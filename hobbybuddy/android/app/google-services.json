@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "632692669439",
+    "project_id": "hobbybuddy-be26c",
+    "storage_bucket": "hobbybuddy-be26c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632692669439:android:00566ac71e3cbdf40e45ca",
+        "android_client_info": {
+          "package_name": "com.example.hobbybuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632692669439-ur72kcttne5d10h0rtjm8bv7slmr5nsp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnSyS_UX6ws9X9IkgF3mXs2qBVoWe88Tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632692669439-ur72kcttne5d10h0rtjm8bv7slmr5nsp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
