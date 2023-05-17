@@ -13,41 +13,45 @@ Future<void> main() async {
   );
 
   runApp(const ShowLoginCredentials());
+  //runApp(const MartaScreen());
 }
 
-/*class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MartaScreen extends StatelessWidget {
+  const MartaScreen({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection:
-          TextDirection.ltr, // Replace with the appropriate text direction
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // App Logo
-              Image.asset(
-                logo, // Replace with your logo image path
-                width: 300,
-                height: 300,
-              ),
-              const SizedBox(height: 16),
-              // Buffering Icon
-              CircularProgressIndicator(backgroundColor: Colors.grey),
-            ],
+    return MaterialApp(
+      title: "hobbybuddy",
+      home: Directionality(
+        textDirection:
+            TextDirection.ltr, // Replace with the appropriate text direction
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // App Logo
+                Image.asset(
+                  logo, // Replace with your logo image path
+                  width: 300,
+                  height: 300,
+                ),
+                const SizedBox(height: 16),
+                // Buffering Icon
+                CircularProgressIndicator(backgroundColor: Colors.grey),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}*/
+}
 
-class MyApp extends StatelessWidget {
+/*class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
@@ -121,7 +125,7 @@ class HelloWorldGenerator extends StatelessWidget {
     }
     return Column(children: childList);
   }
-}
+}*/
 
 class ShowLoginCredentials extends StatelessWidget {
   final String title = "HobbyBuddy";
