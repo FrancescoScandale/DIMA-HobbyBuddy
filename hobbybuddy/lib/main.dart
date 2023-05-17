@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 String logo = 'assets/logo.png';
 
@@ -11,7 +12,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(const ShowLoginCredentials());
 }
 
 /*class MyApp extends StatelessWidget {
@@ -119,5 +120,53 @@ class HelloWorldGenerator extends StatelessWidget {
           )));
     }
     return Column(children: childList);
+  }
+}
+
+class ShowLoginCredentials extends StatelessWidget {
+  final String title = "HobbyBuddy";
+
+  const ShowLoginCredentials({Key? key}) : super(key: key);
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+    return ListTile(
+      title: Row(
+        children: [
+          Expanded(
+            child: Text(
+              document['username'],
+              style: Theme.of(context).textTheme.headlineSmall,
+            ), // Text
+          ), // Expanded
+          Expanded(
+            child: Text(
+              document['password'],
+              style: Theme.of(context).textTheme.headlineSmall,
+            ), // Text
+          ), // Expanded
+        ],
+      ),
+    ); // ListTile
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: "hobbybuddy",
+      home: Scaffold(
+        appBar: AppBar(title: Text(title)),
+        body: StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('login').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const Text('Loading...');
+              return ListView.builder(
+                itemExtent: 80.0,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) =>
+                    _buildListItem(context, snapshot.data!.docs[index]),
+              );
+            }),
+      ),
+    );
   }
 }
