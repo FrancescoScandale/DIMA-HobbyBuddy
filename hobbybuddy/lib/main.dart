@@ -41,7 +41,7 @@ class MartaScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 // Buffering Icon
-                CircularProgressIndicator(backgroundColor: Colors.grey),
+                const CircularProgressIndicator(backgroundColor: Colors.grey),
               ],
             ),
           ),
@@ -160,9 +160,11 @@ class ShowLoginCredentials extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: Text(title)),
         body: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection('login').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('credentials')
+                .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Text('Loading...');
+              if (!snapshot.hasData) return const Text('Data not found :(');
               return ListView.builder(
                 itemExtent: 80.0,
                 itemCount: snapshot.data!.docs.length,
