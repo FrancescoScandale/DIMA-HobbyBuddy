@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/firebase_options.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; //we use CLOUD FIRESTORE as a db
 
 String logo = 'assets/logo.png';
 
@@ -214,16 +214,24 @@ class MyCustomFormState extends State<MyCustomForm> {
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  Map<String, dynamic> credentials = {};
+  Map<String, String> credentials = {};
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  void retrieveCredentials() async {
-    final snap = await FirebaseFirestore.instance.collection("credentials").get();
-    credentials = snap.docs.first.data();
-    print("credentials -> " + credentials.toString());
-    print("keys -> " + credentials.keys.toString());
-    print("passwords -> " + credentials.values.toString());
+  Future<void> retrieveCredentials() async {
+    //this version will set everything correctly
+    await FirebaseFirestore.instance.collection("credentials").get().then(
+      (querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          credentials[doc["username"]] = doc["password"];
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    //credentials = snap.docs.first.data();
+    print("credentials -> $credentials");
+    print("keys -> ${credentials.keys}");
+    print("passwords -> ${credentials.values}");
   }
 
   @override
