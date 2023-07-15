@@ -12,12 +12,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //runApp(const ShowLoginCredentials());
   //runApp(const MartaScreen());
-  runApp(const LoginScreen());
+  //runApp(const ShowLoginCredentials()); //retrieves data from db and builds a list
+  //runApp(const LoginScreen()); //retrives all data from a collection and saves it in a map which uses it later
+  runApp(const BetterLoginScreen()); //retrieves specific data from db using a query and checks if any data retrieved (i.e. if the query had results)
 }
 
-class MartaScreen extends StatelessWidget {
+/*class MartaScreen extends StatelessWidget {
   const MartaScreen({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
@@ -49,7 +50,7 @@ class MartaScreen extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
 /*class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -127,7 +128,7 @@ class HelloWorldGenerator extends StatelessWidget {
   }
 }*/
 
-class ShowLoginCredentials extends StatelessWidget {
+/*class ShowLoginCredentials extends StatelessWidget {
   final String title = "HobbyBuddy";
 
   const ShowLoginCredentials({Key? key}) : super(key: key);
@@ -140,8 +141,8 @@ class ShowLoginCredentials extends StatelessWidget {
             child: Text(
               document['username'],
               style: Theme.of(context).textTheme.headlineSmall,
-            ), // Text
-          ), // Expanded
+            ),
+          ),
           Expanded(
             child: Text(
               document['password'],
@@ -173,9 +174,9 @@ class ShowLoginCredentials extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
-class LoginScreen extends StatelessWidget {
+/*class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -281,6 +282,133 @@ class MyCustomFormState extends State<MyCustomForm> {
                       );
                     }
                   }
+                  // If the form is valid, display a snackbar. In the real world,
+                  // you'd often call a server or save the information in a database.
+                  if (!check) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Data not found...")),
+                    );
+                  }
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}*/
+
+class BetterLoginScreen extends StatelessWidget {
+  const BetterLoginScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const appTitle = 'hobbybuddy';
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: appTitle,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(appTitle),
+        ),
+        body: const LoginForm(),
+      ),
+    );
+  }
+}
+
+// Create a Form widget.
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
+  @override
+  LoginFormState createState() {
+    return LoginFormState();
+  }
+}
+
+// Create a corresponding State class.
+// This class holds data related to the form.
+class LoginFormState extends State<LoginForm> {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a GlobalKey<FormState>,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+  Map<String, String> credentials = {};
+  TextEditingController username = TextEditingController();
+  TextEditingController password = TextEditingController();
+
+  Future<void> retrieveCredentials() async {
+    //this version will set everything correctly
+    await FirebaseFirestore.instance.collection("credentials").get().then(
+      (querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          credentials[doc["username"]] = doc["password"];
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    //credentials = snap.docs.first.data();
+    print("credentials -> $credentials");
+    print("keys -> ${credentials.keys}");
+    print("passwords -> ${credentials.values}");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Build a Form widget using the _formKey created above.
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: username,
+            // The validator receives the text that the user has entered.
+            validator: (value1) {
+              if (value1 == null || value1.isEmpty) {
+                return 'username not found';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: password,
+            // The validator receives the text that the user has entered.
+            validator: (value2) {
+              if (value2 == null || value2.isEmpty) {
+                return 'password not found';
+              }
+              return null;
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                // Validate returns true if the form is valid, or false otherwise.
+                if (_formKey.currentState!.validate()) {
+                  bool check = false;
+                  //check if credentials present in db
+                  FirebaseFirestore.instance.collection("credentials")
+                      .where("username", isEqualTo: username.text)
+                      .where("password", isEqualTo: password.text)
+                      .get().then((values) {
+                        if (values.docs.isNotEmpty) {
+                          check = true;
+                        }
+                      });
+                  if (check) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Found!')),
+                    );
+                  }
+
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
                   if (!check) {
