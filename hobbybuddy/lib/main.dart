@@ -1,9 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hobbybuddy/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; //we use CLOUD FIRESTORE as a db
 
 String logo = 'assets/logo.png';
+const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,10 +14,12 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //runApp(const MartaScreen());
+  //runApp(const MartaScreen()); //loading screen
+  //runApp(const MyApp()); //hello world modifications
   //runApp(const ShowLoginCredentials()); //retrieves data from db and builds a list
   //runApp(const LoginScreen()); //retrives all data from a collection and saves it in a map which uses it later
-  runApp(const BetterLoginScreen()); //retrieves specific data from db using a query and checks if any data retrieved (i.e. if the query had results)
+  //runApp(const BetterLoginScreen()); //retrieves specific data from db using a query and checks if any data retrieved (i.e. if the query had results)
+  runApp(const MapsScreen());
 }
 
 /*class MartaScreen extends StatelessWidget {
@@ -300,7 +304,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 }*/
 
-class BetterLoginScreen extends StatelessWidget {
+/*class BetterLoginScreen extends StatelessWidget {
   const BetterLoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -423,6 +427,53 @@ class LoginFormState extends State<LoginForm> {
           ),
         ],
       ),
+    );
+  }
+}*/
+
+
+
+
+class MapsScreen extends StatelessWidget {
+  const MapsScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const appTitle = 'hobbybuddy';
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: appTitle,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(appTitle),
+        ),
+        body: const Map(),
+      ),
+    );
+  }
+}
+
+
+class Map extends StatefulWidget {
+  const Map({Key? key}) : super(key: key);
+
+  @override
+  MapState createState() {
+    return MapState();
+  }
+}
+
+class MapState extends State<Map> {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+        body: GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: startingLocation,
+            zoom: 17
+          ),
+        )
     );
   }
 }
