@@ -15,7 +15,8 @@ Future<void> main() async {
   //runApp(const MartaScreen());
   //runApp(const ShowLoginCredentials()); //retrieves data from db and builds a list
   //runApp(const LoginScreen()); //retrives all data from a collection and saves it in a map which uses it later
-  runApp(const BetterLoginScreen()); //retrieves specific data from db using a query and checks if any data retrieved (i.e. if the query had results)
+  runApp(
+      const BetterLoginScreen()); //retrieves specific data from db using a query and checks if any data retrieved (i.e. if the query had results)
 }
 
 /*class MartaScreen extends StatelessWidget {
@@ -343,20 +344,24 @@ class LoginFormState extends State<LoginForm> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  Future<void> retrieveCredentials() async {
-    //this version will set everything correctly
-    await FirebaseFirestore.instance.collection("credentials").get().then(
-      (querySnapshot) {
-        for (var doc in querySnapshot.docs) {
-          credentials[doc["username"]] = doc["password"];
-        }
-      },
-      onError: (e) => print("Error completing: $e"),
-    );
-    //credentials = snap.docs.first.data();
-    print("credentials -> $credentials");
-    print("keys -> ${credentials.keys}");
-    print("passwords -> ${credentials.values}");
+  Future<bool> checkCredentials() async {
+    bool check = false;
+
+    await FirebaseFirestore.instance
+        .collection("credentials")
+        .where("username", isEqualTo: username.text)
+        .where("password", isEqualTo: password.text)
+        .get()
+        .then((values) {
+      if (values.docs.isNotEmpty) {
+        print("DATA FOUND");
+        check = true;
+      } else {
+        print("EMPTY QUERY");
+      }
+    });
+
+    return check;
   }
 
   @override
@@ -390,28 +395,18 @@ class LoginFormState extends State<LoginForm> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  bool check = false;
                   //check if credentials present in db
-                  FirebaseFirestore.instance.collection("credentials")
-                      .where("username", isEqualTo: username.text)
-                      .where("password", isEqualTo: password.text)
-                      .get().then((values) {
-                        if (values.docs.isNotEmpty) {
-                          check = true;
-                        }
-                      });
-                  if (check) {
+                  Future<bool> check = checkCredentials();
+
+                  print("CHECK -> $check");
+                  if (await check) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Found!')),
                     );
-                  }
-
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  if (!check) {
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Data not found...")),
                     );
