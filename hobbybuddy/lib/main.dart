@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -433,8 +432,6 @@ class LoginFormState extends State<LoginForm> {
   }
 }*/
 
-
-
 class MapsScreen extends StatelessWidget {
   const MapsScreen({Key? key}) : super(key: key);
 
@@ -455,7 +452,6 @@ class MapsScreen extends StatelessWidget {
   }
 }
 
-
 class Map extends StatefulWidget {
   const Map({Key? key}) : super(key: key);
 
@@ -466,7 +462,7 @@ class Map extends StatefulWidget {
 }
 
 class MapState extends State<Map> {
-  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  late GoogleMapController mapController;
 
   static const CameraPosition _goHome = CameraPosition(
     target: startingLocation,
@@ -474,20 +470,17 @@ class MapState extends State<Map> {
   );
 
   Future<void> _goHomeFunction() async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(_goHome));
+    await mapController.animateCamera(CameraUpdate.newCameraPosition(_goHome));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: startingLocation,
-          zoom: startingZoom
-        ),
+        initialCameraPosition: CameraPosition(target: startingLocation, zoom: startingZoom),
         onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
+          mapController = controller;
+          //_controller.complete(controller);
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
