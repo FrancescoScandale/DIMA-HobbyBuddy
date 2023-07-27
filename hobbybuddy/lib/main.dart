@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart'; //we use CLOUD FIRESTORE 
 
 String logo = 'assets/logo.png';
 const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
+const double startingZoom = 17;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -433,7 +435,6 @@ class LoginFormState extends State<LoginForm> {
 
 
 
-
 class MapsScreen extends StatelessWidget {
   const MapsScreen({Key? key}) : super(key: key);
 
@@ -465,15 +466,34 @@ class Map extends StatefulWidget {
 }
 
 class MapState extends State<Map> {
+  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+
+  static const CameraPosition _goHome = CameraPosition(
+    target: startingLocation,
+    zoom: startingZoom,
+  );
+
+  Future<void> _goHomeFunction() async {
+    final GoogleMapController controller = await _controller.future;
+    await controller.animateCamera(CameraUpdate.newCameraPosition(_goHome));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: startingLocation,
-            zoom: 17
-          ),
-        )
+    return Scaffold(
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: startingLocation,
+          zoom: startingZoom
+        ),
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _goHomeFunction,
+        label: const Text('Go back home'),
+      ),
     );
   }
 }
