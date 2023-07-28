@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -354,6 +356,7 @@ class LoginFormState extends State<LoginForm> {
       (querySnapshot) {
         for (var doc in querySnapshot.docs) {
           credentials[doc["username"]] = doc["password"];
+          print("DOC ID -> ${doc.id}");
         }
       },
       onError: (e) => print("Error completing: $e"),
@@ -366,6 +369,7 @@ class LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    retrieveCredentials();
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
@@ -400,14 +404,16 @@ class LoginFormState extends State<LoginForm> {
                 if (_formKey.currentState!.validate()) {
                   bool check = false;
                   //check if credentials present in db
-                  FirebaseFirestore.instance.collection("credentials")
+                  FirebaseFirestore.instance
+                      .collection("credentials")
                       .where("username", isEqualTo: username.text)
                       .where("password", isEqualTo: password.text)
-                      .get().then((values) {
-                        if (values.docs.isNotEmpty) {
-                          check = true;
-                        }
-                      });
+                      .get()
+                      .then((values) {
+                    if (values.docs.isNotEmpty) {
+                      check = true;
+                    }
+                  });
                   if (check) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Found!')),
@@ -446,14 +452,14 @@ class MapsScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text(appTitle),
         ),
-        body: const Map(),
+        body: const MapClass(),
       ),
     );
   }
 }
 
-class Map extends StatefulWidget {
-  const Map({Key? key}) : super(key: key);
+class MapClass extends StatefulWidget {
+  const MapClass({Key? key}) : super(key: key);
 
   @override
   MapState createState() {
@@ -461,8 +467,10 @@ class Map extends StatefulWidget {
   }
 }
 
-class MapState extends State<Map> {
-  late GoogleMapController mapController;
+class MapState extends State<MapClass> {
+  List<Marker> mapMarkers = [];
+  late GoogleMapController mapController; //used to update the camera position
+  //useful because the map lags and the button uses this to go back to the initial position
 
   static const CameraPosition _goHome = CameraPosition(
     target: startingLocation,
@@ -473,15 +481,47 @@ class MapState extends State<Map> {
     await mapController.animateCamera(CameraUpdate.newCameraPosition(_goHome));
   }
 
+  Marker createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) {
+    Marker marker;
+
+    marker = Marker(
+        markerId: MarkerId(id),
+        position: LatLng(lat, lng),
+        infoWindow: InfoWindow(
+          title: windowTitle,
+          snippet: windowSnippet,
+          //onTap: ... -> TODO: this function could be used to see the buddy's profile
+        ));
+
+    return marker;
+  }
+
+  //TODO: only retrieve the markers from the hobbies the user is interested in
+  Future<void> retrieveMarkers() async {
+    await FirebaseFirestore.instance.collection("markers").get().then(
+      (querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          mapMarkers.add(
+              createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]));
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    setState(() {});
+    print(mapMarkers);
+  }
+
   @override
   Widget build(BuildContext context) {
+    //retrieveMarkers();
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: CameraPosition(target: startingLocation, zoom: startingZoom),
+        initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
-          //_controller.complete(controller);
+          retrieveMarkers();
         },
+        markers: mapMarkers.toSet(),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _goHomeFunction,
