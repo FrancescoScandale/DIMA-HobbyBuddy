@@ -1,7 +1,9 @@
-import 'dart:ffi';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hobbybuddy/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; //we use CLOUD FIRESTORE as a db
@@ -481,19 +483,33 @@ class MapState extends State<MapClass> {
     await mapController.animateCamera(CameraUpdate.newCameraPosition(_goHome));
   }
 
-  Marker createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) {
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
+
+  void createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) async {
     Marker marker;
 
-    marker = Marker(
-        markerId: MarkerId(id),
-        position: LatLng(lat, lng),
-        infoWindow: InfoWindow(
-          title: windowTitle,
-          snippet: windowSnippet,
-          //onTap: ... -> TODO: this function could be used to see the buddy's profile
-        ));
+    final Uint8List markerIcon = await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
 
-    return marker;
+    marker = Marker(
+      markerId: MarkerId(id),
+      position: LatLng(lat, lng),
+      infoWindow: InfoWindow(
+        title: windowTitle,
+        snippet: windowSnippet,
+        //onTap: ... -> TODO: this function could be used to see the buddy's profile
+      ),
+      icon: BitmapDescriptor.fromBytes(markerIcon),
+    );
+
+    setState(() {
+      mapMarkers.add(marker);
+    });
+    return;
   }
 
   //TODO: only retrieve the markers from the hobbies the user is interested in
@@ -501,19 +517,15 @@ class MapState extends State<MapClass> {
     await FirebaseFirestore.instance.collection("markers").get().then(
       (querySnapshot) {
         for (var doc in querySnapshot.docs) {
-          mapMarkers.add(
-              createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]));
+          createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]);
         }
       },
       onError: (e) => print("Error completing: $e"),
     );
-    setState(() {});
-    print(mapMarkers);
   }
 
   @override
   Widget build(BuildContext context) {
-    //retrieveMarkers();
     return Scaffold(
       body: GoogleMap(
         initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
