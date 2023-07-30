@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hobbybuddy/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hobbybuddy/services/light_dark_manager.dart';
@@ -15,6 +20,9 @@ import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 String logo = 'assets/logo.png';
+const LatLng startingLocation =
+    LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
+const double startingZoom = 17;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -425,7 +433,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 }*/
 
-class BetterLoginScreen extends StatelessWidget {
+/*class BetterLoginScreen extends StatelessWidget {
   const BetterLoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -468,28 +476,26 @@ class LoginFormState extends State<LoginForm> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  Future<bool> checkCredentials() async {
-    bool check = false;
-
-    await FirebaseFirestore.instance
-        .collection("credentials")
-        .where("username", isEqualTo: username.text)
-        .where("password", isEqualTo: password.text)
-        .get()
-        .then((values) {
-      if (values.docs.isNotEmpty) {
-        print("DATA FOUND");
-        check = true;
-      } else {
-        print("EMPTY QUERY");
-      }
-    });
-
-    return check;
+  Future<void> retrieveCredentials() async {
+    //this version will set everything correctly
+    await FirebaseFirestore.instance.collection("credentials").get().then(
+      (querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          credentials[doc["username"]] = doc["password"];
+          print("DOC ID -> ${doc.id}");
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    //credentials = snap.docs.first.data();
+    print("credentials -> $credentials");
+    print("keys -> ${credentials.keys}");
+    print("passwords -> ${credentials.values}");
   }
 
   @override
   Widget build(BuildContext context) {
+    retrieveCredentials();
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
@@ -523,10 +529,17 @@ class LoginFormState extends State<LoginForm> {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
                   //check if credentials present in db
-                  Future<bool> check = checkCredentials();
-
-                  print("CHECK -> $check");
-                  if (await check) {
+                  FirebaseFirestore.instance
+                      .collection("credentials")
+                      .where("username", isEqualTo: username.text)
+                      .where("password", isEqualTo: password.text)
+                      .get()
+                      .then((values) {
+                    if (values.docs.isNotEmpty) {
+                      check = true;
+                    }
+                  });
+                  if (check) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Found!')),
                     );
@@ -541,6 +554,116 @@ class LoginFormState extends State<LoginForm> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}*/
+
+class MapsScreen extends StatelessWidget {
+  const MapsScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const appTitle = 'hobbybuddy';
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: appTitle,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(appTitle),
+        ),
+        body: const MapClass(),
+      ),
+    );
+  }
+}
+
+class MapClass extends StatefulWidget {
+  const MapClass({Key? key}) : super(key: key);
+
+  @override
+  MapState createState() {
+    return MapState();
+  }
+}
+
+class MapState extends State<MapClass> {
+  List<Marker> mapMarkers = [];
+  late GoogleMapController mapController; //used to update the camera position
+  //useful because the map lags and the button uses this to go back to the initial position
+
+  static const CameraPosition _goHome = CameraPosition(
+    target: startingLocation,
+    zoom: startingZoom,
+  );
+
+  Future<void> _goHomeFunction() async {
+    await mapController.animateCamera(CameraUpdate.newCameraPosition(_goHome));
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  void createMarker(String id, double lat, double lng, String windowTitle,
+      String windowSnippet) async {
+    Marker marker;
+
+    final Uint8List markerIcon =
+        await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
+
+    marker = Marker(
+      markerId: MarkerId(id),
+      position: LatLng(lat, lng),
+      infoWindow: InfoWindow(
+        title: windowTitle,
+        snippet: windowSnippet,
+        //onTap: ... -> TODO: this function could be used to see the buddy's profile
+      ),
+      icon: BitmapDescriptor.fromBytes(markerIcon),
+    );
+
+    setState(() {
+      mapMarkers.add(marker);
+    });
+    return;
+  }
+
+  //TODO: only retrieve the markers from the hobbies the user is interested in
+  Future<void> retrieveMarkers() async {
+    await FirebaseFirestore.instance.collection("markers").get().then(
+      (querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          createMarker(doc.id, double.parse(doc["lat"]),
+              double.parse(doc["lng"]), doc["title"], doc["snippet"]);
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GoogleMap(
+        initialCameraPosition:
+            const CameraPosition(target: startingLocation, zoom: startingZoom),
+        onMapCreated: (GoogleMapController controller) {
+          mapController = controller;
+          retrieveMarkers();
+        },
+        markers: mapMarkers.toSet(),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _goHomeFunction,
+        label: const Text('Go back home'),
       ),
     );
   }
