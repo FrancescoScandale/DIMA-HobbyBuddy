@@ -476,26 +476,8 @@ class LoginFormState extends State<LoginForm> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  Future<void> retrieveCredentials() async {
-    //this version will set everything correctly
-    await FirebaseFirestore.instance.collection("credentials").get().then(
-      (querySnapshot) {
-        for (var doc in querySnapshot.docs) {
-          credentials[doc["username"]] = doc["password"];
-          print("DOC ID -> ${doc.id}");
-        }
-      },
-      onError: (e) => print("Error completing: $e"),
-    );
-    //credentials = snap.docs.first.data();
-    print("credentials -> $credentials");
-    print("keys -> ${credentials.keys}");
-    print("passwords -> ${credentials.values}");
-  }
-
   @override
   Widget build(BuildContext context) {
-    retrieveCredentials();
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
@@ -528,6 +510,7 @@ class LoginFormState extends State<LoginForm> {
               onPressed: () async {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
+                  bool check = false;
                   //check if credentials present in db
                   FirebaseFirestore.instance
                       .collection("credentials")
