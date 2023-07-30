@@ -20,8 +20,7 @@ import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 String logo = 'assets/logo.png';
-const LatLng startingLocation =
-    LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
+const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 const double startingZoom = 17;
 
 Future<void> main() async {
@@ -29,15 +28,13 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await Preferences.init();
-  FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  runApp(MultiProvider(providers: [
-    // DARK/LIGHT THEME
-    ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager())
-  ], child: const Settings()));
 
-  WidgetsFlutterBinding.ensureInitialized();
+  await Preferences.init();
+  // runApp(MultiProvider(providers: [
+  //   // DARK/LIGHT THEME
+  //   ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager())
+  // ], child: const Settings()));
+  runApp(MapsScreen());
 }
 
 class Settings extends StatefulWidget {
@@ -56,20 +53,16 @@ class _SettingsScreenState extends State<Settings> {
       darkTheme: darkTheme,
       themeMode: Provider.of<ThemeManager>(context).themeMode,
       home: Directionality(
-        textDirection:
-            TextDirection.ltr, // Replace with the appropriate text direction
+        textDirection: TextDirection.ltr, // Replace with the appropriate text direction
         child: Scaffold(
           appBar: MyAppBar(
             title: "Settings",
             upRightActions: [
               MyIconButton(
-                margin: const EdgeInsets.only(
-                    right: AppLayout.kModalHorizontalPadding),
-                icon: Icon(Icons.logout,
-                    color: Theme.of(context).primaryColorLight),
+                margin: const EdgeInsets.only(right: AppLayout.kModalHorizontalPadding),
+                icon: Icon(Icons.logout, color: Theme.of(context).primaryColorLight),
                 onTap: () async {
-                  await Provider.of<FirebaseUser>(context, listen: false)
-                      .signOut();
+                  await Provider.of<FirebaseUser>(context, listen: false).signOut();
                 },
               ),
             ],
@@ -90,8 +83,7 @@ class _SettingsScreenState extends State<Settings> {
                         value: Preferences.getBool('isDark'),
                         onChanged: (newValue) {
                           setState(() {
-                            Provider.of<ThemeManager>(context, listen: false)
-                                .toggleTheme(newValue);
+                            Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
                           });
                         },
                         secondary: const Icon(Icons.dark_mode),
@@ -433,7 +425,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 }*/
 
-/*class BetterLoginScreen extends StatelessWidget {
+class BetterLoginScreen extends StatelessWidget {
   const BetterLoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -512,7 +504,7 @@ class LoginFormState extends State<LoginForm> {
                 if (_formKey.currentState!.validate()) {
                   bool check = false;
                   //check if credentials present in db
-                  FirebaseFirestore.instance
+                  await FirebaseFirestore.instance
                       .collection("credentials")
                       .where("username", isEqualTo: username.text)
                       .where("password", isEqualTo: password.text)
@@ -540,14 +532,14 @@ class LoginFormState extends State<LoginForm> {
       ),
     );
   }
-}*/
+}
 
 class MapsScreen extends StatelessWidget {
   const MapsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = 'hobbybuddy';
+    const appTitle = 'Buddy Finder';
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -587,20 +579,15 @@ class MapState extends State<MapClass> {
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
-  void createMarker(String id, double lat, double lng, String windowTitle,
-      String windowSnippet) async {
+  void createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) async {
     Marker marker;
 
-    final Uint8List markerIcon =
-        await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
+    final Uint8List markerIcon = await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
 
     marker = Marker(
       markerId: MarkerId(id),
@@ -624,8 +611,7 @@ class MapState extends State<MapClass> {
     await FirebaseFirestore.instance.collection("markers").get().then(
       (querySnapshot) {
         for (var doc in querySnapshot.docs) {
-          createMarker(doc.id, double.parse(doc["lat"]),
-              double.parse(doc["lng"]), doc["title"], doc["snippet"]);
+          createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]);
         }
       },
       onError: (e) => print("Error completing: $e"),
@@ -636,8 +622,7 @@ class MapState extends State<MapClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition:
-            const CameraPosition(target: startingLocation, zoom: startingZoom),
+        initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
           retrieveMarkers();
