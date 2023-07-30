@@ -1,22 +1,146 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/firebase_options.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; //we use CLOUD FIRESTORE as a db
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hobbybuddy/services/light_dark_manager.dart';
+import 'package:provider/provider.dart';
+import 'themes/layout.dart';
+import 'themes/light_dark.dart';
+import 'themes/app_theme.dart';
+import 'package:hobbybuddy/services/firebase_user.dart';
+import 'package:hobbybuddy/widgets/app_bar.dart';
+import 'package:hobbybuddy/widgets/button_icon.dart';
+import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
+import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 String logo = 'assets/logo.png';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Preferences.init();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  runApp(MultiProvider(providers: [
+    // DARK/LIGHT THEME
+    ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager())
+  ], child: const Settings()));
 
-  //runApp(const MartaScreen());
-  //runApp(const ShowLoginCredentials()); //retrieves data from db and builds a list
-  //runApp(const LoginScreen()); //retrives all data from a collection and saves it in a map which uses it later
-  runApp(
-      const BetterLoginScreen()); //retrieves specific data from db using a query and checks if any data retrieved (i.e. if the query had results)
+  WidgetsFlutterBinding.ensureInitialized();
+}
+
+class Settings extends StatefulWidget {
+  const Settings({Key? key}) : super(key: key);
+
+  @override
+  State<Settings> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<Settings> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'HobbyBuddy',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: Provider.of<ThemeManager>(context).themeMode,
+      home: Directionality(
+        textDirection:
+            TextDirection.ltr, // Replace with the appropriate text direction
+        child: Scaffold(
+          appBar: MyAppBar(
+            title: "Settings",
+            upRightActions: [
+              MyIconButton(
+                margin: const EdgeInsets.only(
+                    right: AppLayout.kModalHorizontalPadding),
+                icon: Icon(Icons.logout,
+                    color: Theme.of(context).primaryColorLight),
+                onTap: () async {
+                  await Provider.of<FirebaseUser>(context, listen: false)
+                      .signOut();
+                },
+              ),
+            ],
+          ),
+          body: ResponsiveWrapper(
+            child: ListView(
+              controller: ScrollController(),
+              children: [
+                Container(height: AppLayout.kPaddingFromCreate),
+                //const ProfileData(),
+                ContainerShadow(
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        title: const Text(
+                          "Dark mode",
+                        ),
+                        value: Preferences.getBool('isDark'),
+                        onChanged: (newValue) {
+                          setState(() {
+                            Provider.of<ThemeManager>(context, listen: false)
+                                .toggleTheme(newValue);
+                          });
+                        },
+                        secondary: const Icon(Icons.dark_mode),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.edit),
+                        title: const Text("Edit profile"),
+                        trailing: const Icon(Icons.navigate_next),
+                        /*onTap: () async {
+                      Stream<UserModel> stream =
+                          Provider.of<FirebaseUser>(context, listen: false)
+                              .getCurrentUserStream();
+                      UserModel userData = await stream.first;
+                      Widget newScreen = EditProfileScreen(userData: userData);
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        ScreenTransition(
+                          builder: (context) => newScreen,
+                        ),
+                      );
+                    },*/
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.password),
+                        title: const Text("Change password"),
+                        trailing: const Icon(Icons.navigate_next),
+                        /*onTap: () {
+                      Widget newScreen = const ChangePasswordScreen();
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        ScreenTransition(
+                          builder: (context) => newScreen,
+                        ),
+                      );
+                    },*/
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.logout),
+                        title: const Text("Sign Out"),
+                        //onTap: () async {
+                        //await Provider.of<FirebaseUser>(context, listen: false)
+                        // .signOut();
+                        //},
+                      ),
+                    ],
+                  ),
+                ),
+                Container(height: AppLayout.kPaddingFromCreate),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /*class MartaScreen extends StatelessWidget {
@@ -421,3 +545,47 @@ class LoginFormState extends State<LoginForm> {
     );
   }
 }
+
+/*class ProfileData extends StatelessWidget {
+  const ProfileData({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: Provider.of<FirebaseUser>(context, listen: false)
+          .getCurrentUserStream(),
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<UserModel> snapshot,
+      ) {
+        UserModel userData = snapshot.data!;
+        return Column(
+          children: [
+            ProfilePicFromData(
+              userData: userData,
+              radius: AppLayout.kProfilePicRadius,
+            ),
+            const SizedBox(height: AppLayout.kHeight),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  userData.username,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  "${userData.name} ${userData.surname}",
+                  style: Theme.of(context).textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+}*/
+
