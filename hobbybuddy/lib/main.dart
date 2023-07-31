@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -17,10 +17,12 @@ import 'package:hobbybuddy/services/firebase_user.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
+//import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 String logo = 'assets/logo.png';
-const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
+const LatLng startingLocation =
+    LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 const double startingZoom = 17;
 
 Future<void> main() async {
@@ -30,11 +32,99 @@ Future<void> main() async {
   );
 
   await Preferences.init();
-  // runApp(MultiProvider(providers: [
-  //   // DARK/LIGHT THEME
-  //   ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager())
-  // ], child: const Settings()));
-  runApp(MapsScreen());
+  runApp(MultiProvider(providers: [
+    // DARK/LIGHT THEME
+    ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager())
+  ], child: const BottomNavigationBarApp()));
+  //runApp(const Settings());
+}
+
+class BottomNavigationBarApp extends StatelessWidget {
+  const BottomNavigationBarApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: Provider.of<ThemeManager>(context).themeMode,
+      home: const BottomNavigationBarTest(),
+    );
+  }
+}
+
+class BottomNavigationBarTest extends StatefulWidget {
+  const BottomNavigationBarTest({super.key});
+
+  @override
+  State<BottomNavigationBarTest> createState() => _BottomNavigationBarState();
+}
+
+class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Home',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 1: Maps',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: Favorites',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 3: Profile',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('BottomNavigationBar Sample'),
+      ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'maps',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'favorites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
 }
 
 class Settings extends StatefulWidget {
@@ -47,52 +137,48 @@ class Settings extends StatefulWidget {
 class _SettingsScreenState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'HobbyBuddy',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: Provider.of<ThemeManager>(context).themeMode,
-      home: Directionality(
-        textDirection: TextDirection.ltr, // Replace with the appropriate text direction
-        child: Scaffold(
-          appBar: MyAppBar(
-            title: "Settings",
-            upRightActions: [
-              MyIconButton(
-                margin: const EdgeInsets.only(right: AppLayout.kModalHorizontalPadding),
-                icon: Icon(Icons.logout, color: Theme.of(context).primaryColorLight),
-                onTap: () async {
-                  await Provider.of<FirebaseUser>(context, listen: false).signOut();
-                },
-              ),
-            ],
+    return Scaffold(
+      appBar: MyAppBar(
+        title: "Settings",
+        upRightActions: [
+          MyIconButton(
+            margin:
+                const EdgeInsets.only(right: AppLayout.kModalHorizontalPadding),
+            icon:
+                Icon(Icons.logout, color: Theme.of(context).primaryColorLight),
+            onTap: () async {
+              await Provider.of<FirebaseUser>(context, listen: false).signOut();
+            },
           ),
-          body: ResponsiveWrapper(
-            child: ListView(
-              controller: ScrollController(),
-              children: [
-                Container(height: AppLayout.kPaddingFromCreate),
-                //const ProfileData(),
-                ContainerShadow(
-                  child: Column(
-                    children: [
-                      SwitchListTile(
-                        title: const Text(
-                          "Dark mode",
-                        ),
-                        value: Preferences.getBool('isDark'),
-                        onChanged: (newValue) {
-                          setState(() {
-                            Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
-                          });
-                        },
-                        secondary: const Icon(Icons.dark_mode),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.edit),
-                        title: const Text("Edit profile"),
-                        trailing: const Icon(Icons.navigate_next),
-                        /*onTap: () async {
+        ],
+      ),
+      body: ResponsiveWrapper(
+        child: ListView(
+          controller: ScrollController(),
+          children: [
+            Container(height: AppLayout.kPaddingFromCreate),
+            //const ProfileData(),
+            ContainerShadow(
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: const Text(
+                      "Dark mode",
+                    ),
+                    value: Preferences.getBool('isDark'),
+                    onChanged: (newValue) {
+                      setState(() {
+                        Provider.of<ThemeManager>(context, listen: false)
+                            .toggleTheme(newValue);
+                      });
+                    },
+                    secondary: const Icon(Icons.dark_mode),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.edit),
+                    title: const Text("Edit profile"),
+                    trailing: const Icon(Icons.navigate_next),
+                    /*onTap: () async {
                       Stream<UserModel> stream =
                           Provider.of<FirebaseUser>(context, listen: false)
                               .getCurrentUserStream();
@@ -106,12 +192,12 @@ class _SettingsScreenState extends State<Settings> {
                         ),
                       );
                     },*/
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.password),
-                        title: const Text("Change password"),
-                        trailing: const Icon(Icons.navigate_next),
-                        /*onTap: () {
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.password),
+                    title: const Text("Change password"),
+                    trailing: const Icon(Icons.navigate_next),
+                    /*onTap: () {
                       Widget newScreen = const ChangePasswordScreen();
                       // ignore: use_build_context_synchronously
                       Navigator.push(
@@ -121,22 +207,20 @@ class _SettingsScreenState extends State<Settings> {
                         ),
                       );
                     },*/
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.logout),
-                        title: const Text("Sign Out"),
-                        //onTap: () async {
-                        //await Provider.of<FirebaseUser>(context, listen: false)
-                        // .signOut();
-                        //},
-                      ),
-                    ],
                   ),
-                ),
-                Container(height: AppLayout.kPaddingFromCreate),
-              ],
+                  ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: const Text("Sign Out"),
+                    //onTap: () async {
+                    //await Provider.of<FirebaseUser>(context, listen: false)
+                    // .signOut();
+                    //},
+                  ),
+                ],
+              ),
             ),
-          ),
+            Container(height: AppLayout.kPaddingFromCreate),
+          ],
         ),
       ),
     );
@@ -579,15 +663,20 @@ class MapState extends State<MapClass> {
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
-  void createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) async {
+  void createMarker(String id, double lat, double lng, String windowTitle,
+      String windowSnippet) async {
     Marker marker;
 
-    final Uint8List markerIcon = await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
+    final Uint8List markerIcon =
+        await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
 
     marker = Marker(
       markerId: MarkerId(id),
@@ -611,7 +700,8 @@ class MapState extends State<MapClass> {
     await FirebaseFirestore.instance.collection("markers").get().then(
       (querySnapshot) {
         for (var doc in querySnapshot.docs) {
-          createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]);
+          createMarker(doc.id, double.parse(doc["lat"]),
+              double.parse(doc["lng"]), doc["title"], doc["snippet"]);
         }
       },
       onError: (e) => print("Error completing: $e"),
@@ -622,7 +712,8 @@ class MapState extends State<MapClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
+        initialCameraPosition:
+            const CameraPosition(target: startingLocation, zoom: startingZoom),
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
           retrieveMarkers();
