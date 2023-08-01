@@ -19,6 +19,10 @@ import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 //import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
+import 'package:flutter/cupertino.dart';
+
+//netstat -aon | findstr 10296 PID
+//adb connect 127.0.0.1:62001
 
 String logo = 'assets/logo.png';
 const LatLng startingLocation =
@@ -34,9 +38,13 @@ Future<void> main() async {
   await Preferences.init();
   runApp(MultiProvider(providers: [
     // DARK/LIGHT THEME
-    ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager())
+    ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager()),
+
+    // GLOBAL TAB CONTROLLER
+    ChangeNotifierProvider<CupertinoTabController>(
+        create: (context) => CupertinoTabController()),
   ], child: const BottomNavigationBarApp()));
-  //runApp(const Settings());
+  //runApp(const MapsScreen());
 }
 
 class BottomNavigationBarApp extends StatelessWidget {
@@ -49,6 +57,7 @@ class BottomNavigationBarApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: Provider.of<ThemeManager>(context).themeMode,
+      initialRoute: '/',
       home: const BottomNavigationBarTest(),
     );
   }
@@ -62,66 +71,102 @@ class BottomNavigationBarTest extends StatefulWidget {
 }
 
 class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Maps',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: Favorites',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 3: Profile',
-      style: optionStyle,
-    ),
-  ];
+  int currentIndex = 0;
+  final GlobalKey<NavigatorState> firstTabNavKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> secondTabNavKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> thirdTabNavKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> fourthTabNavKey = GlobalKey<NavigatorState>();
 
-  void _onItemTapped(int index) {
+  void changeTab(int index) {
+    // https://stackoverflow.com/questions/52298686/flutter-pop-to-root-when-bottom-navigation-tapped
+
+    if (currentIndex == index) {
+      switch (index) {
+        case 0:
+          firstTabNavKey.currentState?.popUntil((r) => r.isFirst);
+          break;
+        case 1:
+          secondTabNavKey.currentState?.popUntil((r) => r.isFirst);
+          break;
+        case 2:
+          thirdTabNavKey.currentState?.popUntil((r) => r.isFirst);
+          break;
+        case 3:
+          fourthTabNavKey.currentState?.popUntil((r) => r.isFirst);
+          break;
+      }
+    }
     setState(() {
-      _selectedIndex = index;
+      currentIndex = index;
+      Provider.of<CupertinoTabController>(context, listen: false).index =
+          currentIndex;
     });
   }
+
+  final Map<int, Widget> screens = {
+    0: MapsScreen(),
+    1: MapsScreen(),
+    2: Settings(),
+    3: Settings(),
+  };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'maps',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'profile',
+      body: Stack(
+        children: [
+          CupertinoTabScaffold(
+            controller:
+                Provider.of<CupertinoTabController>(context, listen: true),
+            tabBar: CupertinoTabBar(
+              onTap: changeTab,
+              items: [
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  label: 'maps',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite),
+                  label: 'favorites',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.account_circle),
+                  label: 'profile',
+                ),
+              ],
+            ),
+            tabBuilder: (context, index) {
+              switch (index) {
+                case 0:
+                  return CupertinoTabView(
+                    navigatorKey: firstTabNavKey,
+                    builder: (context) => const MapsScreen(),
+                  );
+                case 1:
+                  return CupertinoTabView(
+                    navigatorKey: secondTabNavKey,
+                    builder: (context) => const MapsScreen(),
+                  );
+                case 2:
+                  return CupertinoTabView(
+                    navigatorKey: thirdTabNavKey,
+                    builder: (context) => const Settings(),
+                  );
+                case 3:
+                  return CupertinoTabView(
+                    navigatorKey: fourthTabNavKey,
+                    builder: (context) => const Settings(),
+                  );
+                default:
+                  return const CupertinoTabView();
+              }
+            },
           ),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
