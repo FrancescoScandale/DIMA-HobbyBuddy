@@ -77,7 +77,8 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                   controller: _passwordController,
                   obscureText: _passwordInvisibleNew,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_open),
+                    prefixIcon: const Icon(Icons.vpn_key_rounded),
+                    //prefixIcon: const Icon(Icons.password),
                     hintText: 'New password',
                     border: const OutlineInputBorder(),
                     labelText: 'Your new password',
@@ -106,7 +107,8 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 TextFormField(
                   obscureText: _passwordInvisibleNew,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_open),
+                    prefixIcon: const Icon(Icons.vpn_key_rounded),
+                    //prefixIcon: const Icon(Icons.password),
                     hintText: 'New password',
                     border: const OutlineInputBorder(),
                     labelText: 'Confirm new password',

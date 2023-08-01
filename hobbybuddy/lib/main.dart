@@ -209,7 +209,7 @@ class _SettingsScreenState extends State<Settings> {
                             .toggleTheme(newValue);
                       });
                     },
-                    secondary: const Icon(Icons.dark_mode),
+                    secondary: const Icon(Icons.dark_mode_rounded),
                   ),
                   ListTile(
                     leading: const Icon(Icons.edit),
@@ -226,7 +226,7 @@ class _SettingsScreenState extends State<Settings> {
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.password),
+                    leading: const Icon(Icons.lock_open),
                     title: const Text("Change password"),
                     trailing: const Icon(Icons.navigate_next),
                     onTap: () {

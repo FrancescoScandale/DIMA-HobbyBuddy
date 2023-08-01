@@ -66,7 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.perm_identity),
+                        prefixIcon: const Icon(Icons.shortcut_rounded),
                         border: const OutlineInputBorder(),
                         hintText: "Insert new name here",
                         labelText: 'Your new name',
@@ -84,7 +84,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     TextFormField(
                       controller: _surnameController,
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.perm_identity),
+                        prefixIcon: const Icon(Icons.shortcut_rounded),
+                        //prefixIcon: const Icon(Icons.perm_identity),
                         border: const OutlineInputBorder(),
                         hintText: "Insert new surname here",
                         labelText: 'Your new surname',
