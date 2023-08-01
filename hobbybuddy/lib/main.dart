@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+//import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:firebase_core/firebase_core.dart';
@@ -13,9 +13,9 @@ import 'package:provider/provider.dart';
 import 'themes/layout.dart';
 import 'themes/light_dark.dart';
 import 'themes/app_theme.dart';
-import 'package:hobbybuddy/services/firebase_user.dart';
+//import 'package:hobbybuddy/services/firebase_user.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
-import 'package:hobbybuddy/widgets/button_icon.dart';
+//import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 //import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
@@ -185,17 +185,6 @@ class _SettingsScreenState extends State<Settings> {
     return Scaffold(
       appBar: MyAppBar(
         title: "Settings",
-        upRightActions: [
-          MyIconButton(
-            margin:
-                const EdgeInsets.only(right: AppLayout.kModalHorizontalPadding),
-            icon:
-                Icon(Icons.logout, color: Theme.of(context).primaryColorLight),
-            onTap: () async {
-              await Provider.of<FirebaseUser>(context, listen: false).signOut();
-            },
-          ),
-        ],
       ),
       body: ResponsiveWrapper(
         child: ListView(
@@ -670,15 +659,13 @@ class MapsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     const appTitle = 'Buddy Finder';
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: appTitle,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(appTitle),
-        ),
-        body: const MapClass(),
+    return Scaffold(
+      //debugShowCheckedModeBanner: false,
+
+      appBar: AppBar(
+        title: const Text(appTitle),
       ),
+      body: const MapClass(),
     );
   }
 }
@@ -765,10 +752,14 @@ class MapState extends State<MapClass> {
         },
         markers: mapMarkers.toSet(),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goHomeFunction,
-        label: const Text('Go back home'),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: FloatingActionButton.extended(
+          onPressed: _goHomeFunction,
+          label: const Text('Go back home'),
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }
