@@ -17,9 +17,12 @@ import 'themes/app_theme.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 //import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
-//import 'package:hobbybuddy/widgets/screen_transition.dart';
+import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'package:hobbybuddy/screens/change_password.dart';
+import 'package:hobbybuddy/screens/edit_profile.dart';
 
 //netstat -aon | findstr 10296 PID
 //adb connect 127.0.0.1:62001
@@ -212,26 +215,21 @@ class _SettingsScreenState extends State<Settings> {
                     leading: const Icon(Icons.edit),
                     title: const Text("Edit profile"),
                     trailing: const Icon(Icons.navigate_next),
-                    /*onTap: () async {
-                      Stream<UserModel> stream =
-                          Provider.of<FirebaseUser>(context, listen: false)
-                              .getCurrentUserStream();
-                      UserModel userData = await stream.first;
-                      Widget newScreen = EditProfileScreen(userData: userData);
-                      // ignore: use_build_context_synchronously
+                    onTap: () async {
+                      Widget newScreen = const EditProfileScreen();
                       Navigator.push(
                         context,
                         ScreenTransition(
                           builder: (context) => newScreen,
                         ),
                       );
-                    },*/
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.password),
                     title: const Text("Change password"),
                     trailing: const Icon(Icons.navigate_next),
-                    /*onTap: () {
+                    onTap: () {
                       Widget newScreen = const ChangePasswordScreen();
                       // ignore: use_build_context_synchronously
                       Navigator.push(
@@ -240,7 +238,7 @@ class _SettingsScreenState extends State<Settings> {
                           builder: (context) => newScreen,
                         ),
                       );
-                    },*/
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.logout),
