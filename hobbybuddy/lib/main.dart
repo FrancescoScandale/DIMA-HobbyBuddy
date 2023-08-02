@@ -16,7 +16,7 @@ import 'themes/app_theme.dart';
 //import 'package:hobbybuddy/services/firebase_user.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 //import 'package:hobbybuddy/widgets/button_icon.dart';
-import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
+
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:flutter/cupertino.dart';
@@ -189,71 +189,164 @@ class _SettingsScreenState extends State<Settings> {
       appBar: MyAppBar(
         title: "Settings",
       ),
-      body: ResponsiveWrapper(
-        child: ListView(
-          controller: ScrollController(),
-          children: [
-            Container(height: AppLayout.kPaddingFromCreate),
-            //const ProfileData(),
-            ContainerShadow(
-              child: Column(
+      body: ListView(
+        children: [
+          Container(
+            width: MediaQuery.sizeOf(context).width,
+            height: 160,
+            decoration: BoxDecoration(
+              color: ui.Color(0xffffcc80),
+              //color: Color.fromARGB(255, 238, 139, 96),
+            ),
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(20, 40, 20, 0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SwitchListTile(
-                    title: const Text(
-                      "Dark mode",
+                  Card(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80),
                     ),
-                    value: Preferences.getBool('isDark'),
-                    onChanged: (newValue) {
-                      setState(() {
-                        Provider.of<ThemeManager>(context, listen: false)
-                            .toggleTheme(newValue);
-                      });
-                    },
-                    secondary: const Icon(Icons.dark_mode_rounded),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.edit),
-                    title: const Text("Edit profile"),
-                    trailing: const Icon(Icons.navigate_next),
-                    onTap: () async {
-                      Widget newScreen = const EditProfileScreen();
-                      Navigator.push(
-                        context,
-                        ScreenTransition(
-                          builder: (context) => newScreen,
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(80),
+                        child: Image.asset(
+                          logo,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.lock_open),
-                    title: const Text("Change password"),
-                    trailing: const Icon(Icons.navigate_next),
-                    onTap: () {
-                      Widget newScreen = const ChangePasswordScreen();
-                      // ignore: use_build_context_synchronously
-                      Navigator.push(
-                        context,
-                        ScreenTransition(
-                          builder: (context) => newScreen,
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.logout),
-                    title: const Text("Sign Out"),
-                    //onTap: () async {
-                    //await Provider.of<FirebaseUser>(context, listen: false)
-                    // .signOut();
-                    //},
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Mr. Rogers',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              //color: Colors.white,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+                            child: Text(
+                              'Mr.Rogers@gmail.com',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                //color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-            Container(height: AppLayout.kPaddingFromCreate),
-          ],
-        ),
+          ),
+          Container(
+            height: AppLayout.kPaddingFromCreate,
+          ),
+          ContainerShadow(
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: const Text(
+                    "Dark mode",
+                  ),
+                  value: Preferences.getBool('isDark'),
+                  onChanged: (newValue) {
+                    setState(() {
+                      Provider.of<ThemeManager>(context, listen: false)
+                          .toggleTheme(newValue);
+                    });
+                  },
+                  secondary: const Icon(Icons.dark_mode_rounded),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text("Edit profile"),
+                  trailing: const Icon(Icons.navigate_next),
+                  onTap: () async {
+                    Widget newScreen = const EditProfileScreen();
+                    Navigator.push(
+                      context,
+                      ScreenTransition(
+                        builder: (context) => newScreen,
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.lock_open),
+                  title: const Text("Change password"),
+                  trailing: const Icon(Icons.navigate_next),
+                  onTap: () {
+                    Widget newScreen = const ChangePasswordScreen();
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                      context,
+                      ScreenTransition(
+                        builder: (context) => newScreen,
+                      ),
+                    );
+                  },
+                ),
+                /*ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text("Sign Out"),
+                  //onTap: () async {
+                  //await Provider.of<FirebaseUser>(context, listen: false)
+                  // .signOut();
+                  //},
+                ),*/
+              ],
+            ),
+          ),
+          Container(
+            height: AppLayout.kPaddingFromCreate,
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: 200, // Adjust the width as per your requirement
+              height: 50, // Adjust the height as per your requirement
+              child: ElevatedButton(
+                onPressed: () {
+                  // Add your sign-out logic here
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    //color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

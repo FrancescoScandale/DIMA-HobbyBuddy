@@ -14,9 +14,11 @@ class MyButton extends StatelessWidget {
         style: const ButtonStyle(
           padding:
               MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.all(15)),
-          textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 18)),
         ),
-        child: Text(text.toUpperCase()),
+        child: Text(
+          text,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

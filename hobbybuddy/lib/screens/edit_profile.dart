@@ -101,7 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const SizedBox(height: 50),
                     MyButton(
-                        text: "SAVE",
+                        text: "Save",
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
                             showSnackBar(
