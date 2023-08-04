@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -23,9 +24,6 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:hobbybuddy/screens/change_password.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
-
-//netstat -aon | findstr 10296 PID
-//adb connect 127.0.0.1:62001
 
 String logo = 'assets/logo.png';
 const LatLng startingLocation =
