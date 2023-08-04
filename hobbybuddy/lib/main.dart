@@ -107,7 +107,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
   }
 
   final Map<int, Widget> screens = {
-    0: MapsScreen(),
+    0: HomePageHobby(),
     1: MapsScreen(),
     2: Settings(),
     3: Settings(),
@@ -147,7 +147,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
                 case 0:
                   return CupertinoTabView(
                     navigatorKey: firstTabNavKey,
-                    builder: (context) => const MapsScreen(),
+                    builder: (context) => const HomePageHobby(),
                   );
                 case 1:
                   return CupertinoTabView(
@@ -259,6 +259,7 @@ class _SettingsScreenState extends State<Settings> {
               ),
             ),
           ),
+          //padding to the next section
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
@@ -318,6 +319,7 @@ class _SettingsScreenState extends State<Settings> {
               ],
             ),
           ),
+          //padding to the next section
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
@@ -898,3 +900,148 @@ class MapState extends State<MapClass> {
   }
 }*/
 
+class HomePageHobby extends StatefulWidget {
+  const HomePageHobby({Key? key}) : super(key: key);
+
+  @override
+  State<HomePageHobby> createState() => _HomePageHobbyState();
+}
+
+class _HomePageHobbyState extends State<HomePageHobby> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MyAppBar(
+        title: "Home Page Hobby",
+      ),
+      body: ListView(
+        children: [
+          Container(
+            width: MediaQuery.sizeOf(context).width,
+            height: 160,
+            decoration: BoxDecoration(
+              color: ui.Color(0xffffcc80),
+              //color: Color.fromARGB(255, 238, 139, 96),
+            ),
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(50, 0, 0, 0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/hobbies/Frisbee.png",
+                    width: 120,
+                    height: 120,
+                    fit: BoxFit.cover,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(50, 0, 0, 0),
+                      child: Text(
+                        'Frisbee',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          //padding to the next section
+          Container(
+            height: AppLayout.kVerticalPadding,
+          ),
+          ContainerShadow(
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: const Text(
+                    "Dark mode",
+                  ),
+                  value: Preferences.getBool('isDark'),
+                  onChanged: (newValue) {
+                    setState(() {
+                      Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
+                    });
+                  },
+                  secondary: const Icon(Icons.dark_mode_rounded),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text("Edit profile"),
+                  trailing: const Icon(Icons.navigate_next),
+                  onTap: () async {
+                    Widget newScreen = const EditProfileScreen();
+                    Navigator.push(
+                      context,
+                      ScreenTransition(
+                        builder: (context) => newScreen,
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.lock_open),
+                  title: const Text("Change password"),
+                  trailing: const Icon(Icons.navigate_next),
+                  onTap: () {
+                    Widget newScreen = const ChangePasswordScreen();
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                      context,
+                      ScreenTransition(
+                        builder: (context) => newScreen,
+                      ),
+                    );
+                  },
+                ),
+                /*ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text("Sign Out"),
+                  //onTap: () async {
+                  //await Provider.of<FirebaseUser>(context, listen: false)
+                  // .signOut();
+                  //},
+                ),*/
+              ],
+            ),
+          ),
+          //padding to the next section
+          Container(
+            height: AppLayout.kPaddingFromCreate,
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: 200, // Adjust the width as per your requirement
+              height: 50, // Adjust the height as per your requirement
+              child: ElevatedButton(
+                onPressed: () {
+                  // Add your sign-out logic here
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    //color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
