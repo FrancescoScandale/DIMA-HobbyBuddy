@@ -46,7 +46,7 @@ Future<void> main() async {
     // GLOBAL TAB CONTROLLER
     ChangeNotifierProvider<CupertinoTabController>(
         create: (context) => CupertinoTabController()),
-  ], child: const BottomNavigationBarApp()));
+  ], child: const BetterLoginScreen()));
   //runApp(const MapsScreen());
 }
 
@@ -328,7 +328,14 @@ class _SettingsScreenState extends State<Settings> {
               height: 50, // Adjust the height as per your requirement
               child: ElevatedButton(
                 onPressed: () {
-                  // Add your sign-out logic here
+                  Widget newScreen = const BetterLoginScreen();
+                  // ignore: use_build_context_synchronously
+                  Navigator.push(
+                    context,
+                    ScreenTransition(
+                      builder: (context) => newScreen,
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -726,6 +733,15 @@ class LoginFormState extends State<LoginForm> {
                   if (check) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Found!')),
+                    );
+
+                    Widget newScreen = const BottomNavigationBarApp();
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                      context,
+                      ScreenTransition(
+                        builder: (context) => newScreen,
+                      ),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
