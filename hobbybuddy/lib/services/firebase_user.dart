@@ -4,7 +4,7 @@ import 'package:hobbybuddy/widgets/snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'firebase_crud.dart';
+import 'firebase_queries.dart';
 
 import 'dart:io';
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseCrud {
@@ -52,5 +54,41 @@ class FirebaseCrud {
     } on FirebaseException catch (e) {
       print(e.message!);
     }
+  }
+
+  //OTHER QUERIES
+  static Future<QuerySnapshot<Map<String, dynamic>>> getUserPwd(String user, String pwd) async {
+    QuerySnapshot<Map<String, dynamic>> result;
+
+    try {
+      result = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .where("password", isEqualTo: pwd)
+          .get();
+      return result;
+    } on FirebaseException catch (e) {
+      print(e.message!);
+      exit(1);
+    }
+  }
+
+  //function used to retrieve user mentors and hobbies
+  //data can be equal to 'hobbies' or 'mentors'
+  static Future<List<String>> getUserData(String user, String data) async {
+    List<String> result = [];
+
+    try {
+      result =
+          await FirebaseFirestore.instance.collection("users").where("username", isEqualTo: user).get().then((value) {
+        String tmp = value.docs[0][data];
+        result = tmp.split(',');
+        return result;
+      });
+      return result;
+    } on FirebaseException catch (e) {
+      print(e.message!);
+    }
+    return result;
   }
 }
