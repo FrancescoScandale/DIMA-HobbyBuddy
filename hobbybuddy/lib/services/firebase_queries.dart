@@ -57,8 +57,8 @@ class FirebaseCrud {
   }
 
   //OTHER QUERIES
-  static Future<QuerySnapshot<Map<String, dynamic>>> getUserPwd(String user, String pwd) async {
-    QuerySnapshot<Map<String, dynamic>> result;
+  static Future<QuerySnapshot<Map<String, dynamic>>?> getUserPwd(String user, String pwd) async {
+    QuerySnapshot<Map<String, dynamic>>? result;
 
     try {
       result = await FirebaseFirestore.instance
@@ -69,7 +69,7 @@ class FirebaseCrud {
       return result;
     } on FirebaseException catch (e) {
       print(e.message!);
-      exit(1);
+      return null;
     }
   }
 
@@ -85,7 +85,24 @@ class FirebaseCrud {
         result = tmp.split(',');
         return result;
       });
-      return result;
+    } on FirebaseException catch (e) {
+      print(e.message!);
+    }
+    return result;
+  }
+
+  static Future<List<String>> getMentors(String hobby) async {
+    List<String> result = [];
+
+    try {
+      result =
+          await FirebaseFirestore.instance.collection("mentors").where("hobby", isEqualTo: hobby).get().then((values) {
+        for (var doc in values.docs) {
+          String tmp = doc['name'] + ' ' + doc['surname'];
+          result.add(tmp);
+        }
+        return result;
+      });
     } on FirebaseException catch (e) {
       print(e.message!);
     }

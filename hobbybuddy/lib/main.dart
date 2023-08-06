@@ -15,7 +15,7 @@ import 'services/preferences.dart';
 import 'themes/app_theme.dart';
 //import 'package:hobbybuddy/services/firebase_user.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
-//import 'package:hobbybuddy/widgets/button_icon.dart';
+import 'package:hobbybuddy/widgets/button_icon.dart';
 
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
@@ -45,7 +45,7 @@ Future<void> main() async {
 
     // GLOBAL TAB CONTROLLER
     ChangeNotifierProvider<CupertinoTabController>(create: (context) => CupertinoTabController()),
-  ], child: const BetterLoginScreen()));
+  ], child: const BottomNavigationBarApp()));
 }
 
 class BottomNavigationBarApp extends StatelessWidget {
@@ -711,7 +711,7 @@ class LoginFormState extends State<LoginForm> {
                   bool check = false;
                   //check if credentials present in db
                   await FirebaseCrud.getUserPwd(username.text, password.text).then((values) async {
-                    if (values.docs.isNotEmpty) {
+                    if (values!.docs.isNotEmpty) {
                       check = true;
 
                       //retrieve data
@@ -901,52 +901,119 @@ class HomePageHobby extends StatefulWidget {
 
 class _HomePageHobbyState extends State<HomePageHobby> {
   late String _hobby = "Skateboard";
+  List<String> _mentors = [];
+  Icon notFavouriteHobby = const Icon(
+    Icons.favorite_border,
+    color: Colors.red,
+    size: AppLayout.kIconSize,
+  );
+  Icon favouriteHobby = const Icon(
+    Icons.favorite,
+    color: Colors.red,
+    size: AppLayout.kIconSize,
+  );
+  bool favourite = false;
+
+  //toggles "favourite" in order to change the icon displayed
+  void toggleFavouriteHobby() {
+    setState(() {
+      favourite = !favourite;
+    });
+  }
+
+  //sets "favourite" based on the favourite hobbies
+  void getFavouriteStatus() {
+    favourite = Preferences.getHobbies()!.contains(_hobby);
+  }
+
+  void retrieveMentors() async {
+    _mentors = await FirebaseCrud.getMentors(_hobby);
+  }
 
   @override
   Widget build(BuildContext context) {
+    getFavouriteStatus();
+    retrieveMentors();
     return Scaffold(
       appBar: MyAppBar(
         title: "Home Page Hobby",
       ),
-      body: ListView(
+      body: Column(
         children: [
           Container(
             width: MediaQuery.sizeOf(context).width,
             height: 160,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: ui.Color(0xffffcc80),
-              //color: Color.fromARGB(255, 238, 139, 96),
             ),
-            child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(50, 0, 0, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/hobbies/${_hobby}.png",
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.cover,
-                  ),
-                  const Padding(padding: EdgeInsetsDirectional.fromSTEB(0, 0, 30, 0)),
-                  Text(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/hobbies/$_hobby.png",
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                  child: Text(
                     _hobby,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                  child: MyIconButton(
+                    onTap: toggleFavouriteHobby,
+                    icon: favourite ? favouriteHobby : notFavouriteHobby,
+                  ),
+                ),
+              ],
+            )
+          ),
+          Container(
+            height: AppLayout.kPaddingFromCreate,
+          ),
+          Container(
+            alignment: AlignmentDirectional.topStart,
+            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            child: const Text(
+              "Mentors",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          //padding to the next section
-          Container(
-            height: AppLayout.kVerticalPadding,
-          ),
-          ContainerShadow(
+          /*ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: Preferences.getHobbies()!.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(_mentors[index]),
+                //onTap: loadMentorProfile(),
+              );
+            },
+          ),*/
+
+
+
+          /*ContainerShadow(
             child: Column(
               children: [
                 SwitchListTile(
@@ -1029,7 +1096,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 ),
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );

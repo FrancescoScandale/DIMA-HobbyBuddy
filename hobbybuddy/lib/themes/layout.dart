@@ -36,7 +36,7 @@ class AppLayout {
   static const double kButtonWidth = 110.0;
 
   /// Icon size
-  static const double kIconSize = 30.0;
+  static const double kIconSize = 50.0;
 
   /// Icon padding
   static const double kIconPadding = 10.0;
