@@ -45,8 +45,8 @@ Future<void> main() async {
     // GLOBAL TAB CONTROLLER
     ChangeNotifierProvider<CupertinoTabController>(
         create: (context) => CupertinoTabController()),
-  ], child: const BetterLoginScreen()));
-  //runApp(const MapsScreen());
+  ], child: const BottomNavigationBarApp()));
+  //runApp(const MapsScreen());BetterLoginScreen()
 }
 
 class BottomNavigationBarApp extends StatelessWidget {
@@ -329,8 +329,8 @@ class _SettingsScreenState extends State<Settings> {
                 onPressed: () {
                   Widget newScreen = const BetterLoginScreen();
                   // ignore: use_build_context_synchronously
-                  Navigator.push(
-                    context,
+                  Navigator.of(context, rootNavigator: true).push(
+                    //navigator.push( context, == old version
                     ScreenTransition(
                       builder: (context) => newScreen,
                     ),
