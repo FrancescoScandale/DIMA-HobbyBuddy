@@ -901,33 +901,61 @@ class HomePageHobby extends StatefulWidget {
 
 class _HomePageHobbyState extends State<HomePageHobby> {
   late String _hobby = "Skateboard";
-  List<String> _mentors = [];
-  Icon notFavouriteHobby = const Icon(
+  Map<String, bool> _mentors = {};
+  Icon hobbyNotFavourite = const Icon(
     Icons.favorite_border,
     color: Colors.red,
     size: AppLayout.kIconSize,
   );
-  Icon favouriteHobby = const Icon(
+  Icon hobbyFavourite = const Icon(
     Icons.favorite,
     color: Colors.red,
     size: AppLayout.kIconSize,
   );
-  bool favourite = false;
+  bool checkFavouriteHobby = false;
+  Icon mentorNotFavourite = const Icon(
+    Icons.favorite_border,
+    color: Colors.red,
+    size: AppLayout.kIconSize / 2,
+  );
+  Icon mentorFavourite = const Icon(
+    Icons.favorite,
+    color: Colors.red,
+    size: AppLayout.kIconSize / 2,
+  );
 
   //toggles "favourite" in order to change the icon displayed
-  void toggleFavouriteHobby() {
-    setState(() {
-      favourite = !favourite;
-    });
+  void toggleFavouriteHobby() async {
+    String username = Preferences.getUsername()!;
+
+    checkFavouriteHobby = !checkFavouriteHobby;
+
+    if (checkFavouriteHobby) {
+      //add the new favourite hobby in db
+      await FirebaseCrud.updateFavouriteHobbies(username, _hobby,'add');
+    } else {
+      //remove the favourite hobby from db
+      await FirebaseCrud.updateFavouriteHobbies(username, _hobby,'remove');
+    }
+
+    //update cache
+    await Preferences.setHobbies(username);
+
+    setState(() {});
   }
 
   //sets "favourite" based on the favourite hobbies
   void getFavouriteStatus() {
-    favourite = Preferences.getHobbies()!.contains(_hobby);
+    checkFavouriteHobby = Preferences.getHobbies()!.contains(_hobby);
   }
 
   void retrieveMentors() async {
-    _mentors = await FirebaseCrud.getMentors(_hobby);
+    if (_mentors.isEmpty) {
+      //TODO: passando da un hobby all'altro, questo potrebbe avere bisogno di essere
+      //inizializzato di nuovo... se la schermata è nuova invece dovrebbe essere a posto
+      _mentors = await FirebaseCrud.getMentors(_hobby);
+      setState(() {});
+    }
   }
 
   @override
@@ -935,7 +963,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     getFavouriteStatus();
     retrieveMentors();
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: const MyAppBar(
         title: "Home Page Hobby",
       ),
       body: Column(
@@ -961,31 +989,30 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             ),
           ),
           SizedBox(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
-                  child: Text(
-                    _hobby,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                child: Text(
+                  _hobby,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
-                  child: MyIconButton(
-                    onTap: toggleFavouriteHobby,
-                    icon: favourite ? favouriteHobby : notFavouriteHobby,
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                child: MyIconButton(
+                  onTap: toggleFavouriteHobby,
+                  icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
                 ),
-              ],
-            )
-          ),
+              ),
+            ],
+          )),
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
@@ -1000,18 +1027,21 @@ class _HomePageHobbyState extends State<HomePageHobby> {
               ),
             ),
           ),
-          /*ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: Preferences.getHobbies()!.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(_mentors[index]),
-                //onTap: loadMentorProfile(),
-              );
-            },
-          ),*/
-
-
+          ContainerShadow(
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: _mentors.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: Icon(Icons.person), //TODO: mettere la propic del mentore
+                  title: Text(_mentors.keys.elementAt(index)),
+                  trailing: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
+                  //onTap: loadMentorProfile(), //TODO: load mentor profile on click
+                );
+              },
+            ),
+          ),
 
           /*ContainerShadow(
             child: Column(

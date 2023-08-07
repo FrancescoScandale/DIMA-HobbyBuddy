@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hobbybuddy/services/preferences.dart';
 
 class FirebaseCrud {
   // CRUD
@@ -83,7 +84,7 @@ class FirebaseCrud {
           await FirebaseFirestore.instance.collection("users").where("username", isEqualTo: user).get().then((value) {
         String tmp = value.docs[0][data];
         result = tmp.split(',');
-        return result;
+        return result; //result = [name0 surname0,name1 surname1]
       });
     } on FirebaseException catch (e) {
       print(e.message!);
@@ -91,21 +92,90 @@ class FirebaseCrud {
     return result;
   }
 
-  static Future<List<String>> getMentors(String hobby) async {
-    List<String> result = [];
+  static Future<Map<String, bool>> getMentors(String hobby) async {
+    Map<String, bool> result = {};
+    List<String> favouriteMentors = [];
 
     try {
+      favouriteMentors = Preferences.getMentors()!;
       result =
           await FirebaseFirestore.instance.collection("mentors").where("hobby", isEqualTo: hobby).get().then((values) {
         for (var doc in values.docs) {
           String tmp = doc['name'] + ' ' + doc['surname'];
-          result.add(tmp);
+          result[tmp] = favouriteMentors.contains(tmp);
         }
-        return result;
+
+        return result; //result = [[name0 surname0, true],[name1 surname1, false]]
       });
     } on FirebaseException catch (e) {
       print(e.message!);
     }
     return result;
+  }
+
+  //operation = "add" or "remove"
+  /*static Future<void> addFavouriteHobby(String username, String hobby) async {
+    List<String> hobbies = [];
+    String id = '';
+
+    hobbies = Preferences.getHobbies()!;
+
+    if (!hobbies.contains(hobby)) {
+      hobbies.add(hobby);
+      try {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .where("username", isEqualTo: username)
+            .get()
+            .then((value) => value.docs[0].id);
+        await FirebaseFirestore.instance.collection("users").doc(id).update({'hobbies': hobbies.join(',')});
+      } on FirebaseException catch (e) {
+        print(e.message!);
+      }
+    }
+  }
+
+  static Future<void> removeFavouriteHobby(String username, String hobby) async {
+    List<String> hobbies = [];
+    String id = '';
+
+    hobbies = Preferences.getHobbies()!;
+    if (hobbies.contains(hobby)) {
+      hobbies.remove(hobby);
+      try {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .where("username", isEqualTo: username)
+            .get()
+            .then((value) => value.docs[0].id);
+        await FirebaseFirestore.instance.collection("users").doc(id).update({'hobbies': hobbies.join(',')});
+      } on FirebaseException catch (e) {
+        print(e.message!);
+      }
+    }
+  }*/
+
+  //operation = 'add' or 'remove' based on the update to be done on the database
+  static Future<void> updateFavouriteHobbies(String username, String hobby, String operation) async {
+    List<String> hobbies = [];
+    String id = '';
+
+    hobbies = Preferences.getHobbies()!;
+    if (hobbies.contains(hobby) && operation.compareTo('remove') == 0) {
+      hobbies.remove(hobby);
+    } else if (!hobbies.contains(hobby) && operation.compareTo('add') == 0) {
+      hobbies.add(hobby);
+    }
+
+    try {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .where("username", isEqualTo: username)
+            .get()
+            .then((value) => value.docs[0].id);
+        await FirebaseFirestore.instance.collection("users").doc(id).update({'hobbies': hobbies.join(',')});
+      } on FirebaseException catch (e) {
+        print(e.message!);
+      }
   }
 }
