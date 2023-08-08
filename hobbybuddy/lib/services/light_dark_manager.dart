@@ -1,4 +1,4 @@
-import 'package:hobbybuddy/themes/light_dark.dart';
+import 'package:hobbybuddy/services/preferences.dart';
 import 'package:flutter/material.dart';
 
 // class ThemeManager {
