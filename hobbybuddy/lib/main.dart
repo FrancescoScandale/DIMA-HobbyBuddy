@@ -929,13 +929,14 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     String username = Preferences.getUsername()!;
 
     checkFavouriteHobby = !checkFavouriteHobby;
+    print('CHECK -> $checkFavouriteHobby');
 
     if (checkFavouriteHobby) {
       //add the new favourite hobby in db
-      await FirebaseCrud.updateFavouriteHobbies(username, _hobby,'add');
+      await FirebaseCrud.updateFavouriteHobbies(username, _hobby, 'add');
     } else {
       //remove the favourite hobby from db
-      await FirebaseCrud.updateFavouriteHobbies(username, _hobby,'remove');
+      await FirebaseCrud.updateFavouriteHobbies(username, _hobby, 'remove');
     }
 
     //update cache
@@ -960,6 +961,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
   @override
   Widget build(BuildContext context) {
+    Preferences.setUsername('francesco');
     getFavouriteStatus();
     retrieveMentors();
     return Scaffold(

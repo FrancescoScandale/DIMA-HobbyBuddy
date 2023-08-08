@@ -161,21 +161,24 @@ class FirebaseCrud {
     String id = '';
 
     hobbies = Preferences.getHobbies()!;
+    print('HOBBIES -> $hobbies');
     if (hobbies.contains(hobby) && operation.compareTo('remove') == 0) {
+      print('HERE 1');
       hobbies.remove(hobby);
     } else if (!hobbies.contains(hobby) && operation.compareTo('add') == 0) {
+      print('HERE 2');
       hobbies.add(hobby);
     }
 
     try {
-        await FirebaseFirestore.instance
-            .collection("users")
-            .where("username", isEqualTo: username)
-            .get()
-            .then((value) => value.docs[0].id);
-        await FirebaseFirestore.instance.collection("users").doc(id).update({'hobbies': hobbies.join(',')});
-      } on FirebaseException catch (e) {
-        print(e.message!);
-      }
+      await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: username)
+          .get()
+          .then((value) => id = value.docs[0].id);
+      await FirebaseFirestore.instance.collection("users").doc(id).update({'hobbies': hobbies.join(',')});
+    } on FirebaseException catch (e) {
+      print(e.message!);
+    }
   }
 }
