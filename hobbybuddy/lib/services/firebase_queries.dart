@@ -72,8 +72,8 @@ class FirebaseCrud {
     }
   }
 
-  //function used to retrieve user mentors and hobbies
-  //data can be equal to 'hobbies' or 'mentors'
+  ///function used to retrieve user mentors and hobbies
+  ///data can be equal to 'hobbies' or 'mentors'
   static Future<List<String>> getUserData(String user, String data) async {
     List<String> result = [];
 
@@ -111,7 +111,7 @@ class FirebaseCrud {
     return result;
   }
 
-  //operation = 'add' or 'remove' based on the update to be done on the database
+  ///operation = 'add' or 'remove' based on the update to be done on the database
   static Future<void> updateFavouriteHobbies(String username, String hobby, String operation) async {
     List<String> hobbies = [];
     String id = '';
@@ -135,7 +135,7 @@ class FirebaseCrud {
     }
   }
 
-  //operation = 'add' or 'remove' based on the update to be done on the database
+  ///operation = 'add' or 'remove' based on the update to be done on the database
   static Future<void> updateFavouriteMentors(String username, String mentor, String operation) async {
     List<String> mentors = [];
     String id = '';

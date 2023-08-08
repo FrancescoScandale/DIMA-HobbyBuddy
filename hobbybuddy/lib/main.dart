@@ -900,7 +900,7 @@ class HomePageHobby extends StatefulWidget {
 }
 
 class _HomePageHobbyState extends State<HomePageHobby> {
-  late String _hobby = "Skateboard";
+  late String _hobby = "Skateboard"; //TODO: constructor has to be called in order to set this parameter
   Map<String, bool> _mentors = {};
 
   //icons for the hobby
@@ -928,7 +928,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     size: AppLayout.kIconSize / 2,
   );
 
-  //toggles "checkFavouriteHobby" in order to change the icon displayed, updates db and cache
+  ///toggles "checkFavouriteHobby" in order to change the icon displayed, updates db and cache
   void toggleFavouriteHobby() async {
     String username = Preferences.getUsername()!;
 
@@ -948,7 +948,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     setState(() {});
   }
 
-  //toggles the bool in _mentors<Mentor,Like> to change the displayed icon, updates db and cache
+  ///toggles the bool in _mentors<Mentor,Like> to change the displayed icon, updates db and cache
   void toggleLikeMentor(String mentor) async {
     String username = Preferences.getUsername()!;
 
@@ -968,8 +968,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     setState(() {});
   }
 
-  //sets "favourite" based on the favourite hobbies
-  void getFavouriteStatus() {
+  //sets "checkFavouriteHobby" based on the favourite hobbies
+  void setFavouriteStatus() {
     checkFavouriteHobby = Preferences.getHobbies()!.contains(_hobby);
   }
 
@@ -985,7 +985,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
   @override
   Widget build(BuildContext context) {
     Preferences.setUsername('francesco'); //TODO: REMOVE THIS LINE (used for testing)
-    getFavouriteStatus();
+    setFavouriteStatus();
     retrieveMentors();
     return Scaffold(
       appBar: const MyAppBar(
@@ -1014,30 +1014,31 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             ),
           ),
           SizedBox(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
-                child: Text(
-                  _hobby,
-                  style: const TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                  child: Text(
+                    _hobby,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
-                child: MyIconButton(
-                  onTap: toggleFavouriteHobby,
-                  icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                  child: MyIconButton(
+                    onTap: toggleFavouriteHobby,
+                    icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
+                  ),
                 ),
-              ),
-            ],
-          )),
+              ],
+            )
+          ),
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
@@ -1053,8 +1054,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             ),
           ),
           ContainerShadow(
+            margin: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, AppLayout.kModalHorizontalPadding, 0),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               itemCount: _mentors.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
@@ -1070,7 +1071,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                   //onTap: loadMentorProfile(), //TODO: load mentor profile on click
                 );
               },
-            ),
+            )
           ),
         ],
       ),
