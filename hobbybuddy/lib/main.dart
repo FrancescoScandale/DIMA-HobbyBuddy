@@ -119,20 +119,20 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
             controller: Provider.of<CupertinoTabController>(context, listen: true),
             tabBar: CupertinoTabBar(
               onTap: changeTab,
-              items: [
-                const BottomNavigationBarItem(
+              items: const [
+                BottomNavigationBarItem(
                   icon: Icon(Icons.home),
                   label: 'Home',
                 ),
-                const BottomNavigationBarItem(
+                BottomNavigationBarItem(
                   icon: Icon(Icons.map),
                   label: 'maps',
                 ),
-                const BottomNavigationBarItem(
+                BottomNavigationBarItem(
                   icon: Icon(Icons.favorite),
                   label: 'favorites',
                 ),
-                const BottomNavigationBarItem(
+                BottomNavigationBarItem(
                   icon: Icon(Icons.account_circle),
                   label: 'profile',
                 ),
@@ -153,7 +153,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
                 case 2:
                   return CupertinoTabView(
                     navigatorKey: thirdTabNavKey,
-                    builder: (context) => const Settings(),
+                    builder: (context) => const FavouritesScreen(),
                   );
                 case 3:
                   return CupertinoTabView(
@@ -1086,7 +1086,14 @@ class FavouritesScreen extends StatefulWidget {
 }
 
 class _FavouriteScreenState extends State<FavouritesScreen> {
+  List<String> hobbies = Preferences.getHobbies()!;
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+        appBar: const MyAppBar(
+          title: "Favourite Hobbies",
+        ),
+        body: Icon(Icons.favorite));
   }
 }
