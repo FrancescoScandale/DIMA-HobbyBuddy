@@ -719,9 +719,9 @@ class LoginFormState extends State<LoginForm> {
                       await Preferences.setHobbies(username.text);
                       await Preferences.setMentors(username.text);
 
-                      print("username -> ${Preferences.getUsername()}");
-                      print("hobbies -> ${Preferences.getHobbies()}");
-                      print("mentors -> ${Preferences.getMentors()}");
+                      // print("username -> ${Preferences.getUsername()}");
+                      // print("hobbies -> ${Preferences.getHobbies()}");
+                      // print("mentors -> ${Preferences.getMentors()}");
                     }
                   });
                   if (check) {
@@ -929,7 +929,6 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     String username = Preferences.getUsername()!;
 
     checkFavouriteHobby = !checkFavouriteHobby;
-    print('CHECK -> $checkFavouriteHobby');
 
     if (checkFavouriteHobby) {
       //add the new favourite hobby in db
