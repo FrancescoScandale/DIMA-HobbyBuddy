@@ -46,7 +46,7 @@ Future<void> main() async {
     // GLOBAL TAB CONTROLLER
     ChangeNotifierProvider<CupertinoTabController>(
         create: (context) => CupertinoTabController()),
-  ], child: const BottomNavigationBarApp()));
+  ], child: const BetterLoginScreen()));
 }
 
 class BottomNavigationBarApp extends StatelessWidget {
@@ -1137,7 +1137,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
       appBar: const MyAppBar(
         title: "Home Page Hobby",
       ),
-      body: Column(
+      body: ListView(
         children: [
           Container(
             width: MediaQuery.sizeOf(context).width,
