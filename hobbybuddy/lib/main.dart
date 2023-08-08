@@ -106,7 +106,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
   final Map<int, Widget> screens = {
     0: HomePageHobby(),
     1: MapsScreen(),
-    2: Settings(),
+    2: FavouritesScreen(),
     3: Settings(),
   };
 
@@ -1014,31 +1014,30 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             ),
           ),
           SizedBox(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
-                  child: Text(
-                    _hobby,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                child: Text(
+                  _hobby,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
-                  child: MyIconButton(
-                    onTap: toggleFavouriteHobby,
-                    icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                child: MyIconButton(
+                  onTap: toggleFavouriteHobby,
+                  icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
                 ),
-              ],
-            )
-          ),
+              ),
+            ],
+          )),
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
@@ -1054,27 +1053,40 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             ),
           ),
           ContainerShadow(
-            margin: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, AppLayout.kModalHorizontalPadding, 0),
-            child: ListView.builder(
-              itemCount: _mentors.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Icon(Icons.person), //TODO: mettere la propic del mentore
-                  title: Text(_mentors.keys.elementAt(index)),
-                  trailing: MyIconButton(
-                    onTap: () {
-                      toggleLikeMentor(_mentors.keys.elementAt(index));
-                    },
-                    icon: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
-                  ),
-                  //onTap: loadMentorProfile(), //TODO: load mentor profile on click
-                );
-              },
-            )
-          ),
+              margin: const EdgeInsetsDirectional.fromSTEB(
+                  AppLayout.kModalHorizontalPadding, 0, AppLayout.kModalHorizontalPadding, 0),
+              child: ListView.builder(
+                itemCount: _mentors.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Icon(Icons.person), //TODO: mettere la propic del mentore
+                    title: Text(_mentors.keys.elementAt(index)),
+                    trailing: MyIconButton(
+                      onTap: () {
+                        toggleLikeMentor(_mentors.keys.elementAt(index));
+                      },
+                      icon: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
+                    ),
+                    //onTap: loadMentorProfile(), //TODO: load mentor profile on click
+                  );
+                },
+              )),
         ],
       ),
     );
+  }
+}
+
+class FavouritesScreen extends StatefulWidget {
+  const FavouritesScreen({Key? key}) : super(key: key);
+
+  @override
+  State<FavouritesScreen> createState() => _FavouriteScreenState();
+}
+
+class _FavouriteScreenState extends State<FavouritesScreen> {
+  Widget build(BuildContext context) {
+    return Scaffold();
   }
 }
