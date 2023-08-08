@@ -902,6 +902,8 @@ class HomePageHobby extends StatefulWidget {
 class _HomePageHobbyState extends State<HomePageHobby> {
   late String _hobby = "Skateboard";
   Map<String, bool> _mentors = {};
+
+  //icons for the hobby
   Icon hobbyNotFavourite = const Icon(
     Icons.favorite_border,
     color: Colors.red,
@@ -913,6 +915,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     size: AppLayout.kIconSize,
   );
   bool checkFavouriteHobby = false;
+
+  //icons for the mentors
   Icon mentorNotFavourite = const Icon(
     Icons.favorite_border,
     color: Colors.red,
@@ -924,7 +928,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     size: AppLayout.kIconSize / 2,
   );
 
-  //toggles "favourite" in order to change the icon displayed
+  //toggles "checkFavouriteHobby" in order to change the icon displayed, updates db and cache
   void toggleFavouriteHobby() async {
     String username = Preferences.getUsername()!;
 
@@ -940,6 +944,26 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
     //update cache
     await Preferences.setHobbies(username);
+
+    setState(() {});
+  }
+
+  //toggles the bool in _mentors<Mentor,Like> to change the displayed icon, updates db and cache
+  void toggleLikeMentor(String mentor) async {
+    String username = Preferences.getUsername()!;
+
+    _mentors[mentor] = !_mentors[mentor]!;
+
+    if (_mentors[mentor]!) {
+      //add the new favourite mentor in db
+      await FirebaseCrud.updateFavouriteMentors(username, mentor, 'add');
+    } else {
+      //remove the favourite mentor from db
+      await FirebaseCrud.updateFavouriteMentors(username, mentor, 'remove');
+    }
+
+    //update cache
+    await Preferences.setMentors(username);
 
     setState(() {});
   }
@@ -960,7 +984,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
   @override
   Widget build(BuildContext context) {
-    Preferences.setUsername('francesco');
+    Preferences.setUsername('francesco'); //TODO: REMOVE THIS LINE (used for testing)
     getFavouriteStatus();
     retrieveMentors();
     return Scaffold(
@@ -1037,97 +1061,17 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 return ListTile(
                   leading: Icon(Icons.person), //TODO: mettere la propic del mentore
                   title: Text(_mentors.keys.elementAt(index)),
-                  trailing: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
+                  trailing: MyIconButton(
+                    onTap: () {
+                      toggleLikeMentor(_mentors.keys.elementAt(index));
+                    },
+                    icon: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
+                  ),
                   //onTap: loadMentorProfile(), //TODO: load mentor profile on click
                 );
               },
             ),
           ),
-
-          /*ContainerShadow(
-            child: Column(
-              children: [
-                SwitchListTile(
-                  title: const Text(
-                    "Dark mode",
-                  ),
-                  value: Preferences.getBool('isDark'),
-                  onChanged: (newValue) {
-                    setState(() {
-                      Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
-                    });
-                  },
-                  secondary: const Icon(Icons.dark_mode_rounded),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.edit),
-                  title: const Text("Edit profile"),
-                  trailing: const Icon(Icons.navigate_next),
-                  onTap: () async {
-                    Widget newScreen = const EditProfileScreen();
-                    Navigator.push(
-                      context,
-                      ScreenTransition(
-                        builder: (context) => newScreen,
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.lock_open),
-                  title: const Text("Change password"),
-                  trailing: const Icon(Icons.navigate_next),
-                  onTap: () {
-                    Widget newScreen = const ChangePasswordScreen();
-                    // ignore: use_build_context_synchronously
-                    Navigator.push(
-                      context,
-                      ScreenTransition(
-                        builder: (context) => newScreen,
-                      ),
-                    );
-                  },
-                ),
-                /*ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text("Sign Out"),
-                  //onTap: () async {
-                  //await Provider.of<FirebaseUser>(context, listen: false)
-                  // .signOut();
-                  //},
-                ),*/
-              ],
-            ),
-          ),
-          //padding to the next section
-          Container(
-            height: AppLayout.kPaddingFromCreate,
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              width: 200, // Adjust the width as per your requirement
-              height: 50, // Adjust the height as per your requirement
-              child: ElevatedButton(
-                onPressed: () {
-                  // Add your sign-out logic here
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    //color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),*/
         ],
       ),
     );
