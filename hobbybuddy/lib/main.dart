@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,9 +25,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hobbybuddy/screens/change_password.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'services/firebase_queries.dart';
-
-//netstat -aon | findstr 10296 PID
-//adb connect 127.0.0.1:62001
+import 'package:hobbybuddy/screens/sign_up.dart';
 
 String logo = 'assets/logo.png';
 const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
@@ -325,7 +324,14 @@ class _SettingsScreenState extends State<Settings> {
               height: 50, // Adjust the height as per your requirement
               child: ElevatedButton(
                 onPressed: () {
-                  // Add your sign-out logic here
+                  Widget newScreen = const BetterLoginScreen();
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(context, rootNavigator: true).push(
+                    //navigator.push( context, == old version
+                    ScreenTransition(
+                      builder: (context) => newScreen,
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -641,6 +647,9 @@ class BetterLoginScreen extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: appTitle,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: Provider.of<ThemeManager>(context).themeMode,
       home: Scaffold(
         appBar: AppBar(
           title: const Text(appTitle),
@@ -673,39 +682,111 @@ class LoginFormState extends State<LoginForm> {
   Map<String, String> credentials = {};
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool _passwordInvisible = true;
+
+  @override
+  void dispose() {
+    username.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Scrollbar(
+      child: ListView(
+        controller: ScrollController(),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          TextFormField(
-            controller: username,
-            // The validator receives the text that the user has entered.
-            validator: (value1) {
-              if (value1 == null || value1.isEmpty) {
-                return 'username not found';
-              }
-              return null;
-            },
+          const SizedBox(height: 60),
+          Image.asset(
+            logo, // Replace with your logo image path
+            width: 150,
+            height: 150,
           ),
-          TextFormField(
-            controller: password,
-            // The validator receives the text that the user has entered.
-            validator: (value2) {
-              if (value2 == null || value2.isEmpty) {
-                return 'password not found';
-              }
-              return null;
-            },
+          const SizedBox(height: 20),
+          Text(
+            "Welcome to Hobby Buddy!",
+            textAlign: TextAlign.center,
+            style: Theme.of(context)
+                .textTheme
+                .displayLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: ElevatedButton(
-              onPressed: () async {
+          const SizedBox(height: 20),
+          Text(
+            "Log In",
+            style: Theme.of(context)
+                .textTheme
+                .headlineLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          Form(
+            key: _formKey,
+            child: Column(
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(
+                  height: 25,
+                ),
+                TextFormField(
+                  controller: username,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.face),
+                    border: OutlineInputBorder(),
+                    labelText: 'Username',
+                    labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                  // The validator receives the text that the user has entered.
+                  validator: (value1) {
+                    if (value1 == null || value1.isEmpty) {
+                      return 'Username not found';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 25),
+                TextFormField(
+                  controller: password,
+                  obscureText: _passwordInvisible,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.lock_open),
+                    hintText: 'Password',
+                    border: const OutlineInputBorder(),
+                    labelText: 'Password',
+                    labelStyle: const TextStyle(fontStyle: FontStyle.italic),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _passwordInvisible = !_passwordInvisible;
+                        });
+                      },
+                      icon: Icon(
+                        _passwordInvisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                    ),
+                  ),
+                  // The validator receives the text that the user has entered.
+                  validator: (value2) {
+                    if (value2 == null || value2.isEmpty) {
+                      return 'Password not found';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: SizedBox(
+                      height: 40,
+                      child: ElevatedButton(
+                        
+                        
+                        onPressed: () async {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
                   bool check = false;
@@ -722,22 +803,94 @@ class LoginFormState extends State<LoginForm> {
                       // print("username -> ${Preferences.getUsername()}");
                       // print("hobbies -> ${Preferences.getHobbies()}");
                       // print("mentors -> ${Preferences.getMentors()}");
-                    }
+                        
+                        
+                        
+                        
+                        onPressed: () async {
+                          // Validate returns true if the form is valid, or false otherwise.
+                          if (_formKey.currentState!.validate()) {
+                            bool check = false;
+                            //check if credentials present in db
+                            await FirebaseCrud.getUserPwd(username.text, password.text).then((values) async {
+                        if (values!.docs.isNotEmpty) {
+                          check = true;
+
+                          //retrieve data
+                          await Preferences.setUsername(username.text);
+                          await Preferences.setHobbies(username.text);
+                          await Preferences.setMentors(username.text);
+
+                          // print("username -> ${Preferences.getUsername()}");
+                          // print("hobbies -> ${Preferences.getHobbies()}");
+                          // print("mentors -> ${Preferences.getMentors()}");
+                                              }
                   });
-                  if (check) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Found!')),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Data not found...")),
-                    );
-                  }
-                }
-              },
-              child: const Text('Submit'),
+                            if (check) {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Found!')),
+                              );
+
+                              Widget newScreen = const BottomNavigationBarApp();
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                context,
+                                ScreenTransition(
+                                  builder: (context) => newScreen,
+                                ),
+                              );
+                            } else {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Data not found...")),
+                              );
+                            }
+                          }
+                        },
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Don't have an account?",
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    TextButton(
+                      key: const Key("log_in_to_sign_up_screen"),
+                      onPressed: () async {
+                        Widget newScreen = const SignUpScreen();
+                        await Navigator.of(context, rootNavigator: false).push(
+                          ScreenTransition(
+                            builder: (context) => newScreen,
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "Sign up here",
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
             ),
-          ),
+          )
         ],
       ),
     );
