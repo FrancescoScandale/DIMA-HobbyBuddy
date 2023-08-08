@@ -28,7 +28,8 @@ import 'services/firebase_queries.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
 
 String logo = 'assets/logo.png';
-const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
+const LatLng startingLocation =
+    LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 const double startingZoom = 17;
 
 Future<void> main() async {
@@ -43,7 +44,8 @@ Future<void> main() async {
     ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager()),
 
     // GLOBAL TAB CONTROLLER
-    ChangeNotifierProvider<CupertinoTabController>(create: (context) => CupertinoTabController()),
+    ChangeNotifierProvider<CupertinoTabController>(
+        create: (context) => CupertinoTabController()),
   ], child: const BottomNavigationBarApp()));
 }
 
@@ -98,7 +100,8 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
     }
     setState(() {
       currentIndex = index;
-      Provider.of<CupertinoTabController>(context, listen: false).index = currentIndex;
+      Provider.of<CupertinoTabController>(context, listen: false).index =
+          currentIndex;
     });
   }
 
@@ -115,7 +118,8 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
       body: Stack(
         children: [
           CupertinoTabScaffold(
-            controller: Provider.of<CupertinoTabController>(context, listen: true),
+            controller:
+                Provider.of<CupertinoTabController>(context, listen: true),
             tabBar: CupertinoTabBar(
               onTap: changeTab,
               items: const [
@@ -268,7 +272,8 @@ class _SettingsScreenState extends State<Settings> {
                   value: Preferences.getBool('isDark'),
                   onChanged: (newValue) {
                     setState(() {
-                      Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
+                      Provider.of<ThemeManager>(context, listen: false)
+                          .toggleTheme(newValue);
                     });
                   },
                   secondary: const Icon(Icons.dark_mode_rounded),
@@ -784,48 +789,27 @@ class LoginFormState extends State<LoginForm> {
                     child: SizedBox(
                       height: 40,
                       child: ElevatedButton(
-                        
-                        
-                        onPressed: () async {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  bool check = false;
-                  //check if credentials present in db
-                  await FirebaseCrud.getUserPwd(username.text, password.text).then((values) async {
-                    if (values!.docs.isNotEmpty) {
-                      check = true;
-
-                      //retrieve data
-                      await Preferences.setUsername(username.text);
-                      await Preferences.setHobbies(username.text);
-                      await Preferences.setMentors(username.text);
-
-                      // print("username -> ${Preferences.getUsername()}");
-                      // print("hobbies -> ${Preferences.getHobbies()}");
-                      // print("mentors -> ${Preferences.getMentors()}");
-                        
-                        
-                        
-                        
                         onPressed: () async {
                           // Validate returns true if the form is valid, or false otherwise.
                           if (_formKey.currentState!.validate()) {
                             bool check = false;
                             //check if credentials present in db
-                            await FirebaseCrud.getUserPwd(username.text, password.text).then((values) async {
-                        if (values!.docs.isNotEmpty) {
-                          check = true;
+                            await FirebaseCrud.getUserPwd(
+                                    username.text, password.text)
+                                .then((values) async {
+                              if (values!.docs.isNotEmpty) {
+                                check = true;
 
-                          //retrieve data
-                          await Preferences.setUsername(username.text);
-                          await Preferences.setHobbies(username.text);
-                          await Preferences.setMentors(username.text);
+                                //retrieve data
+                                await Preferences.setUsername(username.text);
+                                await Preferences.setHobbies(username.text);
+                                await Preferences.setMentors(username.text);
 
-                          // print("username -> ${Preferences.getUsername()}");
-                          // print("hobbies -> ${Preferences.getHobbies()}");
-                          // print("mentors -> ${Preferences.getMentors()}");
-                                              }
-                  });
+                                // print("username -> ${Preferences.getUsername()}");
+                                // print("hobbies -> ${Preferences.getHobbies()}");
+                                // print("mentors -> ${Preferences.getMentors()}");
+                              }
+                            });
                             if (check) {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -940,15 +924,20 @@ class MapState extends State<MapClass> {
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
-  void createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) async {
+  void createMarker(String id, double lat, double lng, String windowTitle,
+      String windowSnippet) async {
     Marker marker;
 
-    final Uint8List markerIcon = await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
+    final Uint8List markerIcon =
+        await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
 
     marker = Marker(
       markerId: MarkerId(id),
@@ -972,7 +961,8 @@ class MapState extends State<MapClass> {
     await FirebaseFirestore.instance.collection("markers").get().then(
       (querySnapshot) {
         for (var doc in querySnapshot.docs) {
-          createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]);
+          createMarker(doc.id, double.parse(doc["lat"]),
+              double.parse(doc["lng"]), doc["title"], doc["snippet"]);
         }
       },
       onError: (e) => print("Error completing: $e"),
@@ -983,7 +973,8 @@ class MapState extends State<MapClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
+        initialCameraPosition:
+            const CameraPosition(target: startingLocation, zoom: startingZoom),
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
           retrieveMarkers();
@@ -1053,7 +1044,8 @@ class HomePageHobby extends StatefulWidget {
 }
 
 class _HomePageHobbyState extends State<HomePageHobby> {
-  late String _hobby = "Skateboard"; //TODO: constructor has to be called in order to set this parameter
+  late String _hobby =
+      "Skateboard"; //TODO: constructor has to be called in order to set this parameter
   Map<String, bool> _mentors = {};
 
   //icons for the hobby
@@ -1137,7 +1129,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
   @override
   Widget build(BuildContext context) {
-    Preferences.setUsername('francesco'); //TODO: REMOVE THIS LINE (used for testing)
+    Preferences.setUsername(
+        'francesco'); //TODO: REMOVE THIS LINE (used for testing)
     setFavouriteStatus();
     retrieveMentors();
     return Scaffold(
@@ -1173,7 +1166,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    AppLayout.kModalHorizontalPadding, 0, 0, 0),
                 child: Text(
                   _hobby,
                   style: const TextStyle(
@@ -1183,10 +1177,12 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
                 child: MyIconButton(
                   onTap: toggleFavouriteHobby,
-                  icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
+                  icon:
+                      checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
                 ),
               ),
             ],
@@ -1196,7 +1192,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
           ),
           Container(
             alignment: AlignmentDirectional.topStart,
-            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+                AppLayout.kModalHorizontalPadding, 0, 0, 0),
             child: const Text(
               "Mentors",
               style: TextStyle(
@@ -1207,19 +1204,25 @@ class _HomePageHobbyState extends State<HomePageHobby> {
           ),
           ContainerShadow(
               margin: const EdgeInsetsDirectional.fromSTEB(
-                  AppLayout.kModalHorizontalPadding, 0, AppLayout.kModalHorizontalPadding, 0),
+                  AppLayout.kModalHorizontalPadding,
+                  0,
+                  AppLayout.kModalHorizontalPadding,
+                  0),
               child: ListView.builder(
                 itemCount: _mentors.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    leading: Icon(Icons.person), //TODO: mettere la propic del mentore
+                    leading: Icon(
+                        Icons.person), //TODO: mettere la propic del mentore
                     title: Text(_mentors.keys.elementAt(index)),
                     trailing: MyIconButton(
                       onTap: () {
                         toggleLikeMentor(_mentors.keys.elementAt(index));
                       },
-                      icon: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
+                      icon: _mentors.values.elementAt(index)
+                          ? mentorFavourite
+                          : mentorNotFavourite,
                     ),
                     //onTap: loadMentorProfile(), //TODO: load mentor profile on click
                   );
