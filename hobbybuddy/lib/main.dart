@@ -26,6 +26,7 @@ import 'package:hobbybuddy/screens/change_password.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'services/firebase_queries.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
+import 'package:hobbybuddy/screens/home_page.dart';
 
 String logo = 'assets/logo.png';
 const LatLng startingLocation =
@@ -108,7 +109,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
   final Map<int, Widget> screens = {
     0: HomePageHobby(),
     1: MapsScreen(),
-    2: FavouritesScreen(),
+    2: HomePScreen(),
     3: Settings(),
   };
 
@@ -156,7 +157,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
                 case 2:
                   return CupertinoTabView(
                     navigatorKey: thirdTabNavKey,
-                    builder: (context) => const FavouritesScreen(),
+                    builder: (context) => const HomePScreen(),
                   );
                 case 3:
                   return CupertinoTabView(
@@ -194,7 +195,7 @@ class _SettingsScreenState extends State<Settings> {
             width: MediaQuery.sizeOf(context).width,
             height: 160,
             decoration: BoxDecoration(
-              color: ui.Color(0xffffcc80),
+              color: ui.Color.fromRGBO(250, 220, 204, 0.5),
               //color: Color.fromARGB(255, 238, 139, 96),
             ),
             child: Padding(
@@ -836,8 +837,7 @@ class LoginFormState extends State<LoginForm> {
                         child: const Text(
                           'Submit',
                           style: TextStyle(
-                            fontSize: 18,
-                          ),
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
