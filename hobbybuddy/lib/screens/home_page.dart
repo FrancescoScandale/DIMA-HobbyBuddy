@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
+import 'dart:ui' as ui;
+import 'package:hobbybuddy/main.dart';
+import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 class HomePScreen extends StatefulWidget {
   const HomePScreen({super.key});
@@ -11,6 +14,7 @@ class HomePScreen extends StatefulWidget {
 class _HomePScreenState extends State<HomePScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _addressController = TextEditingController();
+  late String _hobby = "Skateboard";
 
   @override
   void dispose() {
@@ -139,27 +143,111 @@ class _HomePScreenState extends State<HomePScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 15),
                 ],
               ),
             ),
             // Add the other part of the page here
-            Container(
-              height: 400, // Adjust the height as needed
-              child: ListView.builder(
-                itemCount: 10, // Number of rectangles you want to display
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ContainerShadow(
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(
-                          'Rectangle $index',
+            GestureDetector(
+              onTap: () async {
+                Widget newScreen = const HomePageHobby();
+                Navigator.push(
+                  context,
+                  ScreenTransition(
+                    builder: (context) => newScreen,
+                  ),
+                );
+              },
+              child: Container(
+                height: 400, // Adjust the height as needed
+                child: ListView.builder(
+                  itemCount: 10, // Number of rectangles you want to display
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ContainerShadow(
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  height:
+                                      200, // Adjust the image height as needed
+
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: ui.Color(0xffffcc80),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(context)
+                                            .shadowColor
+                                            .withOpacity(0.2),
+                                        spreadRadius: 1,
+                                        blurRadius: 1,
+                                        offset: const Offset(0, 1.5),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      "assets/hobbies/$_hobby.png",
+                                      width: 120,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text('n of likes'),
+                                      SizedBox(width: 4),
+                                      Icon(
+                                        Icons.favorite,
+                                        color: Colors.red,
+                                      ),
+                                      SizedBox(width: 5),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(
+                                height: 8), // Spacing between image and title
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0), // Add left padding
+                                  child: Text(
+                                    _hobby,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(
+                                      right: 8.0), // Add right padding
+                                  child: Icon(Icons.navigate_next),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          ],
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
