@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 class HomePScreen extends StatefulWidget {
   const HomePScreen({super.key});
@@ -25,33 +26,22 @@ class _HomePScreenState extends State<HomePScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Container(
-              width: double.infinity,
-              height: 200, //300
-              decoration: const BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 3,
-                    color: Color(0x39000000),
-                    offset: Offset(0, 2),
-                  )
-                ],
-              ),
+            ContainerShadow(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   /*Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24, 40, 0, 0),
-                    child: Image.asset(
-                      'logo.png',
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),*/
+                  padding: EdgeInsetsDirectional.fromSTEB(24, 40, 0, 0),
+                  child: Image.asset(
+                    'logo.png',
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),*/
                   const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24, 30, 24, 8),
+                    padding: EdgeInsetsDirectional.fromSTEB(24, 20, 24, 8),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -90,61 +80,86 @@ class _HomePScreenState extends State<HomePScreen> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       alignment: const AlignmentDirectional(0, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  4, 0, 4, 0),
-                              child: TextFormField(
-                                controller: _addressController,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Search a Hobby',
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.search_sharp,
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      4, 0, 4, 0),
+                                  child: TextFormField(
+                                    controller: _addressController,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      labelText: 'Search a Hobby',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      prefixIcon: const Icon(
+                                        Icons.search_sharp,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                2, 0, 8, 0),
-                            child: ElevatedButton(
-                              onPressed: () async {},
-                              style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    2, 0, 8, 0),
+                                child: ElevatedButton(
+                                  onPressed: () async {},
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Search',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ),
-                              child: const Text(
-                                'Search',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                   ),
                 ],
+              ),
+            ),
+            // Add the other part of the page here
+            Container(
+              height: 400, // Adjust the height as needed
+              child: ListView.builder(
+                itemCount: 10, // Number of rectangles you want to display
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ContainerShadow(
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          'Rectangle $index',
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
