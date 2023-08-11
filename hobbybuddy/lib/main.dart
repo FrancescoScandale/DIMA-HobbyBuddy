@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -47,11 +47,11 @@ Future<void> main() async {
     // GLOBAL TAB CONTROLLER
     ChangeNotifierProvider<CupertinoTabController>(
         create: (context) => CupertinoTabController()),
-  ], child: const BetterLoginScreen()));
+  ], child: const Main()));
 }
 
-class BottomNavigationBarApp extends StatelessWidget {
-  const BottomNavigationBarApp({super.key});
+class Main extends StatelessWidget {
+  const Main({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -61,19 +61,21 @@ class BottomNavigationBarApp extends StatelessWidget {
       darkTheme: darkTheme,
       themeMode: Provider.of<ThemeManager>(context).themeMode,
       initialRoute: '/',
-      home: const BottomNavigationBarTest(),
+      home: const Scaffold(
+        body: LoginForm(),
+      ),
     );
   }
 }
 
-class BottomNavigationBarTest extends StatefulWidget {
-  const BottomNavigationBarTest({super.key});
+class BottomNavigationBarApp extends StatefulWidget {
+  const BottomNavigationBarApp({super.key});
 
   @override
-  State<BottomNavigationBarTest> createState() => _BottomNavigationBarState();
+  State<BottomNavigationBarApp> createState() => _BottomNavigationBarState();
 }
 
-class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
+class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
   int currentIndex = 0;
   final GlobalKey<NavigatorState> firstTabNavKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> secondTabNavKey = GlobalKey<NavigatorState>();
@@ -107,9 +109,9 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
   }
 
   final Map<int, Widget> screens = {
-    0: HomePageHobby(),
+    0: HomePScreen(),
     1: MapsScreen(),
-    2: HomePScreen(),
+    2: FavouritesScreen(),
     3: Settings(),
   };
 
@@ -147,7 +149,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
                 case 0:
                   return CupertinoTabView(
                     navigatorKey: firstTabNavKey,
-                    builder: (context) => const HomePageHobby(),
+                    builder: (context) => const HomePScreen(),
                   );
                 case 1:
                   return CupertinoTabView(
@@ -157,7 +159,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarTest> {
                 case 2:
                   return CupertinoTabView(
                     navigatorKey: thirdTabNavKey,
-                    builder: (context) => const HomePScreen(),
+                    builder: (context) => const FavouritesScreen(),
                   );
                 case 3:
                   return CupertinoTabView(
@@ -194,12 +196,12 @@ class _SettingsScreenState extends State<Settings> {
           Container(
             width: MediaQuery.sizeOf(context).width,
             height: 160,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: ui.Color.fromRGBO(250, 220, 204, 0.5),
               //color: Color.fromARGB(255, 238, 139, 96),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 40, 20, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 40, 20, 0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -212,7 +214,7 @@ class _SettingsScreenState extends State<Settings> {
                       borderRadius: BorderRadius.circular(80),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
+                      padding: const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(80),
                         child: Image.asset(
@@ -224,7 +226,7 @@ class _SettingsScreenState extends State<Settings> {
                       ),
                     ),
                   ),
-                  Expanded(
+                  const Expanded(
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                       child: Column(
@@ -329,11 +331,10 @@ class _SettingsScreenState extends State<Settings> {
               width: 200, // Adjust the width as per your requirement
               height: 50, // Adjust the height as per your requirement
               child: ElevatedButton(
-                onPressed: () {
-                  Widget newScreen = const BetterLoginScreen();
+                onPressed: () async {
+                  Widget newScreen = const Main();
                   // ignore: use_build_context_synchronously
-                  Navigator.of(context, rootNavigator: true).push(
-                    //navigator.push( context, == old version
+                  await Navigator.of(context, rootNavigator: true).push(
                     ScreenTransition(
                       builder: (context) => newScreen,
                     ),
@@ -344,7 +345,7 @@ class _SettingsScreenState extends State<Settings> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Sign Out',
                   style: TextStyle(
                     fontSize: 18,
@@ -643,7 +644,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 }*/
 
-class BetterLoginScreen extends StatelessWidget {
+/*class BetterLoginScreen extends StatelessWidget {
   const BetterLoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -664,21 +665,20 @@ class BetterLoginScreen extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
 // Create a Form widget.
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
   @override
-  LoginFormState createState() {
-    return LoginFormState();
-  }
+  State<LoginForm> createState() => _LoginFormState();
 }
+//}
 
 // Create a corresponding State class.
 // This class holds data related to the form.
-class LoginFormState extends State<LoginForm> {
+class _LoginFormState extends State<LoginForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
@@ -701,8 +701,9 @@ class LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Scrollbar(
+      controller: PrimaryScrollController.of(context),
       child: ListView(
-        controller: ScrollController(),
+        controller: PrimaryScrollController.of(context),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           const SizedBox(height: 60),
@@ -1213,7 +1214,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                         Icons.person), //TODO: mettere la propic del mentore
                     title: Text(_mentors.keys.elementAt(index)),
                     trailing: MyIconButton(
@@ -1246,8 +1247,8 @@ class _FavouriteScreenState extends State<FavouritesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: const MyAppBar(
+    return const Scaffold(
+        appBar: MyAppBar(
           title: "Favourite Hobbies",
         ),
         body: Icon(Icons.favorite));

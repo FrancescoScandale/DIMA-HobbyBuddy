@@ -37,8 +37,9 @@ class _SignUpFormState extends State<SignUpForm> {
     return Form(
       key: _formKey,
       child: Scrollbar(
+        controller: PrimaryScrollController.of(context),
         child: ListView(
-          controller: ScrollController(),
+          controller: PrimaryScrollController.of(context),
           padding: const EdgeInsets.symmetric(horizontal: 20),
           children: [
             const SizedBox(height: 20),

@@ -36,8 +36,9 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
         child: Form(
           key: _formkey,
           child: Scrollbar(
+            controller: PrimaryScrollController.of(context),
             child: ListView(
-              controller: ScrollController(),
+              controller: PrimaryScrollController.of(context),
               padding: const EdgeInsets.symmetric(
                 horizontal: AppLayout.kHorizontalPadding,
               ),
