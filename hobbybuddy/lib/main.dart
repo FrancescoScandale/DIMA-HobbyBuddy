@@ -1109,9 +1109,9 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     setFavouriteStatus();
     retrieveMentors();
     return Scaffold(
-      appBar: const MyAppBar(
-        title: "Home Page Hobby",
-      ),
+      // appBar: const MyAppBar(
+      //   title: "Home Page Hobby",
+      // ),
       body: ListView(
         children: [
           Container(
@@ -1227,17 +1227,23 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  late String username = 'Francesco Scandale'; //TODO: costruttore passa il nome da mostrare come username
+  late String _username = 'Francesco Scandale'; //TODO: costruttore passa il nome da mostrare come username
   final double _backgroundPadding = 250;
   late String _location;
+  List<String> _hobbies = Preferences.getHobbies()!;
+  List<String> _mentors = Preferences.getMentors()!;
+  //List<String> _milestones
 
   void computeLocation() async {
     List<Location> coordinates;
     List<Placemark> addresses;
     coordinates = await locationFromAddress("Via Eugenio Camerini 2, Milano");
     addresses = await placemarkFromCoordinates(45.4905447, 9.2303139);
-    print(coordinates);
-    print(addresses);
+    // print(coordinates);
+    // print(addresses);
+    _location = addresses[0].street! + ', ' + addresses[0].locality!;
+    print("$_location");
+    print('$_hobbies');
     //setState(() {});
   }
 
@@ -1245,116 +1251,152 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     computeLocation();
     return Scaffold(
-        appBar: MyAppBar(
-          title: "$username",
-        ),
+        // appBar: MyAppBar(
+        //   title: "User Profile Page",
+        // ),
         body: ListView(
+      children: [
+        Stack(
+          //images
           children: [
-            Stack(
-              //images
-              children: [
-                SizedBox(
-                    height: _backgroundPadding,
-                    child: Image(
-                      image: AssetImage('assets/pics/background.jpg'), //TODO: prendere l'immagine dal db
-                      alignment: Alignment.topCenter,
-                      fit: BoxFit.cover,
-                    )),
-                Container(
-                    padding: EdgeInsetsDirectional.fromSTEB(
-                        2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
-                      child: Image.asset(
-                        'assets/pics/propic.jpg', //TODO: prendere l'immagine dal db
-                        width: AppLayout.kProfilePicRadiusLarge,
-                        height: AppLayout.kProfilePicRadiusLarge,
-                        fit: BoxFit.cover,
-                      ),
-                    ))
-              ],
-            ),
-            Row(
-              //info
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(2 * AppLayout.kModalHorizontalPadding, 0, 0, 0),
-                  child: Text(
-                    'Location:',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+            SizedBox(
+                height: _backgroundPadding,
+                child: Image(
+                  image: AssetImage('assets/pics/background.jpg'), //TODO: prendere l'immagine dal db
+                  alignment: Alignment.topCenter,
+                  fit: BoxFit.cover,
+                )),
+            Container(
+                padding: EdgeInsetsDirectional.fromSTEB(
+                    2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
+                  child: Image.asset(
+                    'assets/pics/propic.jpg', //TODO: prendere l'immagine dal db
+                    width: AppLayout.kProfilePicRadiusLarge,
+                    height: AppLayout.kProfilePicRadiusLarge,
+                    fit: BoxFit.cover,
                   ),
-                ),
-                IconButton(
-                    iconSize: AppLayout.kButtonHeight,
-                    onPressed: () {}, //TODO: go to settings screen
-                    icon: Icon(Icons.settings_sharp))
-              ],
-            ),
-            Row(
-                //hobbies
-                ),
-            Row(
-                //mentors
-                ),
-            Row(
-                //milestones
-                ),
+                ))
           ],
-        ));
-  }
-}
-        
-        
-        /*Container(
-            height: _backgroundPadding,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              image: AssetImage('assets/pics/background.jpg'), //TODO: prendere l'immagine dal db
-              alignment: Alignment.topCenter,
-              fit: BoxFit.cover,
-            )),
-            child: ListView(
-              children: [
-                Row(
-                  //personal info
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+        Row(
+          //info
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(2 * AppLayout.kModalHorizontalPadding, 200, 0, 0),
-                      child: Column(
-                        children: [
-                          //Image(image: AssetImage('assets/pics/propic.jpg')),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
-                            child: Image.asset(
-                              'assets/pics/propic.jpg', //TODO: prendere l'immagine dal db
-                              width: AppLayout.kProfilePicRadiusLarge,
-                              height: AppLayout.kProfilePicRadiusLarge,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
+                    Text(
+                      _username,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                    Text(
+                      _location,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
+                )),
+            MyIconButton(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                onTap: () {}, //TODO: go to settings screen
+                icon: Icon(
+                  Icons.settings_sharp,
+                  size: 1.2 * AppLayout.kButtonHeight,
+                ))
+          ],
+        ),
+        Container(height: AppLayout.kDividerHeight),
+        ContainerShadow(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                child: Text(
+                  'Hobbies',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                Row(
-                    //hobbies
-                    ),
-                Row(
-                    //mentors
-                    ),
-                Row(
-                    //milestones
-                    ),
-              ],
-            )));
+              ),
+              Expanded(
+                  child: ListView.builder(
+                itemCount: _hobbies.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text("ciao $index"),
+                  );
+                },
+              )),
+            ],
+          ),
+        ),
+        // Container(
+        //   height: 30.0,
+        //   child: ContainerShadow(
+        //     //HOBBIES
+        //     margin: EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+        //     child: Column(
+        //       mainAxisAlignment: MainAxisAlignment.start,
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       mainAxisSize: MainAxisSize.max,
+        //       children: [
+        //         const Padding(
+        //           padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+        //           child: Text(
+        //             'Hobbies',
+        //             style: TextStyle(
+        //               fontSize: 18,
+        //               fontWeight: FontWeight.bold,
+        //             ),
+        //           ),
+        //         ),
+        //         Padding(
+        //             padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+        //             child: ListView.builder(
+        //               shrinkWrap: true,
+        //               itemCount: _hobbies.length,
+        //               scrollDirection: Axis.horizontal,
+        //               itemBuilder: (context, index) {
+        //                 return ListTile(
+        //                   title: Text('ciao')
+        //                   // title: ClipRRect(
+        //                   //   borderRadius: BorderRadius.circular(20),
+        //                   //   child: Image.asset(
+        //                   //     'assets/pics/propic.jpg', //TODO: prendere l'immagine dal db
+        //                   //     width: 20,
+        //                   //     height: 20,
+        //                   //     fit: BoxFit.contain,
+        //                   //   ),
+        //                   // ),
+        //                 );
+        //               },
+        //             ))
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        Container(height: AppLayout.kDividerHeight),
+        Row(
+            //MENTORS
+            ),
+        Container(height: AppLayout.kDividerHeight),
+        Row(
+            //MILESTONES
+            ),
+      ],
+    ));
   }
-}*/
+}
