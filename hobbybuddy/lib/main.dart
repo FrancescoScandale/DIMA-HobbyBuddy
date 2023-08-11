@@ -26,6 +26,7 @@ import 'package:hobbybuddy/screens/change_password.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'services/firebase_queries.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
+import 'package:geocoding/geocoding.dart';
 
 String logo = 'assets/logo.png';
 const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
@@ -1228,9 +1229,21 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   late String username = 'Francesco Scandale'; //TODO: costruttore passa il nome da mostrare come username
   final double _backgroundPadding = 250;
+  late String _location;
+
+  void computeLocation() async {
+    List<Location> coordinates;
+    List<Placemark> addresses;
+    coordinates = await locationFromAddress("Via Eugenio Camerini 2, Milano");
+    addresses = await placemarkFromCoordinates(45.4905447, 9.2303139);
+    print(coordinates);
+    print(addresses);
+    //setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    computeLocation();
     return Scaffold(
         appBar: MyAppBar(
           title: "$username",
@@ -1266,16 +1279,19 @@ class _UserPageState extends State<UserPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(2*AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(2 * AppLayout.kModalHorizontalPadding, 0, 0, 0),
                   child: Text(
-                    'location',
+                    'Location:',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                IconButton(iconSize: AppLayout.kButtonHeight, onPressed: () {}, icon: Icon(Icons.settings_sharp))
+                IconButton(
+                    iconSize: AppLayout.kButtonHeight,
+                    onPressed: () {}, //TODO: go to settings screen
+                    icon: Icon(Icons.settings_sharp))
               ],
             ),
             Row(
