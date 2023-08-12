@@ -1229,27 +1229,31 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   late String _username = 'Francesco Scandale'; //TODO: costruttore passa il nome da mostrare come username
   final double _backgroundPadding = 250;
-  late String _location;
+  late String _location = '';
   List<String> _hobbies = Preferences.getHobbies()!;
   List<String> _mentors = Preferences.getMentors()!;
   //List<String> _milestones
 
   void computeLocation() async {
-    List<Location> coordinates;
+    // List<Location> coordinates;
     List<Placemark> addresses;
-    coordinates = await locationFromAddress("Via Eugenio Camerini 2, Milano");
+    // coordinates = await locationFromAddress("Via Eugenio Camerini 2, Milano");
     addresses = await placemarkFromCoordinates(45.4905447, 9.2303139);
     // print(coordinates);
     // print(addresses);
     _location = addresses[0].street! + ', ' + addresses[0].locality!;
-    print("$_location");
-    print('$_hobbies');
-    //setState(() {});
+    // print("$_location");
+    // print('$_hobbies');
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    computeLocation();
+    if (_location == '') {
+      print('--------------------------------------------------------------------------------------');
+      print('--------------------------------------------------------------------------------------');
+      computeLocation();
+    }
     return Scaffold(
         // appBar: MyAppBar(
         //   title: "User Profile Page",
@@ -1257,7 +1261,7 @@ class _UserPageState extends State<UserPage> {
         body: ListView(
       children: [
         Stack(
-          //images
+          //IMAGES
           children: [
             SizedBox(
                 height: _backgroundPadding,
@@ -1281,11 +1285,11 @@ class _UserPageState extends State<UserPage> {
           ],
         ),
         Row(
-          //info
+          //INFO
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1314,8 +1318,8 @@ class _UserPageState extends State<UserPage> {
                 ))
           ],
         ),
-        Container(height: AppLayout.kDividerHeight),
         ContainerShadow(
+          //HOBBIES
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1330,68 +1334,64 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ),
               ),
-              Expanded(
+              SizedBox(
+                  height: AppLayout.kIconDimension,
                   child: ListView.builder(
-                itemCount: _hobbies.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text("ciao $index"),
-                  );
-                },
-              )),
+                    itemCount: _hobbies.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kModalHorizontalPadding),
+                        width: AppLayout.kIconDimension,
+                        child: ClipRRect(
+                          child: Image.asset(
+                            'assets/hobbies/${_hobbies[index]}.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      );
+                    },
+                  ))
             ],
           ),
         ),
-        // Container(
-        //   height: 30.0,
-        //   child: ContainerShadow(
-        //     //HOBBIES
-        //     margin: EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
-        //     child: Column(
-        //       mainAxisAlignment: MainAxisAlignment.start,
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       mainAxisSize: MainAxisSize.max,
-        //       children: [
-        //         const Padding(
-        //           padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
-        //           child: Text(
-        //             'Hobbies',
-        //             style: TextStyle(
-        //               fontSize: 18,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ),
-        //         ),
-        //         Padding(
-        //             padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
-        //             child: ListView.builder(
-        //               shrinkWrap: true,
-        //               itemCount: _hobbies.length,
-        //               scrollDirection: Axis.horizontal,
-        //               itemBuilder: (context, index) {
-        //                 return ListTile(
-        //                   title: Text('ciao')
-        //                   // title: ClipRRect(
-        //                   //   borderRadius: BorderRadius.circular(20),
-        //                   //   child: Image.asset(
-        //                   //     'assets/pics/propic.jpg', //TODO: prendere l'immagine dal db
-        //                   //     width: 20,
-        //                   //     height: 20,
-        //                   //     fit: BoxFit.contain,
-        //                   //   ),
-        //                   // ),
-        //                 );
-        //               },
-        //             ))
-        //       ],
-        //     ),
-        //   ),
-        // ),
-        Container(height: AppLayout.kDividerHeight),
-        Row(
-            //MENTORS
-            ),
+        ContainerShadow(
+          //MENTORS
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                child: Text(
+                  'Mentors',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                  height: AppLayout.kIconDimension,
+                  child: ListView.builder(
+                    itemCount: _hobbies.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kModalHorizontalPadding),
+                        width: AppLayout.kIconDimension,
+                        child: ClipRRect(
+                          child: Image.asset(
+                            'assets/hobbies/${_hobbies[index]}.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      );
+                    },
+                  ))
+            ],
+          ),
+        ),
         Container(height: AppLayout.kDividerHeight),
         Row(
             //MILESTONES
