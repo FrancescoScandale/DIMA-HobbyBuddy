@@ -42,5 +42,5 @@ class AppLayout {
   static const double kIconPadding = 10.0;
 
   /// Icon dimensions
-  static const double kIconDimension = 100.0;
+  static const double kIconDimension = 110.0;
 }

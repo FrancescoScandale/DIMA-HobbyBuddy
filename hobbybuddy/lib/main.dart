@@ -1289,7 +1289,8 @@ class _UserPageState extends State<UserPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1341,21 +1342,31 @@ class _UserPageState extends State<UserPage> {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
                       return Container(
-                        padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kModalHorizontalPadding),
-                        width: AppLayout.kIconDimension,
-                        child: ClipRRect(
-                          child: Image.asset(
-                            'assets/hobbies/${_hobbies[index]}.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      );
+                          padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                          width: AppLayout.kIconDimension,
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    color: ui.Color.fromARGB(255, 237, 216, 146),
+                                    child: Image.asset(
+                                      'assets/hobbies/${_hobbies[index]}.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  )),
+                              Text(
+                                _hobbies[index],
+                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ));
                     },
                   ))
             ],
           ),
         ),
-        ContainerShadow(
+        Container(
           //MENTORS
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -1374,19 +1385,31 @@ class _UserPageState extends State<UserPage> {
               SizedBox(
                   height: AppLayout.kIconDimension,
                   child: ListView.builder(
-                    itemCount: _hobbies.length,
+                    itemCount: _mentors.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
                       return Container(
-                        padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kModalHorizontalPadding),
-                        width: AppLayout.kIconDimension,
-                        child: ClipRRect(
-                          child: Image.asset(
-                            'assets/hobbies/${_hobbies[index]}.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      );
+                          padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                          width: AppLayout.kIconDimension*1.1,
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    color: ui.Color.fromARGB(255, 237, 216, 146),
+                                    child: Image.asset(
+                                      'assets/pics/propic.jpg', //TODO: prendere le immagini dal db
+                                      fit: BoxFit.cover,
+                                      height: AppLayout.kIconDimension*0.8,
+                                      width: AppLayout.kIconDimension*0.8,
+                                    ),
+                                  )),
+                              Text(
+                                _mentors[index],
+                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ));
                     },
                   ))
             ],
