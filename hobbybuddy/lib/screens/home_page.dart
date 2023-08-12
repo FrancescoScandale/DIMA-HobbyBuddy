@@ -5,6 +5,7 @@ import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/main.dart';
+import 'package:hobbybuddy/services/firebase_queries.dart';
 
 class HomePScreen extends StatefulWidget {
   const HomePScreen({super.key});
@@ -17,6 +18,12 @@ class _HomePScreenState extends State<HomePScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _addressController = TextEditingController();
   final String _hobby = "Skateboard";
+  List<String> _hobbies = [];
+  @override
+  void initState() {
+    super.initState();
+    retriveHobbies();
+  }
 
   //icons for the number of likes
   Icon hobbyNotFavourite = const Icon(
@@ -35,6 +42,15 @@ class _HomePScreenState extends State<HomePScreen> {
   void setFavouriteStatus() {
     checkFavouriteHobby = !checkFavouriteHobby;
     checkFavouriteHobby = Preferences.getHobbies()!.contains(_hobby);
+  }
+
+  void retriveHobbies() async {
+    if (_hobbies.isEmpty) {
+      List<String> hobbies = await FirebaseCrud.getHobbies();
+      setState(() {
+        _hobbies = hobbies;
+      });
+    }
   }
 
   void filterSearchResults(String query) {
@@ -179,20 +195,21 @@ class _HomePScreenState extends State<HomePScreen> {
             // Add the other part of the page here
             GestureDetector(
               onTap: () async {
-                Widget newScreen = const HomePageHobby();
+                /*Widget newScreen = const HomePageHobby();
                 Navigator.push(
                   context,
                   ScreenTransition(
                     builder: (context) => newScreen,
                   ),
-                );
+                );*/
               },
               child: Container(
                 height: 400, // Adjust the height as needed
                 child: Scrollbar(
                   child: ListView.builder(
                     controller: PrimaryScrollController.of(context),
-                    itemCount: 10, // Number of rectangles you want to display
+                    itemCount: _hobbies
+                        .length, // Number of rectangles you want to display
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -225,7 +242,7 @@ class _HomePScreenState extends State<HomePScreen> {
                                     ),
                                     child: Center(
                                       child: Image.asset(
-                                        "assets/hobbies/$_hobby.png",
+                                        "assets/hobbies/${_hobbies[index]}.png",
                                         width: 120,
                                         height: 120,
                                         fit: BoxFit.cover,
@@ -261,12 +278,7 @@ class _HomePScreenState extends State<HomePScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         left: 8.0), // Add left padding
-                                    child: Text(
-                                      _hobby,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                      ),
-                                    ),
+                                    child: Text(_hobbies[index]),
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(
