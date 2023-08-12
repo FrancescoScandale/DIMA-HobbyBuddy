@@ -16,7 +16,7 @@ class HomePScreen extends StatefulWidget {
 class _HomePScreenState extends State<HomePScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _addressController = TextEditingController();
-  late String _hobby = "Skateboard";
+  final String _hobby = "Skateboard";
 
   //icons for the number of likes
   Icon hobbyNotFavourite = const Icon(
@@ -37,6 +37,10 @@ class _HomePScreenState extends State<HomePScreen> {
     checkFavouriteHobby = Preferences.getHobbies()!.contains(_hobby);
   }
 
+  void filterSearchResults(String query) {
+    setState(() {});
+  }
+
   @override
   void dispose() {
     _addressController.dispose();
@@ -52,12 +56,11 @@ class _HomePScreenState extends State<HomePScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            ContainerShadow(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /*Padding(
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /*Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(24, 40, 0, 0),
                   child: Image.asset(
                     'logo.png',
@@ -66,109 +69,113 @@ class _HomePScreenState extends State<HomePScreen> {
                     fit: BoxFit.fitWidth,
                   ),
                 ),*/
-                  const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24, 20, 24, 8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Welcome!',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Find your new Passion with Hobby Buddy',
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
+                const Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(24, 20, 24, 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome!',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
-                      alignment: const AlignmentDirectional(0, 0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      4, 0, 4, 0),
-                                  child: TextFormField(
-                                    controller: _addressController,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      labelText: 'Search a Hobby',
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      prefixIcon: const Icon(
-                                        Icons.search_sharp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Find your new Passion with Hobby Buddy',
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    alignment: const AlignmentDirectional(0, 0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
-                                    2, 0, 8, 0),
-                                child: ElevatedButton(
-                                  onPressed: () async {},
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
+                                    4, 0, 4, 0),
+                                child: TextField(
+                                  onChanged: (value) {
+                                    filterSearchResults(value);
+                                  },
+                                  controller: _addressController,
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    labelText: 'Search a Hobby',
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                  ),
-                                  child: const Text(
-                                    'Search',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.search_sharp,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                            /*Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  2, 0, 8, 0),
+                              child: ElevatedButton(
+                                onPressed: () async {
+
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Search',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),*/
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 15),
-                ],
-              ),
+                ),
+                const SizedBox(height: 15),
+              ],
             ),
+
             // Add the other part of the page here
             GestureDetector(
               onTap: () async {
