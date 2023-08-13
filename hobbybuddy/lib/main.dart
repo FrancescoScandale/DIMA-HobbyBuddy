@@ -27,6 +27,7 @@ import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'services/firebase_queries.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 String logo = 'assets/logo.png';
 const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
@@ -1232,6 +1233,8 @@ class _UserPageState extends State<UserPage> {
   late String _location = '';
   List<String> _hobbies = Preferences.getHobbies()!;
   List<String> _mentors = Preferences.getMentors()!;
+  Map<String, Image> _mentorsPics = {};
+  bool downloadMentors = false;
   //List<String> _milestones
 
   void computeLocation() async {
@@ -1244,15 +1247,23 @@ class _UserPageState extends State<UserPage> {
     _location = addresses[0].street! + ', ' + addresses[0].locality!;
     // print("$_location");
     // print('$_hobbies');
+  }
+
+  void getMentorsImages() async {
+    for (int i = 0; i < _mentors.length; i++) {
+      String url = await FirebaseStorage.instance.ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
+      _mentorsPics[_mentors[i]] = Image.network(url);
+    }
+
+    downloadMentors = true;
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     if (_location == '') {
-      print('--------------------------------------------------------------------------------------');
-      print('--------------------------------------------------------------------------------------');
       computeLocation();
+      getMentorsImages();
     }
     return Scaffold(
         // appBar: MyAppBar(
@@ -1390,20 +1401,25 @@ class _UserPageState extends State<UserPage> {
                     itemBuilder: (context, index) {
                       return Container(
                           padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
-                          width: AppLayout.kIconDimension*1.1,
+                          width: AppLayout.kIconDimension * 1.1,
                           child: Column(
                             children: [
                               ClipRRect(
                                   borderRadius: BorderRadius.circular(20),
                                   child: Container(
-                                    color: ui.Color.fromARGB(255, 237, 216, 146),
-                                    child: Image.asset(
-                                      'assets/pics/propic.jpg', //TODO: prendere le immagini dal db
-                                      fit: BoxFit.cover,
-                                      height: AppLayout.kIconDimension*0.8,
-                                      width: AppLayout.kIconDimension*0.8,
-                                    ),
-                                  )),
+                                      color: ui.Color.fromARGB(255, 237, 216, 146),
+                                      child: downloadMentors
+                                          ? Image(
+                                              image: _mentorsPics[_mentors[index]]!
+                                                  .image, //TODO: prendere le immagini dal db
+                                              fit: BoxFit.cover,
+                                              height: AppLayout.kIconDimension * 0.8,
+                                              width: AppLayout.kIconDimension * 0.8,
+                                            )
+                                          : Container(
+                                              height: AppLayout.kIconDimension * 0.8,
+                                              width: AppLayout.kIconDimension * 0.8,
+                                            ))),
                               Text(
                                 _mentors[index],
                                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
@@ -1416,7 +1432,7 @@ class _UserPageState extends State<UserPage> {
           ),
         ),
         Container(height: AppLayout.kDividerHeight),
-        Row(
+        Container(
             //MILESTONES
             ),
       ],
