@@ -7,8 +7,6 @@ import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/main.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 
-//TO DO: searchable hobbies
-
 class HomePScreen extends StatefulWidget {
   const HomePScreen({super.key});
 
@@ -44,20 +42,15 @@ class _HomePScreenState extends State<HomePScreen> {
                 .contains(_searchController.text.toLowerCase()))
             .toList();
       }
-    });
 
-    // Update the checkFavouriteHobby list to match the filtered hobbies
-    List<bool> updatedFavouriteStatus = _hobbies.map((hobby) {
-      int filteredIndex = _filteredHobbies.indexOf(hobby);
-      if (filteredIndex != -1) {
-        return checkFavouriteHobby[_hobbies.indexOf(hobby)];
-      }
-      return false;
-    }).toList();
-
-    setState(() {
-      print('Check Favourite Hobby: $checkFavouriteHobby');
-      checkFavouriteHobby = List.from(updatedFavouriteStatus);
+      // Update the checkFavouriteHobby list to match the filtered hobbies
+      checkFavouriteHobby = _hobbies.map((hobby) {
+        int filteredIndex = _filteredHobbies.indexOf(hobby);
+        if (filteredIndex != -1) {
+          return checkFavouriteHobby[_hobbies.indexOf(hobby)];
+        }
+        return false;
+      }).toList();
     });
   }
 
