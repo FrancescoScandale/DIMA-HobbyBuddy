@@ -19,8 +19,11 @@ class HomePScreen extends StatefulWidget {
 class _HomePScreenState extends State<HomePScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _addressController = TextEditingController();
-  final String _hobby = "Skateboard";
+  final TextEditingController _searchController = TextEditingController();
+
   List<String> _hobbies = [];
+  List<bool> checkFavouriteHobby = [];
+
   @override
   void initState() {
     super.initState();
@@ -38,12 +41,17 @@ class _HomePScreenState extends State<HomePScreen> {
     color: Colors.red,
     size: AppLayout.kIconSize,
   );
-  bool checkFavouriteHobby = false;
 
-  //sets "checkFavouriteHobby" based on the favourite hobbies
+// Sets "checkFavouriteHobby" for each hobby based on the favourite hobbies
   void setFavouriteStatus() {
-    checkFavouriteHobby = !checkFavouriteHobby;
-    checkFavouriteHobby = Preferences.getHobbies()!.contains(_hobby);
+    List<String>? favoriteHobbies = Preferences.getHobbies();
+
+    if (favoriteHobbies != null) {
+      checkFavouriteHobby =
+          _hobbies.map((hobby) => favoriteHobbies.contains(hobby)).toList();
+    } else {
+      checkFavouriteHobby = List.generate(_hobbies.length, (_) => false);
+    }
   }
 
   void retriveHobbies() async {
@@ -136,10 +144,10 @@ class _HomePScreenState extends State<HomePScreen> {
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     4, 0, 4, 0),
                                 child: TextField(
+                                  controller: _searchController,
                                   onChanged: (value) {
                                     filterSearchResults(value);
                                   },
-                                  controller: _addressController,
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     labelText: 'Search a Hobby',
@@ -155,8 +163,16 @@ class _HomePScreenState extends State<HomePScreen> {
                                     focusedErrorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    prefixIcon: const Icon(
-                                      Icons.search_sharp,
+                                    suffixIcon: IconButton(
+                                      icon: Icon(Icons.clear),
+                                      onPressed: () =>
+                                          _searchController.clear(),
+                                    ),
+                                    prefixIcon: IconButton(
+                                      icon: Icon(Icons.search),
+                                      onPressed: () {
+                                        // Perform the search here
+                                      },
                                     ),
                                   ),
                                 ),
@@ -259,7 +275,7 @@ class _HomePScreenState extends State<HomePScreen> {
                                         Text('n of likes'),
                                         SizedBox(width: 4),
                                         Icon(
-                                          (checkFavouriteHobby
+                                          (checkFavouriteHobby[index]
                                               ? Icons.favorite
                                               : Icons.favorite_border),
                                           color: Colors.red,
