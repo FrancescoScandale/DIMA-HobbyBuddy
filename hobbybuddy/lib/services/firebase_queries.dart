@@ -139,6 +139,28 @@ class FirebaseCrud {
     }
   }
 
+  static Future<List<int>> getLikes() async {
+    List<int> allLikes = [];
+
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection("hobbies")
+          .doc("d11XvjCVnj8hKbXzIlDO")
+          .get();
+
+      if (snapshot.exists) {
+        String likesData =
+            snapshot.get("likes"); // Change the field name to "likes"
+        List<String> likeCounts = likesData.split(',');
+        allLikes = likeCounts.map((count) => int.tryParse(count) ?? 0).toList();
+      }
+      return allLikes;
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
+
   ///operation = 'add' or 'remove' based on the update to be done on the database
   static Future<void> updateFavouriteHobbies(
       String username, String hobby, String operation) async {

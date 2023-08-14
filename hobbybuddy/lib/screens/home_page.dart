@@ -27,6 +27,7 @@ class _HomePScreenState extends State<HomePScreen> {
   void initState() {
     super.initState();
     retriveHobbies();
+
     _searchController.addListener(_performSearch);
   }
 
@@ -43,14 +44,19 @@ class _HomePScreenState extends State<HomePScreen> {
             .toList();
       }
 
-      // Update the checkFavouriteHobby list to match the filtered hobbies
-      checkFavouriteHobby = _hobbies.map((hobby) {
-        int filteredIndex = _filteredHobbies.indexOf(hobby);
-        if (filteredIndex != -1) {
-          return checkFavouriteHobby[_hobbies.indexOf(hobby)];
-        }
-        return false;
-      }).toList();
+      setFavouriteStatus();
+    });
+
+    // Update the checkFavouriteHobby list to match the filtered hobbies
+    List<bool> updatedFavouriteStatus = _filteredHobbies.map((hobby) {
+      int originalIndex = _hobbies.indexOf(hobby);
+      if (originalIndex != -1) {
+        return checkFavouriteHobby[originalIndex];
+      }
+      return false;
+    }).toList();
+    setState(() {
+      checkFavouriteHobby = List.from(updatedFavouriteStatus);
     });
   }
 
@@ -76,7 +82,6 @@ class _HomePScreenState extends State<HomePScreen> {
     } else {
       checkFavouriteHobby = List.generate(_hobbies.length, (_) => false);
     }
-    print('Check Favourite Hobby: $checkFavouriteHobby');
   }
 
   Future<void> retriveHobbies() async {
