@@ -7,6 +7,8 @@ import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/main.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 
+//TO DO: searchable hobbies
+
 class HomePScreen extends StatefulWidget {
   const HomePScreen({super.key});
 
@@ -195,13 +197,13 @@ class _HomePScreenState extends State<HomePScreen> {
             // Add the other part of the page here
             GestureDetector(
               onTap: () async {
-                /*Widget newScreen = const HomePageHobby();
+                Widget newScreen = const HomePageHobby();
                 Navigator.push(
                   context,
                   ScreenTransition(
                     builder: (context) => newScreen,
                   ),
-                );*/
+                );
               },
               child: Container(
                 height: 400, // Adjust the height as needed

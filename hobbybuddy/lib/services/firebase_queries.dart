@@ -130,12 +130,8 @@ class FirebaseCrud {
       if (snapshot.exists) {
         String hobbiesData = snapshot.get("hobbye");
         List<String> hobbyNames = hobbiesData.split(',');
-
         allHobbies.addAll(hobbyNames);
       }
-
-      print("Retrieved Hobbies: $allHobbies");
-
       return allHobbies;
     } catch (e) {
       print(e.toString());
