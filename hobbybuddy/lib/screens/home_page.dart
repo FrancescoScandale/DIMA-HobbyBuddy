@@ -23,11 +23,42 @@ class _HomePScreenState extends State<HomePScreen> {
 
   List<String> _hobbies = [];
   List<bool> checkFavouriteHobby = [];
+  List<String> _filteredHobbies = [];
 
   @override
   void initState() {
     super.initState();
     retriveHobbies();
+    _searchController.addListener(_performSearch);
+  }
+
+  Future<void> _performSearch() async {
+    setState(() {
+      if (_searchController.text.isEmpty) {
+        _filteredHobbies = _hobbies;
+        setFavouriteStatus(); // Update the favorite status when clearing the search
+      } else {
+        _filteredHobbies = _hobbies
+            .where((element) => element
+                .toLowerCase()
+                .contains(_searchController.text.toLowerCase()))
+            .toList();
+      }
+    });
+
+    // Update the checkFavouriteHobby list to match the filtered hobbies
+    List<bool> updatedFavouriteStatus = _hobbies.map((hobby) {
+      int filteredIndex = _filteredHobbies.indexOf(hobby);
+      if (filteredIndex != -1) {
+        return checkFavouriteHobby[_hobbies.indexOf(hobby)];
+      }
+      return false;
+    }).toList();
+
+    setState(() {
+      print('Check Favourite Hobby: $checkFavouriteHobby');
+      checkFavouriteHobby = List.from(updatedFavouriteStatus);
+    });
   }
 
   //icons for the number of likes
@@ -52,19 +83,20 @@ class _HomePScreenState extends State<HomePScreen> {
     } else {
       checkFavouriteHobby = List.generate(_hobbies.length, (_) => false);
     }
+    print('Check Favourite Hobby: $checkFavouriteHobby');
   }
 
-  void retriveHobbies() async {
+  Future<void> retriveHobbies() async {
     if (_hobbies.isEmpty) {
       List<String> hobbies = await FirebaseCrud.getHobbies();
       setState(() {
         _hobbies = hobbies;
+        _filteredHobbies = _hobbies;
+        checkFavouriteHobby =
+            List.generate(_filteredHobbies.length, (_) => false);
       });
     }
-  }
-
-  void filterSearchResults(String query) {
-    setState(() {});
+    setFavouriteStatus(); // Call this after retrieving hobbies
   }
 
   @override
@@ -75,7 +107,6 @@ class _HomePScreenState extends State<HomePScreen> {
 
   @override
   Widget build(BuildContext context) {
-    setFavouriteStatus();
     return Scaffold(
       key: scaffoldKey,
       body: SingleChildScrollView(
@@ -145,9 +176,6 @@ class _HomePScreenState extends State<HomePScreen> {
                                     4, 0, 4, 0),
                                 child: TextField(
                                   controller: _searchController,
-                                  onChanged: (value) {
-                                    filterSearchResults(value);
-                                  },
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     labelText: 'Search a Hobby',
@@ -168,11 +196,8 @@ class _HomePScreenState extends State<HomePScreen> {
                                       onPressed: () =>
                                           _searchController.clear(),
                                     ),
-                                    prefixIcon: IconButton(
-                                      icon: Icon(Icons.search),
-                                      onPressed: () {
-                                        // Perform the search here
-                                      },
+                                    prefixIcon: const Icon(
+                                      Icons.search_sharp,
                                     ),
                                   ),
                                 ),
@@ -226,8 +251,8 @@ class _HomePScreenState extends State<HomePScreen> {
                 child: Scrollbar(
                   child: ListView.builder(
                     controller: PrimaryScrollController.of(context),
-                    itemCount: _hobbies
-                        .length, // Number of rectangles you want to display
+                    itemCount: _filteredHobbies.length,
+                    // Number of rectangles you want to display
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -260,7 +285,7 @@ class _HomePScreenState extends State<HomePScreen> {
                                     ),
                                     child: Center(
                                       child: Image.asset(
-                                        "assets/hobbies/${_hobbies[index]}.png",
+                                        "assets/hobbies/${_filteredHobbies[index]}.png",
                                         width: 120,
                                         height: 120,
                                         fit: BoxFit.cover,
@@ -296,7 +321,7 @@ class _HomePScreenState extends State<HomePScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         left: 8.0), // Add left padding
-                                    child: Text(_hobbies[index]),
+                                    child: Text(_filteredHobbies[index]),
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(
