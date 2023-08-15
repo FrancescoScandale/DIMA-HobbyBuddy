@@ -43,4 +43,7 @@ class AppLayout {
 
   /// Icon dimensions
   static const double kIconDimension = 110.0;
+
+  /// Pictures dimesions
+  static const double kPicDimension = 500.0;
 }
