@@ -4,9 +4,9 @@ import 'dart:ui' as ui;
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:hobbybuddy/main.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/screens/homepage_hobby.dart';
 
 class HomePScreen extends StatefulWidget {
   const HomePScreen({super.key});
