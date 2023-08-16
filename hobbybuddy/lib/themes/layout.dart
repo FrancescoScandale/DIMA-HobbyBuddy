@@ -18,7 +18,7 @@ class AppLayout {
   static const double kProfilePicRadius = 70.0;
 
   /// Profile Picture radius
-  static const double kProfilePicRadiusLarge = 100.0;
+  static const double kProfilePicRadiusLarge = 125.0;
 
   /// Divider height
   static const double kDividerHeight = 30.0;
@@ -40,4 +40,10 @@ class AppLayout {
 
   /// Icon padding
   static const double kIconPadding = 10.0;
+
+  /// Icon dimensions
+  static const double kIconDimension = 110.0;
+
+  /// Pictures dimesions
+  static const double kPicDimension = 500.0;
 }

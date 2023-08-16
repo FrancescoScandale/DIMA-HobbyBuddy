@@ -22,7 +22,7 @@ class ContainerShadow extends StatelessWidget {
       width: width,
       margin: margin ??
           const EdgeInsets.symmetric(
-            vertical: AppLayout.kVerticalPadding,
+            vertical: AppLayout.kVerticalPadding/2,
             horizontal: AppLayout.kHorizontalPadding,
           ),
       padding: padding,

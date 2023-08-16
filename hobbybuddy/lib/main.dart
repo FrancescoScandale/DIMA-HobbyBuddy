@@ -1,4 +1,5 @@
 //import 'dart:typed_data';
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:firebase_core/firebase_core.dart';
@@ -26,11 +27,12 @@ import 'package:hobbybuddy/screens/change_password.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'services/firebase_queries.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:tuple/tuple.dart';
 import 'package:hobbybuddy/screens/home_page.dart';
 
 String logo = 'assets/logo.png';
-const LatLng startingLocation =
-    LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
+const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 const double startingZoom = 17;
 
 Future<void> main() async {
@@ -103,8 +105,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
     }
     setState(() {
       currentIndex = index;
-      Provider.of<CupertinoTabController>(context, listen: false).index =
-          currentIndex;
+      Provider.of<CupertinoTabController>(context, listen: false).index = currentIndex;
     });
   }
 
@@ -112,7 +113,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
     0: HomePScreen(),
     1: MapsScreen(),
     2: FavouritesScreen(),
-    3: Settings(),
+    3: UserPage(),
   };
 
   @override
@@ -121,8 +122,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
       body: Stack(
         children: [
           CupertinoTabScaffold(
-            controller:
-                Provider.of<CupertinoTabController>(context, listen: true),
+            controller: Provider.of<CupertinoTabController>(context, listen: true),
             tabBar: CupertinoTabBar(
               onTap: changeTab,
               items: const [
@@ -132,15 +132,15 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.map),
-                  label: 'maps',
+                  label: 'Maps',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.favorite),
-                  label: 'favorites',
+                  label: 'Favorites',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.account_circle),
-                  label: 'profile',
+                  label: 'Profile',
                 ),
               ],
             ),
@@ -164,7 +164,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                 case 3:
                   return CupertinoTabView(
                     navigatorKey: fourthTabNavKey,
-                    builder: (context) => const Settings(),
+                    builder: (context) => const UserPage(),
                   );
                 default:
                   return const CupertinoTabView();
@@ -275,8 +275,7 @@ class _SettingsScreenState extends State<Settings> {
                   value: Preferences.getBool('isDark'),
                   onChanged: (newValue) {
                     setState(() {
-                      Provider.of<ThemeManager>(context, listen: false)
-                          .toggleTheme(newValue);
+                      Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
                     });
                   },
                   secondary: const Icon(Icons.dark_mode_rounded),
@@ -716,18 +715,12 @@ class _LoginFormState extends State<LoginForm> {
           Text(
             "Welcome to Hobby Buddy!",
             textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
           Text(
             "Log In",
-            style: Theme.of(context)
-                .textTheme
-                .headlineLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           Form(
             key: _formKey,
@@ -770,9 +763,7 @@ class _LoginFormState extends State<LoginForm> {
                         });
                       },
                       icon: Icon(
-                        _passwordInvisible
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                        _passwordInvisible ? Icons.visibility_off : Icons.visibility,
                       ),
                     ),
                   ),
@@ -796,9 +787,7 @@ class _LoginFormState extends State<LoginForm> {
                           if (_formKey.currentState!.validate()) {
                             bool check = false;
                             //check if credentials present in db
-                            await FirebaseCrud.getUserPwd(
-                                    username.text, password.text)
-                                .then((values) async {
+                            await FirebaseCrud.getUserPwd(username.text, password.text).then((values) async {
                               if (values!.docs.isNotEmpty) {
                                 check = true;
 
@@ -829,8 +818,7 @@ class _LoginFormState extends State<LoginForm> {
                             } else {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("Data not found...")),
+                                const SnackBar(content: Text("Data not found...")),
                               );
                             }
                           }
@@ -925,20 +913,15 @@ class MapState extends State<MapClass> {
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
-  void createMarker(String id, double lat, double lng, String windowTitle,
-      String windowSnippet) async {
+  void createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) async {
     Marker marker;
 
-    final Uint8List markerIcon =
-        await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
+    final Uint8List markerIcon = await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
 
     marker = Marker(
       markerId: MarkerId(id),
@@ -962,8 +945,7 @@ class MapState extends State<MapClass> {
     await FirebaseFirestore.instance.collection("markers").get().then(
       (querySnapshot) {
         for (var doc in querySnapshot.docs) {
-          createMarker(doc.id, double.parse(doc["lat"]),
-              double.parse(doc["lng"]), doc["title"], doc["snippet"]);
+          createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]);
         }
       },
       onError: (e) => print("Error completing: $e"),
@@ -974,8 +956,7 @@ class MapState extends State<MapClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition:
-            const CameraPosition(target: startingLocation, zoom: startingZoom),
+        initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
           retrieveMarkers();
@@ -1045,8 +1026,7 @@ class HomePageHobby extends StatefulWidget {
 }
 
 class _HomePageHobbyState extends State<HomePageHobby> {
-  late String _hobby =
-      "Skateboard"; //TODO: constructor has to be called in order to set this parameter
+  late String _hobby = "Skateboard"; //TODO: constructor has to be called in order to set this parameter
   Map<String, bool> _mentors = {};
 
   //icons for the hobby
@@ -1130,14 +1110,12 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
   @override
   Widget build(BuildContext context) {
-    Preferences.setUsername(
-        'francesco'); //TODO: REMOVE THIS LINE (used for testing)
     setFavouriteStatus();
     retrieveMentors();
     return Scaffold(
-      appBar: const MyAppBar(
-        title: "Home Page Hobby",
-      ),
+      // appBar: const MyAppBar(
+      //   title: "Home Page Hobby",
+      // ),
       body: ListView(
         children: [
           Container(
@@ -1167,8 +1145,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                    AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
                 child: Text(
                   _hobby,
                   style: const TextStyle(
@@ -1178,12 +1155,10 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                    0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
                 child: MyIconButton(
                   onTap: toggleFavouriteHobby,
-                  icon:
-                      checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
+                  icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
                 ),
               ),
             ],
@@ -1193,8 +1168,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
           ),
           Container(
             alignment: AlignmentDirectional.topStart,
-            padding: const EdgeInsetsDirectional.fromSTEB(
-                AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
             child: const Text(
               "Mentors",
               style: TextStyle(
@@ -1205,10 +1179,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
           ),
           ContainerShadow(
               margin: const EdgeInsetsDirectional.fromSTEB(
-                  AppLayout.kModalHorizontalPadding,
-                  0,
-                  AppLayout.kModalHorizontalPadding,
-                  0),
+                  AppLayout.kModalHorizontalPadding, 0, AppLayout.kModalHorizontalPadding, 0),
               child: ListView.builder(
                 itemCount: _mentors.length,
                 shrinkWrap: true,
@@ -1221,9 +1192,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                       onTap: () {
                         toggleLikeMentor(_mentors.keys.elementAt(index));
                       },
-                      icon: _mentors.values.elementAt(index)
-                          ? mentorFavourite
-                          : mentorNotFavourite,
+                      icon: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
                     ),
                     //onTap: loadMentorProfile(), //TODO: load mentor profile on click
                   );
@@ -1252,5 +1221,340 @@ class _FavouriteScreenState extends State<FavouritesScreen> {
           title: "Favourite Hobbies",
         ),
         body: Icon(Icons.favorite));
+  }
+}
+
+class UserPage extends StatefulWidget {
+  const UserPage({Key? key}) : super(key: key);
+
+  @override
+  State<UserPage> createState() => _UserPageState();
+}
+
+class _UserPageState extends State<UserPage> {
+  late String _username = 'Francesco Scandale'; //TODO: costruttore passa il nome da mostrare come username
+  final double _backgroundPadding = 250;
+  late String _location = '';
+  List<String> _hobbies = Preferences.getHobbies()!;
+  List<String> _mentors = Preferences.getMentors()!;
+  Map<String, Image> _mentorsPics = {};
+  bool downloadMentors = false;
+  bool downloadMilestones = false;
+  Map<String, Tuple2<String, Image>> _milestones = {};
+
+  void computeLocation() async {
+    // List<Location> coordinates;
+    List<Placemark> addresses;
+    // coordinates = await locationFromAddress("Via Eugenio Camerini 2, Milano");
+    addresses = await placemarkFromCoordinates(45.4905447, 9.2303139);
+    // print(coordinates);
+    // print(addresses);
+    _location = addresses[0].street! + ', ' + addresses[0].locality!;
+    // print("$_location");
+    // print('$_hobbies');
+  }
+
+  void getMentorsImages() async {
+    for (int i = 0; i < _mentors.length; i++) {
+      String url = await FirebaseStorage.instance.ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
+      _mentorsPics[_mentors[i]] = Image.network(url);
+    }
+
+    downloadMentors = true;
+    if (downloadMentors && downloadMilestones) {
+      setState(() {});
+    }
+  }
+
+  void getMilestones() async {
+    ListResult result =
+        await FirebaseStorage.instance.ref().child('Users/${Preferences.getUsername()}/milestones/').listAll();
+
+    int len = (result.prefixes[0].fullPath.split('/')).length;
+    for (Reference prefs in result.prefixes) {
+      String tmp = prefs.fullPath.split('/')[len - 1];
+      Uint8List? cap = await FirebaseStorage.instance
+          .ref()
+          .child('Users/${Preferences.getUsername()}/milestones/$tmp/caption.txt')
+          .getData();
+      Uint8List? image = await FirebaseStorage.instance
+          .ref()
+          .child('Users/${Preferences.getUsername()}/milestones/$tmp/pic.jpg')
+          .getData();
+      _milestones[tmp] = Tuple2(utf8.decode(cap!), Image.memory(image!));
+    }
+
+    downloadMilestones = true;
+    if (downloadMentors && downloadMilestones) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //TODO: used for the uploads
+    DateTime timestamp = DateTime.timestamp();
+    String ts = timestamp.toString().split('.')[0].replaceAll(' ', '_');
+    // print('timestamp -> $timestamp');
+    // print('used timestamp -> $ts');
+    if (_location == '') {
+      computeLocation();
+      getMentorsImages();
+      getMilestones();
+    }
+    return Scaffold(
+        // appBar: MyAppBar(
+        //   title: "User Profile Page",
+        // ),
+        body: ListView(
+      children: [
+        Stack(
+          //IMAGES
+          children: [
+            SizedBox(
+                height: _backgroundPadding,
+                child: Image(
+                  image: AssetImage('assets/pics/background.jpg'), //TODO: prendere l'immagine dal db
+                  alignment: Alignment.topCenter,
+                  fit: BoxFit.cover,
+                )),
+            Container(
+                padding: EdgeInsetsDirectional.fromSTEB(
+                    2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
+                  child: Image.asset(
+                    'assets/pics/propic.jpg', //TODO: prendere l'immagine dal db
+                    width: AppLayout.kProfilePicRadiusLarge,
+                    height: AppLayout.kProfilePicRadiusLarge,
+                    fit: BoxFit.cover,
+                  ),
+                ))
+          ],
+        ),
+        Row(
+          //INFO
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _username,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      _location,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                )),
+            MyIconButton(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                onTap: () {}, //TODO: go to settings screen
+                icon: Icon(
+                  Icons.settings_sharp,
+                  size: 1.2 * AppLayout.kButtonHeight,
+                ))
+          ],
+        ),
+        ContainerShadow(
+          //HOBBIES
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                child: Text(
+                  'Hobbies',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                  height: AppLayout.kIconDimension,
+                  child: ListView.builder(
+                    itemCount: _hobbies.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Container(
+                          padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                          width: AppLayout.kIconDimension,
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    color: ui.Color.fromARGB(255, 237, 216, 146),
+                                    child: Image.asset(
+                                      'assets/hobbies/${_hobbies[index]}.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  )),
+                              Text(
+                                _hobbies[index],
+                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ));
+                    },
+                  ))
+            ],
+          ),
+        ),
+        ContainerShadow(
+          //MENTORS
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                child: Text(
+                  'Mentors',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                  height: AppLayout.kIconDimension,
+                  child: ListView.builder(
+                    itemCount: _mentors.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Container(
+                          padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                          width: AppLayout.kIconDimension * 1.1,
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                      color: ui.Color.fromARGB(255, 237, 216, 146),
+                                      child: downloadMentors
+                                          ? Image(
+                                              image: _mentorsPics[_mentors[index]]!
+                                                  .image, //TODO: prendere le immagini dal db
+                                              fit: BoxFit.cover,
+                                              height: AppLayout.kIconDimension * 0.8,
+                                              width: AppLayout.kIconDimension * 0.8,
+                                            )
+                                          : Container(
+                                              height: AppLayout.kIconDimension * 0.8,
+                                              width: AppLayout.kIconDimension * 0.8,
+                                            ))),
+                              Text(
+                                _mentors[index],
+                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ));
+                    },
+                  ))
+            ],
+          ),
+        ),
+        Column(
+          //MILESTONES
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: AppLayout.kHeight,
+            ),
+            const Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+              child: Text(
+                'Milestones',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Divider(
+              height: 0,
+              indent: AppLayout.kHorizontalPadding,
+              endIndent: AppLayout.kHorizontalPadding,
+              thickness: 2,
+            ),
+            downloadMilestones
+                ? ListView.builder(
+                    itemCount: _milestones.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ContainerShadow(
+                          child: Column(
+                        children: [
+                          Container(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              downloadMilestones ? _milestones.keys.toList()[index] : '',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              downloadMilestones ? _milestones.values.toList()[index].item1 : '',
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          downloadMilestones
+                              ? Image(
+                                  image: _milestones.values.toList()[index].item2.image,
+                                  //width: AppLayout.kPicDimension,
+                                  width: MediaQuery.sizeOf(context).width*0.8,
+                                  fit: BoxFit.fitWidth,
+                                  alignment: Alignment.center,
+                                )
+                              : Container(
+                                  height: AppLayout.kIconDimension * 0.8,
+                                  width: AppLayout.kIconDimension * 0.8,
+                                )
+                        ],
+                      ));
+                    },
+                  )
+                : Container(
+                    height: AppLayout.kIconDimension * 0.8,
+                    width: AppLayout.kIconDimension * 0.8,
+                  )
+            // Text(
+            //   downloadMilestones ? _milestones.keys.first : '',
+            //   style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            // ),
+            // Text(
+            //   downloadMilestones ? _milestones.values.first.item1 : '',
+            //   style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            // ),
+            // downloadMilestones
+            //     ? Image(
+            //         image: _milestones.values.first.item2.image,
+            //         height: AppLayout.kIconDimension * 0.8,
+            //         width: AppLayout.kIconDimension * 0.8,
+            //         fit: BoxFit.cover,
+            //       )
+            //     : Container(
+            //         height: AppLayout.kIconDimension * 0.8,
+            //         width: AppLayout.kIconDimension * 0.8,
+            //       )
+          ],
+        ),
+      ],
+    ));
   }
 }
