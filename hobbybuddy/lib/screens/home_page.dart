@@ -168,7 +168,7 @@ class _HomePScreenState extends State<HomePScreen> {
               (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () async {
-                    Widget newScreen = const HomePageHobby();
+                    Widget newScreen = HomePageHobby(hobby: _filteredHobbies[index]);
                     Navigator.push(
                       context,
                       ScreenTransition(

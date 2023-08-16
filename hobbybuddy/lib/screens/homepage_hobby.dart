@@ -9,15 +9,19 @@ import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 import 'package:hobbybuddy/services/firebase_queries.dart';
 
+import '../widgets/app_bar.dart';
+
 class HomePageHobby extends StatefulWidget {
-  const HomePageHobby({Key? key}) : super(key: key);
+  const HomePageHobby({Key? key, required this.hobby}) : super(key: key);
+
+  final String hobby;
 
   @override
-  State<HomePageHobby> createState() => _HomePageHobbyState();
+  State<HomePageHobby> createState() => _HomePageHobbyState(hobby);
 }
 
 class _HomePageHobbyState extends State<HomePageHobby> {
-  late String _hobby = "Skateboard"; //TODO: constructor has to be called in order to set this parameter
+  late String _hobby = widget.hobby; //TODO: constructor has to be called in order to set this parameter
   Map<String, bool> _mentors = {};
 
   //icons for the hobby
@@ -44,6 +48,10 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     color: Colors.red,
     size: AppLayout.kIconSize / 2,
   );
+
+  _HomePageHobbyState(String hobby) {
+    _hobby = hobby;
+  }
 
   ///toggles "checkFavouriteHobby" in order to change the icon displayed, updates db and cache
   void toggleFavouriteHobby() async {
@@ -104,9 +112,9 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     setFavouriteStatus();
     retrieveMentors();
     return Scaffold(
-      // appBar: const MyAppBar(
-      //   title: "Home Page Hobby",
-      // ),
+      appBar: const MyAppBar(
+        title: "Home Page Hobby",
+      ),
       body: ListView(
         children: [
           Container(

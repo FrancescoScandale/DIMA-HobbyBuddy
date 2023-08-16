@@ -12,6 +12,8 @@ import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:tuple/tuple.dart';
 
+import '../widgets/app_bar.dart';
+
 class UserPage extends StatefulWidget {
   const UserPage({Key? key}) : super(key: key);
 
@@ -91,9 +93,9 @@ class _UserPageState extends State<UserPage> {
       getMilestones();
     }
     return Scaffold(
-        // appBar: MyAppBar(
-        //   title: "User Profile Page",
-        // ),
+        appBar: const MyAppBar(
+          title: "Profile Page",
+        ),
         body: ListView(
       children: [
         Stack(
