@@ -13,6 +13,7 @@ import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 import 'package:hobbybuddy/screens/change_password.dart';
+import 'package:hobbybuddy/screens/friends_list.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'package:hobbybuddy/main.dart';
 
@@ -116,7 +117,8 @@ class _SettingsScreenState extends State<Settings> {
                   value: Preferences.getBool('isDark'),
                   onChanged: (newValue) {
                     setState(() {
-                      Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
+                      Provider.of<ThemeManager>(context, listen: false)
+                          .toggleTheme(newValue);
                     });
                   },
                   secondary: const Icon(Icons.dark_mode_rounded),
@@ -150,14 +152,21 @@ class _SettingsScreenState extends State<Settings> {
                     );
                   },
                 ),
-                /*ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text("Sign Out"),
-                  //onTap: () async {
-                  //await Provider.of<FirebaseUser>(context, listen: false)
-                  // .signOut();
-                  //},
-                ),*/
+                ListTile(
+                  leading: const Icon(Icons.groups),
+                  title: const Text("My friends"),
+                  trailing: const Icon(Icons.navigate_next),
+                  onTap: () {
+                    Widget newScreen = const MyFriendsScreen();
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                      context,
+                      ScreenTransition(
+                        builder: (context) => newScreen,
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

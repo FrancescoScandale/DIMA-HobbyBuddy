@@ -168,13 +168,18 @@ class _HomePScreenState extends State<HomePScreen> {
               (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () async {
-                    Widget newScreen = HomePageHobby(hobby: _filteredHobbies[index]);
-                    Navigator.push(
-                      context,
-                      ScreenTransition(
-                        builder: (context) => newScreen,
-                      ),
-                    );
+                    Widget newScreen =
+                        HomePageHobby(hobby: _filteredHobbies[index]);
+                    await Navigator.push(
+                        context,
+                        ScreenTransition(
+                          builder: (context) => newScreen,
+                        )).then((_) {
+                      setState(() {
+                        setFavouriteStatus();
+                      });
+                    });
+                    ;
                   },
                   child: Container(
                     child: ContainerShadow(

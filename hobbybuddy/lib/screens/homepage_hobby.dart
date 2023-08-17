@@ -21,7 +21,8 @@ class HomePageHobby extends StatefulWidget {
 }
 
 class _HomePageHobbyState extends State<HomePageHobby> {
-  late String _hobby = widget.hobby; //TODO: constructor has to be called in order to set this parameter
+  late String _hobby = widget
+      .hobby; //TODO: constructor has to be called in order to set this parameter
   Map<String, bool> _mentors = {};
 
   //icons for the hobby
@@ -144,7 +145,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    AppLayout.kModalHorizontalPadding, 0, 0, 0),
                 child: Text(
                   _hobby,
                   style: const TextStyle(
@@ -154,10 +156,12 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
                 child: MyIconButton(
                   onTap: toggleFavouriteHobby,
-                  icon: checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
+                  icon:
+                      checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
                 ),
               ),
             ],
@@ -167,7 +171,8 @@ class _HomePageHobbyState extends State<HomePageHobby> {
           ),
           Container(
             alignment: AlignmentDirectional.topStart,
-            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+                AppLayout.kModalHorizontalPadding, 0, 0, 0),
             child: const Text(
               "Mentors",
               style: TextStyle(
@@ -178,19 +183,25 @@ class _HomePageHobbyState extends State<HomePageHobby> {
           ),
           ContainerShadow(
               margin: const EdgeInsetsDirectional.fromSTEB(
-                  AppLayout.kModalHorizontalPadding, 0, AppLayout.kModalHorizontalPadding, 0),
+                  AppLayout.kModalHorizontalPadding,
+                  0,
+                  AppLayout.kModalHorizontalPadding,
+                  0),
               child: ListView.builder(
                 itemCount: _mentors.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    leading: const Icon(Icons.person), //TODO: mettere la propic del mentore
+                    leading: const Icon(
+                        Icons.person), //TODO: mettere la propic del mentore
                     title: Text(_mentors.keys.elementAt(index)),
                     trailing: MyIconButton(
                       onTap: () {
                         toggleLikeMentor(_mentors.keys.elementAt(index));
                       },
-                      icon: _mentors.values.elementAt(index) ? mentorFavourite : mentorNotFavourite,
+                      icon: _mentors.values.elementAt(index)
+                          ? mentorFavourite
+                          : mentorNotFavourite,
                     ),
                     //onTap: loadMentorProfile(), //TODO: load mentor profile on click
                   );
