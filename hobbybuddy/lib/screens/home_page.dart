@@ -163,7 +163,13 @@ class _HomePScreenState extends State<HomePScreen> {
               ),
             ),
           ),
-          SliverList(
+          SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Two hobbies per row
+              mainAxisSpacing: 16.0,
+              crossAxisSpacing: 16.0,
+              childAspectRatio: 1, // Adjust the aspect ratio as needed
+            ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
                 return GestureDetector(
@@ -253,7 +259,7 @@ class _HomePScreenState extends State<HomePScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          // const SizedBox(height: 8),
                         ],
                       ),
                     ),

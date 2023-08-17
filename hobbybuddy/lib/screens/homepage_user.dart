@@ -175,7 +175,7 @@ class _UserPageState extends State<UserPage> {
                           builder: (context) => newScreen,
                         ),
                       );
-                    }, //TODO: go to settings screen
+                    },
                     icon: Icon(
                       Icons.settings_sharp,
                       size: 1.2 * AppLayout.kButtonHeight,
