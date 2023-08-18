@@ -49,4 +49,13 @@ class Preferences {
   static List<String>? getMentors() {
     return _prefs.getStringList('mentors');
   }
+
+  static Future<bool> setEmail(String username) async {
+    String email = await FirebaseCrud.getEmail(username);
+    return await _prefs.setString('email', email);
+  }
+
+  static String? getEmail() {
+    return _prefs.getString('email');
+  }
 }

@@ -120,8 +120,8 @@ class _HomePScreenState extends State<HomePScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
                     child: Text(
                       'Welcome!',
                       style: TextStyle(
@@ -130,8 +130,8 @@ class _HomePScreenState extends State<HomePScreen> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 8),
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 8),
                     child: Text(
                       'Find your new Passion with Hobby Buddy',
                       style: TextStyle(
@@ -149,7 +149,7 @@ class _HomePScreenState extends State<HomePScreen> {
                         labelText: 'Search a Hobby',
                         prefixIcon: const Icon(Icons.search_sharp),
                         suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
+                          icon: const Icon(Icons.clear),
                           onPressed: () => _searchController.clear(),
                         ),
                         border: OutlineInputBorder(

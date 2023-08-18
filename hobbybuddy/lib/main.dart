@@ -95,7 +95,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
     0: HomePScreen(),
     1: MapsScreen(),
     2: FavouritesScreen(),
-    3: UserPage(),
+    3: UserPage(user: Preferences.getUsername()!),
   };
 
   @override
@@ -146,7 +146,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                 case 3:
                   return CupertinoTabView(
                     navigatorKey: fourthTabNavKey,
-                    builder: (context) => const UserPage(),
+                    builder: (context) => UserPage(user: Preferences.getUsername()!),
                   );
                 default:
                   return const CupertinoTabView();

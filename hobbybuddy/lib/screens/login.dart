@@ -138,18 +138,10 @@ class _LoginFormState extends State<LoginForm> {
                                 await Preferences.setUsername(username.text);
                                 await Preferences.setHobbies(username.text);
                                 await Preferences.setMentors(username.text);
-
-                                // print("username -> ${Preferences.getUsername()}");
-                                // print("hobbies -> ${Preferences.getHobbies()}");
-                                // print("mentors -> ${Preferences.getMentors()}");
+                                await Preferences.setEmail(username.text);
                               }
                             });
                             if (check) {
-                              // ignore: use_build_context_synchronously
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Found!')),
-                              );
-
                               Widget newScreen = const BottomNavigationBarApp();
                               // ignore: use_build_context_synchronously
                               Navigator.push(
@@ -161,7 +153,7 @@ class _LoginFormState extends State<LoginForm> {
                             } else {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Data not found...")),
+                                const SnackBar(content: Text("Account not found...")),
                               );
                             }
                           }
