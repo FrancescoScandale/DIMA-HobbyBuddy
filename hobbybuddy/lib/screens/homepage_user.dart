@@ -4,10 +4,12 @@ import 'dart:ui' as ui;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hobbybuddy/screens/add_milestone.dart';
 import 'package:hobbybuddy/screens/settings.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/preferences.dart';
+import 'package:hobbybuddy/widgets/button.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
 
 import 'package:hobbybuddy/widgets/container_shadow.dart';
@@ -108,11 +110,6 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: used for the uploads
-    DateTime timestamp = DateTime.timestamp();
-    String ts = timestamp.toString().split('.')[0].replaceAll(' ', '_');
-    // print('timestamp -> $timestamp');
-    // print('used timestamp -> $ts');
     if (_location == '') {
       computeLocation();
       getMentorsImages();
@@ -312,15 +309,39 @@ class _UserPageState extends State<UserPage> {
                 Container(
                   height: AppLayout.kHeight,
                 ),
-                const Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
-                  child: Text(
-                    'Milestones',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                      child: Text(
+                        'Milestones',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
+                    Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, AppLayout.kHorizontalPadding, 0),
+                        child: SizedBox(
+                          width: 125,
+                          height: 35,
+                          child: MyButton(text: '+ Milestone', edge: 5,onPressed: () async {
+                              Widget newScreen = AddMilestone(user: _username);
+                              Navigator.push(
+                                context,
+                                ScreenTransition(
+                                  builder: (context) => newScreen,
+                                ),
+                              );
+                            },
+                          ),
+                        ))
+                  ],
+                ),
+                Container(
+                  height: AppLayout.kHeightSmall,
                 ),
                 const Divider(
                   height: 0,
@@ -336,35 +357,35 @@ class _UserPageState extends State<UserPage> {
                           return ContainerShadow(
                               //color: ui.Color(0xffffcc80), //TODO?
                               child: Column(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      downloadMilestones ? _milestones.keys.toList()[index] : '',
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  Container(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      downloadMilestones ? _milestones.values.toList()[index].item1 : '',
-                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  downloadMilestones
-                                      ? Image(
-                                          image: _milestones.values.toList()[index].item2.image,
-                                          //width: AppLayout.kPicDimension,
-                                          width: MediaQuery.sizeOf(context).width * 0.8,
-                                          fit: BoxFit.fitWidth,
-                                          alignment: Alignment.center,
-                                        )
-                                      : Container(
-                                          height: AppLayout.kIconDimension * 0.8,
-                                          width: AppLayout.kIconDimension * 0.8,
-                                        )
-                                ],
-                              ));
+                            children: [
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  downloadMilestones ? _milestones.keys.toList()[index] : '',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  downloadMilestones ? _milestones.values.toList()[index].item1 : '',
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              downloadMilestones
+                                  ? Image(
+                                      image: _milestones.values.toList()[index].item2.image,
+                                      //width: AppLayout.kPicDimension,
+                                      width: MediaQuery.sizeOf(context).width * 0.8,
+                                      fit: BoxFit.fitWidth,
+                                      alignment: Alignment.center,
+                                    )
+                                  : Container(
+                                      height: AppLayout.kIconDimension * 0.8,
+                                      width: AppLayout.kIconDimension * 0.8,
+                                    )
+                            ],
+                          ));
                         },
                       )
                     : Container(
