@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 
@@ -134,6 +136,52 @@ class FirebaseCrud {
         print('Check Favourite Hobby: $allHobbies');
       }
       return allHobbies;
+    } catch (e) {
+      print(e.toString());
+      return []; // Return an empty list in case of error
+    }
+  }
+
+  static Future<List<String>> getFriends(String user) async {
+    List<String> result = [];
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        String tmp = snapshot.docs[0].get("friends") as String;
+        result = tmp.split(',');
+      }
+
+      print('friends: $result');
+      return result;
+    } catch (e) {
+      print(e.toString());
+      return []; // Return an empty list in case of error
+    }
+  }
+
+  static Future<List<String>> getAllOtherUsernames(String user) async {
+    List<String> result = [];
+
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection("users").get();
+
+      for (var doc in snapshot.docs) {
+        String username = doc.get("username") as String;
+        if (username != user) {
+          result.add(username);
+        }
+      }
+
+      List<String> userFriends = await getFriends(user);
+      result.removeWhere((username) => userFriends.contains(username));
+      print('All other usernames: $result');
+      return result;
     } catch (e) {
       print(e.toString());
       return []; // Return an empty list in case of error

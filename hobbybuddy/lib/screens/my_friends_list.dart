@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
-//import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/preferences.dart';
 
 import 'package:hobbybuddy/widgets/button_icon.dart';
 
@@ -24,7 +25,7 @@ class _MyFriendsListState extends State<MyFriendsList> {
   @override
   void initState() {
     super.initState();
-    //retrivefriends();
+    retriveFriends();
     _searchController.addListener(_performSearch);
   }
 
@@ -41,18 +42,17 @@ class _MyFriendsListState extends State<MyFriendsList> {
       }
     });
   }
-/* Future<void> retriveHobbies() async {
-    if (_hobbies.isEmpty) {
-      List<String> hobbies = await FirebaseCrud.getHobbies();
+
+  Future<void> retriveFriends() async {
+    String username = Preferences.getUsername()!;
+    if (_friends.isEmpty) {
+      List<String> friends = await FirebaseCrud.getFriends(username);
       setState(() {
-        _hobbies = hobbies;
-        _filteredHobbies = _hobbies;
-        checkFavouriteHobby =
-            List.generate(_filteredHobbies.length, (_) => false);
+        _friends = friends;
+        _filteredFriends = _friends;
       });
     }
-    setFavouriteStatus(); // Call this after retrieving hobbies
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
