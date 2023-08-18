@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hobbybuddy/widgets/button_icon.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -13,7 +14,12 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.upRightActions,
     this.shape,
   });
-
+  static Widget acceptRequests(context) => MyIconButton(
+        margin: const EdgeInsets.only(right: 40),
+        onTap: () async {},
+        icon:
+            Icon(Icons.add_circle, color: Theme.of(context).primaryColorLight),
+      );
   @override
   Widget build(BuildContext context) {
     return AppBar(

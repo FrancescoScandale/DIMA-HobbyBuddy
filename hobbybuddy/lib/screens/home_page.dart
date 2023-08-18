@@ -7,6 +7,7 @@ import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 import 'package:hobbybuddy/screens/homepage_hobby.dart';
+import 'package:hobbybuddy/widgets/button_icon.dart';
 
 class HomePScreen extends StatefulWidget {
   const HomePScreen({super.key});
@@ -19,7 +20,7 @@ class _HomePScreenState extends State<HomePScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _addressController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
-
+  bool alphabeticAsc = true;
   List<String> _hobbies = [];
   List<bool> checkFavouriteHobby = [];
   List<String> _filteredHobbies = [];
@@ -115,7 +116,7 @@ class _HomePScreenState extends State<HomePScreen> {
             floating: true,
             pinned: true,
             snap: true,
-            expandedHeight: 133, // Adjust as needed
+            expandedHeight: 166, // Adjust as needed
             flexibleSpace: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,6 +158,30 @@ class _HomePScreenState extends State<HomePScreen> {
                         ),
                       ),
                       onChanged: (_) => _performSearch(),
+                    ),
+                  ),
+                  Padding(
+                    //mainAxisAlignment: MainAxisAlignment.end,
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 3, 20, 3),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        MyIconButton(
+                          icon: const Icon(Icons.sort_by_alpha_outlined),
+                          onTap: () {
+                            setState(() {
+                              alphabeticAsc = !alphabeticAsc;
+                              alphabeticAsc
+                                  ? _filteredHobbies.sort((a, b) => a
+                                      .toLowerCase()
+                                      .compareTo(b.toLowerCase()))
+                                  : _filteredHobbies.sort((a, b) => b
+                                      .toLowerCase()
+                                      .compareTo(a.toLowerCase()));
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -277,3 +302,23 @@ class _HomePScreenState extends State<HomePScreen> {
     );
   }
 }
+/*child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        MyIconButton(
+                          icon: const Icon(Icons.sort_by_alpha_outlined),
+                          onTap: () {
+                            setState(() {
+                              alphabeticAsc = !alphabeticAsc;
+                              alphabeticAsc
+                                  ? _filteredHobbies.sort((a, b) => a
+                                      .toLowerCase()
+                                      .compareTo(b.toLowerCase()))
+                                  : _filteredHobbies.sort((a, b) => b
+                                      .toLowerCase()
+                                      .compareTo(a.toLowerCase()));
+                            });
+                          },
+                        ),
+                      ],
+                    ),*/
