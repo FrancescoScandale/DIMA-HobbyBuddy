@@ -327,7 +327,7 @@ class _UserPageState extends State<UserPage> {
                         child: SizedBox(
                           width: 125,
                           height: 35,
-                          child: MyButton(text: '+ Milestone', edge: 5,onPressed: () async {
+                          child: MyButton(text: '+ Milestone', edge: 5, onPressed: () async {
                               Widget newScreen = AddMilestone(user: _username);
                               Navigator.push(
                                 context,
