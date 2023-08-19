@@ -112,7 +112,7 @@ class _UserPageState extends State<UserPage> {
               children: [
                 SizedBox(
                     height: _backgroundPadding,
-                    child: Image(
+                    child: const Image(
                       image: AssetImage(
                           'assets/pics/background.jpg'), //TODO: prendere l'immagine dal db
                       alignment: Alignment.topCenter,
@@ -166,7 +166,7 @@ class _UserPageState extends State<UserPage> {
                       ],
                     )),
                 MyIconButton(
-                    margin: EdgeInsets.only(right: 30),
+                    margin: const EdgeInsets.only(right: 30),
                     onTap: () async {
                       Widget newScreen = const Settings();
                       Navigator.push(
@@ -176,7 +176,7 @@ class _UserPageState extends State<UserPage> {
                         ),
                       );
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.settings_sharp,
                       size: 1.2 * AppLayout.kButtonHeight,
                     ))
@@ -214,7 +214,7 @@ class _UserPageState extends State<UserPage> {
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
                                       child: Container(
-                                        color: ui.Color(0xffffcc80),
+                                        color: const ui.Color(0xffffcc80),
                                         child: Image.asset(
                                           'assets/hobbies/${_hobbies[index]}.png',
                                           fit: BoxFit.contain,
@@ -222,7 +222,7 @@ class _UserPageState extends State<UserPage> {
                                       )),
                                   Text(
                                     _hobbies[index],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold),
                                   )
@@ -265,7 +265,7 @@ class _UserPageState extends State<UserPage> {
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
                                       child: Container(
-                                          color: ui.Color(0xffffcc80),
+                                          color: const ui.Color(0xffffcc80),
                                           child: downloadMentors
                                               ? Image(
                                                   image: _mentorsPics[
@@ -338,7 +338,7 @@ class _UserPageState extends State<UserPage> {
                                   downloadMilestones
                                       ? _milestones.keys.toList()[index]
                                       : '',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -349,7 +349,7 @@ class _UserPageState extends State<UserPage> {
                                   downloadMilestones
                                       ? _milestones.values.toList()[index].item1
                                       : '',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold),
                                 ),

@@ -256,6 +256,26 @@ class FirebaseCrud {
     }
   }
 
+  static Future<List<String>> getReceivedRequest(String username) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: username)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String receivedRequestString =
+            userDoc.docs[0].get("receivedReq") as String;
+        List<String> receivedRequests = receivedRequestString.split(',');
+        return receivedRequests;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return [];
+  }
+
   static Future<void> addSentRequest(String user, String friendToAdd) async {
     try {
       final userDoc = await FirebaseFirestore.instance

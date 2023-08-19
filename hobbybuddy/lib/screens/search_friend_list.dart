@@ -126,84 +126,81 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                 itemBuilder: (context, index) {
                   final friendName = _filteredFriends[index];
                   final bool isPending = _pendingRequests.contains(friendName);
-                  return Container(
-                    child: GestureDetector(
-                      onTap: () async {
-                        Widget newScreen = const UserPage();
-                        Navigator.push(
-                          context,
-                          ScreenTransition(
-                            builder: (context) => newScreen,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      20, 3, 0, 0),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        AppLayout.kProfilePicRadiusLarge),
-                                    child: Image.asset(
-                                      'assets/pics/propic.jpg',
-                                      width: AppLayout.kProfilePicRadius,
-                                      height: AppLayout.kProfilePicRadius,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  // Wrap with Expanded widget
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .spaceBetween, // Align text and icon to the extremes
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 20.0),
-                                        child: Text(
-                                          _filteredFriends[index],
-                                          style: const TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      MyIconButton(
-                                        icon: Icon(
-                                          isPending
-                                              ? Icons.pending
-                                              : Icons.add_circle,
-                                          color: isPending
-                                              ? Colors.grey
-                                              : Theme.of(context)
-                                                  .primaryColorLight,
-                                        ),
-                                        margin:
-                                            const EdgeInsets.only(right: 20),
-                                        onTap: () {
-                                          if (!isPending) {
-                                            _showAddFriendDialog(friendName);
-                                          } else {
-                                            _showRemoveFriendDialog(friendName);
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 15),
-                          ],
+                  return GestureDetector(
+                    onTap: () async {
+                      Widget newScreen = const UserPage();
+                      Navigator.push(
+                        context,
+                        ScreenTransition(
+                          builder: (context) => newScreen,
                         ),
+                      );
+                    },
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    20, 3, 0, 0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      AppLayout.kProfilePicRadiusLarge),
+                                  child: Image.asset(
+                                    'assets/pics/propic.jpg',
+                                    width: AppLayout.kProfilePicRadius,
+                                    height: AppLayout.kProfilePicRadius,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                // Wrap with Expanded widget
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween, // Align text and icon to the extremes
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 20.0),
+                                      child: Text(
+                                        _filteredFriends[index],
+                                        style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    MyIconButton(
+                                      icon: Icon(
+                                        isPending
+                                            ? Icons.pending
+                                            : Icons.add_circle,
+                                        color: isPending
+                                            ? Colors.grey
+                                            : Theme.of(context)
+                                                .primaryColorLight,
+                                      ),
+                                      margin: const EdgeInsets.only(right: 20),
+                                      onTap: () {
+                                        if (!isPending) {
+                                          _showAddFriendDialog(friendName);
+                                        } else {
+                                          _showRemoveFriendDialog(friendName);
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                        ],
                       ),
                     ),
                   );
@@ -226,15 +223,15 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
             text: TextSpan(
               style: DefaultTextStyle.of(context).style,
               children: <TextSpan>[
-                TextSpan(
-                  text: 'Do you want to send $friendName a friend request?',
+                const TextSpan(
+                  text: 'Do you want to send ',
                 ),
                 TextSpan(
                   text: friendName,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const TextSpan(
-                  text: '?',
+                  text: ' a friendship request?',
                 ),
               ],
             ),

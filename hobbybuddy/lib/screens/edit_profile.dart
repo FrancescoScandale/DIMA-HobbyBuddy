@@ -47,13 +47,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       controller: _usernameController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.face),
-                        border: const OutlineInputBorder(),
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.face),
+                        border: OutlineInputBorder(),
                         hintText: "Insert new username here",
                         labelText: 'Your new username',
-                        labelStyle:
-                            const TextStyle(fontStyle: FontStyle.italic),
+                        labelStyle: TextStyle(fontStyle: FontStyle.italic),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -65,13 +64,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _nameController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.shortcut_rounded),
-                        border: const OutlineInputBorder(),
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.shortcut_rounded),
+                        border: OutlineInputBorder(),
                         hintText: "Insert new name here",
                         labelText: 'Your new name',
-                        labelStyle:
-                            const TextStyle(fontStyle: FontStyle.italic),
+                        labelStyle: TextStyle(fontStyle: FontStyle.italic),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -83,14 +81,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _surnameController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.shortcut_rounded),
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.shortcut_rounded),
                         //prefixIcon: const Icon(Icons.perm_identity),
-                        border: const OutlineInputBorder(),
+                        border: OutlineInputBorder(),
                         hintText: "Insert new surname here",
                         labelText: 'Your new surname',
-                        labelStyle:
-                            const TextStyle(fontStyle: FontStyle.italic),
+                        labelStyle: TextStyle(fontStyle: FontStyle.italic),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {

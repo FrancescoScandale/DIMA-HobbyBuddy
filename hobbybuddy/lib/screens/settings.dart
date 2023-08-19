@@ -30,7 +30,7 @@ class _SettingsScreenState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: const MyAppBar(
         title: "Settings",
       ),
       body: ListView(
@@ -176,7 +176,7 @@ class _SettingsScreenState extends State<Settings> {
           ),
           Align(
             alignment: Alignment.center,
-            child: Container(
+            child: SizedBox(
               width: 200, // Adjust the width as per your requirement
               height: 50, // Adjust the height as per your requirement
               child: ElevatedButton(

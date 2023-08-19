@@ -30,7 +30,8 @@ Future<void> main() async {
     ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager()),
 
     // GLOBAL TAB CONTROLLER
-    ChangeNotifierProvider<CupertinoTabController>(create: (context) => CupertinoTabController()),
+    ChangeNotifierProvider<CupertinoTabController>(
+        create: (context) => CupertinoTabController()),
   ], child: const Main()));
 }
 
@@ -87,15 +88,16 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
     }
     setState(() {
       currentIndex = index;
-      Provider.of<CupertinoTabController>(context, listen: false).index = currentIndex;
+      Provider.of<CupertinoTabController>(context, listen: false).index =
+          currentIndex;
     });
   }
 
   final Map<int, Widget> screens = {
-    0: HomePScreen(),
-    1: MapsScreen(),
-    2: FavouritesScreen(),
-    3: UserPage(),
+    0: const HomePScreen(),
+    1: const MapsScreen(),
+    2: const FavouritesScreen(),
+    3: const UserPage(),
   };
 
   @override
@@ -104,7 +106,8 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
       body: Stack(
         children: [
           CupertinoTabScaffold(
-            controller: Provider.of<CupertinoTabController>(context, listen: true),
+            controller:
+                Provider.of<CupertinoTabController>(context, listen: true),
             tabBar: CupertinoTabBar(
               onTap: changeTab,
               items: const [

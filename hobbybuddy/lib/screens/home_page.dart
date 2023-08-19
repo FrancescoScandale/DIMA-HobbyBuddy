@@ -121,8 +121,8 @@ class _HomePScreenState extends State<HomePScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
                     child: Text(
                       'Welcome!',
                       style: TextStyle(
@@ -131,8 +131,8 @@ class _HomePScreenState extends State<HomePScreen> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 8),
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 8),
                     child: Text(
                       'Find your new Passion with Hobby Buddy',
                       style: TextStyle(
@@ -150,7 +150,7 @@ class _HomePScreenState extends State<HomePScreen> {
                         labelText: 'Search a Hobby',
                         prefixIcon: const Icon(Icons.search_sharp),
                         suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
+                          icon: const Icon(Icons.clear),
                           onPressed: () => _searchController.clear(),
                         ),
                         border: OutlineInputBorder(
@@ -210,83 +210,79 @@ class _HomePScreenState extends State<HomePScreen> {
                         setFavouriteStatus();
                       });
                     });
-                    ;
                   },
-                  child: Container(
-                    child: ContainerShadow(
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            alignment: Alignment.bottomRight,
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                height:
-                                    120, // Adjust the image height as needed
+                  child: ContainerShadow(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 120, // Adjust the image height as needed
 
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: ui.Color(0xffffcc80),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Theme.of(context)
-                                          .shadowColor
-                                          .withOpacity(0.2),
-                                      spreadRadius: 1,
-                                      blurRadius: 1,
-                                      offset: const Offset(0, 1.5),
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Image.asset(
-                                    "assets/hobbies/${_filteredHobbies[index]}.png",
-                                    width: 90,
-                                    height: 90,
-                                    fit: BoxFit.cover,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const ui.Color(0xffffcc80),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .shadowColor
+                                        .withOpacity(0.2),
+                                    spreadRadius: 1,
+                                    blurRadius: 1,
+                                    offset: const Offset(0, 1.5),
                                   ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  "assets/hobbies/${_filteredHobbies[index]}.png",
+                                  width: 90,
+                                  height: 90,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                              Container(
-                                alignment: Alignment.bottomRight,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      (checkFavouriteHobby[index]
-                                          ? Icons.favorite
-                                          : Icons.favorite_border),
-                                      color: Colors.red,
-                                    ),
-                                    SizedBox(width: 8),
-                                  ],
-                                ),
+                            ),
+                            Container(
+                              alignment: Alignment.bottomRight,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    (checkFavouriteHobby[index]
+                                        ? Icons.favorite
+                                        : Icons.favorite_border),
+                                    color: Colors.red,
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
                               ),
-                            ],
-                          ),
-                          const SizedBox(
-                              height: 8), // Spacing between image and title
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0), // Add left padding
-                                child: Text(_filteredHobbies[index],
-                                    style: TextStyle(fontSize: 17)),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(
-                                    right: 8.0), // Add right padding
-                                child: Icon(Icons.navigate_next),
-                              ),
-                            ],
-                          ),
-                          // const SizedBox(height: 8),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                            height: 8), // Spacing between image and title
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0), // Add left padding
+                              child: Text(_filteredHobbies[index],
+                                  style: const TextStyle(fontSize: 17)),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                  right: 8.0), // Add right padding
+                              child: Icon(Icons.navigate_next),
+                            ),
+                          ],
+                        ),
+                        // const SizedBox(height: 8),
+                      ],
                     ),
                   ),
                 );
