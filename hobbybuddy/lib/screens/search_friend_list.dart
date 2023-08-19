@@ -24,7 +24,14 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
   void initState() {
     super.initState();
     retriveUsers();
+    retriveSentRequests();
     _searchController.addListener(_performSearch);
+  }
+
+  @override
+  void didUpdateWidget(SearchFriendsList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    retriveSentRequests(); // Update pending requests when widget updates
   }
 
   Future<void> _performSearch() async {
@@ -52,6 +59,16 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
     }
   }
 
+  Future<void> retriveSentRequests() async {
+    String username = Preferences.getUsername()!;
+    if (_pendingRequests.isEmpty) {
+      List<String> sentRequests = await FirebaseCrud.getSentRequest(username);
+      setState(() {
+        _pendingRequests = sentRequests;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +85,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                   labelText: 'Search for a friend',
                   prefixIcon: const Icon(Icons.search_sharp),
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
                     onPressed: () => _searchController.clear(),
                   ),
                   border: OutlineInputBorder(
@@ -108,7 +125,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                 // Number of rectangles you want to display
                 itemBuilder: (context, index) {
                   final friendName = _filteredFriends[index];
-                  final isPending = _pendingRequests.contains(friendName);
+                  final bool isPending = _pendingRequests.contains(friendName);
                   return Container(
                     child: GestureDetector(
                       onTap: () async {
@@ -169,9 +186,12 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                                               : Theme.of(context)
                                                   .primaryColorLight,
                                         ),
-                                        margin: EdgeInsets.only(right: 20),
+                                        margin:
+                                            const EdgeInsets.only(right: 20),
                                         onTap: () {
                                           if (!isPending) {
+                                            _showAddFriendDialog(friendName);
+                                          } else {
                                             _showRemoveFriendDialog(friendName);
                                           }
                                         },
@@ -196,25 +216,51 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
     );
   }
 
-  Future<void> _showRemoveFriendDialog(String friendName) async {
+  Future<void> _showAddFriendDialog(String friendName) async {
     bool confirmAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add a new Buddy!'),
-          content: Text('Do you want to send $friendName a friend request?'),
+          title: const Text('Add a new Buddy!'),
+          content: RichText(
+            text: TextSpan(
+              style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                TextSpan(
+                  text: 'Do you want to send $friendName a friend request?',
+                ),
+                TextSpan(
+                  text: friendName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const TextSpan(
+                  text: '?',
+                ),
+              ],
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true); // Confirmed action
               },
-              child: Text('Send'),
+              child: const Text(
+                'Send',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false); // Canceled action
               },
-              child: Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         );
@@ -228,6 +274,69 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
 
       await FirebaseCrud.addSentRequest(Preferences.getUsername()!, friendName);
       await FirebaseCrud.addReceivedRequest(
+          friendName, Preferences.getUsername()!);
+    }
+  }
+
+  Future<void> _showRemoveFriendDialog(String friendName) async {
+    bool confirmAction = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Friend'),
+          content: RichText(
+            text: TextSpan(
+              style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                const TextSpan(
+                  text: 'Do you want to delete the friendship request to ',
+                ),
+                TextSpan(
+                  text: friendName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const TextSpan(
+                  text: '?',
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Confirmed action
+              },
+              child: const Text(
+                'Confirm',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Canceled action
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmAction == true) {
+      setState(() {
+        _pendingRequests.remove(friendName);
+      });
+
+      await FirebaseCrud.removeSentRequest(
+          Preferences.getUsername()!, friendName);
+      await FirebaseCrud.removeReceivedRequest(
           friendName, Preferences.getUsername()!);
     }
   }

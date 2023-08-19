@@ -76,7 +76,7 @@ class _MyFriendsListState extends State<MyFriendsList> {
                   labelText: 'Search for a friend',
                   prefixIcon: const Icon(Icons.search_sharp),
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
                     onPressed: () => _searchController.clear(),
                   ),
                   border: OutlineInputBorder(
@@ -169,7 +169,8 @@ class _MyFriendsListState extends State<MyFriendsList> {
                                         icon: Icon(Icons.person_remove,
                                             color: Theme.of(context)
                                                 .primaryColorLight),
-                                        margin: EdgeInsets.only(right: 20),
+                                        margin:
+                                            const EdgeInsets.only(right: 20),
                                         onTap: () {
                                           _showRemoveFriendDialog(
                                               _filteredFriends[index]);
@@ -201,20 +202,44 @@ class _MyFriendsListState extends State<MyFriendsList> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Remove Friend'),
-          content: Text('Do you want to remove $friendName from your friends?'),
+          title: const Text('Remove Friend'),
+          content: RichText(
+            text: TextSpan(
+              style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                const TextSpan(text: 'Do you want to remove '),
+                TextSpan(
+                  text: friendName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const TextSpan(
+                  text: ' from your friends?',
+                ),
+              ],
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true); // Confirmed action
               },
-              child: Text('Remove'),
+              child: const Text(
+                'Remove',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false); // Canceled action
               },
-              child: Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         );

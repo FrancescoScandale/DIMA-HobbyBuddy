@@ -232,6 +232,30 @@ class FirebaseCrud {
     }
   }
 
+  static Future<void> removeReceivedRequest(
+      String user, String friendToRemove) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String tmp = userDoc.docs[0].get("receivedReq") as String;
+        List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
+
+        friendList.remove(friendToRemove);
+
+        String updatedFriendString = friendList.join(',');
+
+        await userDoc.docs[0].reference
+            .update({'receivedReq': updatedFriendString});
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   static Future<void> addSentRequest(String user, String friendToAdd) async {
     try {
       final userDoc = await FirebaseFirestore.instance
@@ -253,6 +277,49 @@ class FirebaseCrud {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  static Future<void> removeSentRequest(
+      String user, String friendToRemove) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String tmp = userDoc.docs[0].get("sentReq") as String;
+        List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
+
+        friendList.remove(friendToRemove);
+
+        String updatedFriendString = friendList.join(',');
+
+        await userDoc.docs[0].reference
+            .update({'sentReq': updatedFriendString});
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  static Future<List<String>> getSentRequest(String username) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: username)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String sentRequestString = userDoc.docs[0].get("sentReq") as String;
+        List<String> sentRequests = sentRequestString.split(',');
+        return sentRequests;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return [];
   }
 
   static Future<List<String>> getAllOtherUsernames(String user) async {
