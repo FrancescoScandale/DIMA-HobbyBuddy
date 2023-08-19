@@ -164,6 +164,97 @@ class FirebaseCrud {
     }
   }
 
+  static Future<void> removeFriend(String user, String friendToRemove) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String tmp = userDoc.docs[0].get("friends") as String;
+        List<String> friendList = tmp.split(',');
+
+        friendList.remove(friendToRemove);
+        String updatedFriendString = friendList.join(',');
+
+        await userDoc.docs[0].reference
+            .update({'friends': updatedFriendString});
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  static Future<void> addFriend(String user, String friendToAdd) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String tmp = userDoc.docs[0].get("friends") as String;
+        List<String> friendList = tmp.split(',');
+
+        friendList.add(friendToAdd);
+        String updatedFriendString = friendList.join(',');
+
+        await userDoc.docs[0].reference
+            .update({'friends': updatedFriendString});
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  static Future<void> addReceivedRequest(
+      String user, String friendToAdd) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String tmp = userDoc.docs[0].get("receivedReq") as String;
+        List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
+
+        friendList.add(friendToAdd);
+
+        String updatedFriendString = friendList.join(',');
+
+        await userDoc.docs[0].reference
+            .update({'receivedReq': updatedFriendString});
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  static Future<void> addSentRequest(String user, String friendToAdd) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: user)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        String tmp = userDoc.docs[0].get("sentReq") as String;
+        List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
+
+        friendList.add(friendToAdd);
+
+        String updatedFriendString = friendList.join(',');
+
+        await userDoc.docs[0].reference
+            .update({'sentReq': updatedFriendString});
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   static Future<List<String>> getAllOtherUsernames(String user) async {
     List<String> result = [];
 

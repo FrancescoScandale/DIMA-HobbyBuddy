@@ -17,8 +17,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   static Widget acceptRequests(context) => MyIconButton(
         margin: const EdgeInsets.only(right: 40),
         onTap: () async {},
-        icon:
-            Icon(Icons.add_circle, color: Theme.of(context).primaryColorLight),
+        icon: Icon(Icons.person_add_alt_1,
+            color: Theme.of(context).primaryColorLight),
       );
   @override
   Widget build(BuildContext context) {

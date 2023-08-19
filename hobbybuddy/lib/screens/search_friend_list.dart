@@ -19,7 +19,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
   bool alphabeticAsc = true;
   List<String> _friends = [];
   List<String> _filteredFriends = [];
-
+  List<String> _pendingRequests = [];
   @override
   void initState() {
     super.initState();
@@ -107,6 +107,8 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                 itemCount: _filteredFriends.length,
                 // Number of rectangles you want to display
                 itemBuilder: (context, index) {
+                  final friendName = _filteredFriends[index];
+                  final isPending = _pendingRequests.contains(friendName);
                   return Container(
                     child: GestureDetector(
                       onTap: () async {
@@ -157,9 +159,22 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                                           ),
                                         ),
                                       ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(right: 25.0),
-                                        child: Icon(Icons.navigate_next),
+                                      MyIconButton(
+                                        icon: Icon(
+                                          isPending
+                                              ? Icons.pending
+                                              : Icons.add_circle,
+                                          color: isPending
+                                              ? Colors.grey
+                                              : Theme.of(context)
+                                                  .primaryColorLight,
+                                        ),
+                                        margin: EdgeInsets.only(right: 20),
+                                        onTap: () {
+                                          if (!isPending) {
+                                            _showRemoveFriendDialog(friendName);
+                                          }
+                                        },
                                       ),
                                     ],
                                   ),
@@ -179,5 +194,41 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
         ),
       ),
     );
+  }
+
+  Future<void> _showRemoveFriendDialog(String friendName) async {
+    bool confirmAction = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add a new Buddy!'),
+          content: Text('Do you want to send $friendName a friend request?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Confirmed action
+              },
+              child: Text('Send'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Canceled action
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmAction == true) {
+      setState(() {
+        _pendingRequests.add(friendName); // Add friend to pending requests
+      });
+
+      await FirebaseCrud.addSentRequest(Preferences.getUsername()!, friendName);
+      await FirebaseCrud.addReceivedRequest(
+          friendName, Preferences.getUsername()!);
+    }
   }
 }

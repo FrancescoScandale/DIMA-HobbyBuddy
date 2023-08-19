@@ -165,9 +165,15 @@ class _MyFriendsListState extends State<MyFriendsList> {
                                           ),
                                         ),
                                       ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(right: 25.0),
-                                        child: Icon(Icons.navigate_next),
+                                      MyIconButton(
+                                        icon: Icon(Icons.person_remove,
+                                            color: Theme.of(context)
+                                                .primaryColorLight),
+                                        margin: EdgeInsets.only(right: 20),
+                                        onTap: () {
+                                          _showRemoveFriendDialog(
+                                              _filteredFriends[index]);
+                                        },
                                       ),
                                     ],
                                   ),
@@ -187,5 +193,42 @@ class _MyFriendsListState extends State<MyFriendsList> {
         ),
       ),
     );
+  }
+
+  // Method to show the confirmation dialog
+  Future<void> _showRemoveFriendDialog(String friendName) async {
+    bool confirmAction = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Remove Friend'),
+          content: Text('Do you want to remove $friendName from your friends?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Confirmed action
+              },
+              child: Text('Remove'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Canceled action
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmAction == true) {
+      setState(() {
+        _friends.remove(friendName);
+        _filteredFriends.remove(friendName);
+      });
+
+      await FirebaseCrud.removeFriend(Preferences.getUsername()!, friendName);
+      await FirebaseCrud.removeFriend(friendName, Preferences.getUsername()!);
+    }
   }
 }
