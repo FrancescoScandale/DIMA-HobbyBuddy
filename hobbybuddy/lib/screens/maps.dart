@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hobbybuddy/services/preferences.dart';
 
 const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 const double startingZoom = 17;
@@ -64,9 +65,9 @@ class MapState extends State<MapClass> {
       markerId: MarkerId(id),
       position: LatLng(lat, lng),
       infoWindow: InfoWindow(
-        title: windowTitle,
-        snippet: windowSnippet,
-        //onTap: ... -> TODO: this function could be used to see the buddy's profile
+        title: windowTitle, //hobby name
+        snippet: windowSnippet, //mentor
+        //onTap: ... -> TODO: this function could be used to see the mentor's profile
       ),
       icon: BitmapDescriptor.fromBytes(markerIcon),
     );
@@ -77,12 +78,12 @@ class MapState extends State<MapClass> {
     return;
   }
 
-  //TODO: only retrieve the markers from the hobbies the user is interested in
   Future<void> retrieveMarkers() async {
-    await FirebaseFirestore.instance.collection("markers").get().then(
+    List<String> hobbies = Preferences.getHobbies()!;
+    await FirebaseFirestore.instance.collection("markers").where('title', whereIn: hobbies).get().then(
       (querySnapshot) {
         for (var doc in querySnapshot.docs) {
-          createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["snippet"]);
+          createMarker(doc.id, double.parse(doc["lat"]), double.parse(doc["lng"]), doc["title"], doc["mentor"]);
         }
       },
       onError: (e) => print("Error completing: $e"),
@@ -94,7 +95,9 @@ class MapState extends State<MapClass> {
     return Scaffold(
       body: GoogleMap(
         initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
-        onMapCreated: (GoogleMapController controller) {
+        onMapCreated: (GoogleMapController controller) async {
+          String style = await DefaultAssetBundle.of(context).loadString('assets/map_style.json');
+          controller.setMapStyle(style);
           mapController = controller;
           retrieveMarkers();
         },

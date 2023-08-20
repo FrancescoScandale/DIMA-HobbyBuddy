@@ -20,13 +20,24 @@ import 'package:hobbybuddy/main.dart';
 String logo = 'assets/logo.png';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+  const Settings({Key? key, required this.username, required this.profilePicture}) : super(key: key);
+
+  final String username;
+  final Image profilePicture;
 
   @override
-  State<Settings> createState() => _SettingsScreenState();
+  State<Settings> createState() => _SettingsScreenState(username, profilePicture);
 }
 
 class _SettingsScreenState extends State<Settings> {
+  late String _username;
+  late Image _propic;
+
+  _SettingsScreenState(String user, Image propic) {
+    _username = user;
+    _propic = propic;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,8 +70,8 @@ class _SettingsScreenState extends State<Settings> {
                       padding: const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(80),
-                        child: Image.asset(
-                          logo,
+                        child: Image(
+                          image: _propic.image,
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
@@ -68,28 +79,28 @@ class _SettingsScreenState extends State<Settings> {
                       ),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Mr. Rogers',
-                            style: TextStyle(
+                            _username,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               //color: Colors.white,
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                             child: Text(
-                              'Mr.Rogers@gmail.com',
-                              style: TextStyle(
-                                fontSize: 18,
+                              Preferences.getEmail()!,
+                              style: const TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                                 //color: Colors.white,
                               ),
