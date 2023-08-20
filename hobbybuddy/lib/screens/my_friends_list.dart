@@ -117,7 +117,8 @@ class _MyFriendsListState extends State<MyFriendsList> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () async {
-                      Widget newScreen = const UserPage();
+                      Widget newScreen =
+                          UserPage(user: _filteredFriends[index]);
                       Navigator.push(
                         context,
                         ScreenTransition(

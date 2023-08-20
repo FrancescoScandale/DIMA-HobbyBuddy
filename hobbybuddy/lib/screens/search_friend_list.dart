@@ -128,7 +128,8 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                   final bool isPending = _pendingRequests.contains(friendName);
                   return GestureDetector(
                     onTap: () async {
-                      Widget newScreen = const UserPage();
+                      Widget newScreen =
+                          UserPage(user: _filteredFriends[index]);
                       Navigator.push(
                         context,
                         ScreenTransition(
