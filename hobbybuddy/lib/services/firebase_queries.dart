@@ -150,13 +150,10 @@ class FirebaseCrud {
           .collection("users")
           .where("username", isEqualTo: user)
           .get();
-
       if (snapshot.docs.isNotEmpty) {
         String tmp = snapshot.docs[0].get("friends") as String;
         result = tmp.split(',');
       }
-
-      print('friends: $result');
       return result;
     } catch (e) {
       print(e.toString());
@@ -174,10 +171,8 @@ class FirebaseCrud {
       if (userDoc.docs.isNotEmpty) {
         String tmp = userDoc.docs[0].get("friends") as String;
         List<String> friendList = tmp.split(',');
-
         friendList.remove(friendToRemove);
         String updatedFriendString = friendList.join(',');
-
         await userDoc.docs[0].reference
             .update({'friends': updatedFriendString});
       }
@@ -196,10 +191,8 @@ class FirebaseCrud {
       if (userDoc.docs.isNotEmpty) {
         String tmp = userDoc.docs[0].get("friends") as String;
         List<String> friendList = tmp.split(',');
-
         friendList.add(friendToAdd);
         String updatedFriendString = friendList.join(',');
-
         await userDoc.docs[0].reference
             .update({'friends': updatedFriendString});
       }
@@ -219,11 +212,8 @@ class FirebaseCrud {
       if (userDoc.docs.isNotEmpty) {
         String tmp = userDoc.docs[0].get("receivedReq") as String;
         List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
-
         friendList.add(friendToAdd);
-
         String updatedFriendString = friendList.join(',');
-
         await userDoc.docs[0].reference
             .update({'receivedReq': updatedFriendString});
       }
@@ -241,7 +231,7 @@ class FirebaseCrud {
           .get();
 
       if (userDoc.docs.isNotEmpty) {
-        String tmp = userDoc.docs[0].get("receivedReq") as String;
+        String tmp = userDoc.docs[0].get("receivedReq");
         List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
 
         friendList.remove(friendToRemove);
@@ -266,7 +256,9 @@ class FirebaseCrud {
       if (userDoc.docs.isNotEmpty) {
         String receivedRequestString =
             userDoc.docs[0].get("receivedReq") as String;
-        List<String> receivedRequests = receivedRequestString.split(',');
+        List<String> receivedRequests = receivedRequestString.isNotEmpty
+            ? receivedRequestString.split(',')
+            : [];
         return receivedRequests;
       }
     } catch (e) {
@@ -286,11 +278,8 @@ class FirebaseCrud {
       if (userDoc.docs.isNotEmpty) {
         String tmp = userDoc.docs[0].get("sentReq") as String;
         List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
-
         friendList.add(friendToAdd);
-
         String updatedFriendString = friendList.join(',');
-
         await userDoc.docs[0].reference
             .update({'sentReq': updatedFriendString});
       }
@@ -308,13 +297,10 @@ class FirebaseCrud {
           .get();
 
       if (userDoc.docs.isNotEmpty) {
-        String tmp = userDoc.docs[0].get("sentReq") as String;
+        String tmp = userDoc.docs[0].get("sentReq");
         List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
-
         friendList.remove(friendToRemove);
-
         String updatedFriendString = friendList.join(',');
-
         await userDoc.docs[0].reference
             .update({'sentReq': updatedFriendString});
       }
@@ -358,7 +344,6 @@ class FirebaseCrud {
 
       List<String> userFriends = await getFriends(user);
       result.removeWhere((username) => userFriends.contains(username));
-      print('All other usernames: $result');
       return result;
     } catch (e) {
       print(e.toString());
