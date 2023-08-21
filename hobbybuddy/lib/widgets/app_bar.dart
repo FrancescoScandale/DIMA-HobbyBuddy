@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hobbybuddy/themes/layout.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => const Size.fromHeight(50);
+  Size get preferredSize => const Size.fromHeight(AppLayout.kAppBarHeight);
   final String title;
   final List<Widget>? upRightActions;
   final ShapeBorder? shape;

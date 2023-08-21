@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,12 +15,8 @@ import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:tuple/tuple.dart';
-
-import '../widgets/app_bar.dart';
-
-import 'package:hobbybuddy/screens/settings.dart';
+import 'package:hobbybuddy/widgets/app_bar.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({Key? key, required this.user}) : super(key: key);
@@ -27,10 +24,10 @@ class UserPage extends StatefulWidget {
   final String user;
 
   @override
-  State<UserPage> createState() => _UserPageState(user);
+  State<UserPage> createState() => UserPageState(user);
 }
 
-class _UserPageState extends State<UserPage> {
+class UserPageState extends State<UserPage> {
   late String _username;
   final double _backgroundPadding = 250;
   late String _location = '';
@@ -44,24 +41,23 @@ class _UserPageState extends State<UserPage> {
   bool downloadMilestones = false;
   bool downloadLocations = false;
   bool downloadUserPics = false;
+  bool allowHobbies = false;
 
-  _UserPageState(String user) {
+  UserPageState(String user) {
     _username = user;
   }
 
   void checkCompletions() {
-    if (downloadMentors &&
-        downloadMilestones &&
-        downloadLocations &&
-        downloadUserPics) {
+    if (downloadMentors && downloadMilestones && downloadLocations && downloadUserPics) {
+      allowHobbies = true;
       setState(() {});
     }
   }
 
   void computeLocation() async {
     List<String> coordinates = await FirebaseCrud.getAddress(_username);
-    List<Placemark> addresses = await placemarkFromCoordinates(
-        double.parse(coordinates[0]), double.parse(coordinates[1]));
+    List<Placemark> addresses =
+        await placemarkFromCoordinates(double.parse(coordinates[0]), double.parse(coordinates[1]));
     _location = addresses[0].street! + ', ' + addresses[0].locality!;
 
     downloadLocations = true;
@@ -70,10 +66,7 @@ class _UserPageState extends State<UserPage> {
 
   void getMentorsImages() async {
     for (int i = 0; i < _mentors.length; i++) {
-      String url = await FirebaseStorage.instance
-          .ref()
-          .child('Mentors/${_mentors[i]}/propic.jpg')
-          .getDownloadURL();
+      String url = await FirebaseStorage.instance.ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
       _mentorsPics[_mentors[i]] = Image.network(url);
     }
 
@@ -82,18 +75,15 @@ class _UserPageState extends State<UserPage> {
   }
 
   void getMilestones() async {
-    ListResult result = await FirebaseStorage.instance
-        .ref()
-        .child('Users/${Preferences.getUsername()}/milestones/')
-        .listAll();
+    ListResult result =
+        await FirebaseStorage.instance.ref().child('Users/${Preferences.getUsername()}/milestones/').listAll();
 
     int len = (result.prefixes[0].fullPath.split('/')).length;
     for (Reference prefs in result.prefixes) {
       String tmp = prefs.fullPath.split('/')[len - 1];
       Uint8List? cap = await FirebaseStorage.instance
           .ref()
-          .child(
-              'Users/${Preferences.getUsername()}/milestones/$tmp/caption.txt')
+          .child('Users/${Preferences.getUsername()}/milestones/$tmp/caption.txt')
           .getData();
       Uint8List? image = await FirebaseStorage.instance
           .ref()
@@ -107,20 +97,19 @@ class _UserPageState extends State<UserPage> {
   }
 
   void getUserPics() async {
-    Uint8List? propicData = await FirebaseStorage.instance
-        .ref()
-        .child('Users/${Preferences.getUsername()}/propic.jpg')
-        .getData();
-    Uint8List? backgroundData = await FirebaseStorage.instance
-        .ref()
-        .child('Users/${Preferences.getUsername()}/background.jpg')
-        .getData();
+    Uint8List? propicData =
+        await FirebaseStorage.instance.ref().child('Users/${Preferences.getUsername()}/propic.jpg').getData();
+    Uint8List? backgroundData =
+        await FirebaseStorage.instance.ref().child('Users/${Preferences.getUsername()}/background.jpg').getData();
 
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);
 
     downloadUserPics = true;
     checkCompletions();
+  }
+
+  static void newMilestone() {
   }
 
   @override
@@ -152,13 +141,9 @@ class _UserPageState extends State<UserPage> {
                         : Container()),
                 Container(
                     padding: EdgeInsetsDirectional.fromSTEB(
-                        2 * AppLayout.kModalHorizontalPadding,
-                        2 * _backgroundPadding / 3,
-                        0,
-                        0),
+                        2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          AppLayout.kProfilePicRadiusLarge),
+                      borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
                       child: downloadUserPics
                           ? Image(
                               image: propic.image,
@@ -176,10 +161,7 @@ class _UserPageState extends State<UserPage> {
               children: [
                 Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
-                        AppLayout.kModalHorizontalPadding,
-                        AppLayout.kHeightSmall,
-                        0,
-                        0),
+                        AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -229,8 +211,7 @@ class _UserPageState extends State<UserPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(
-                        AppLayout.kHorizontalPadding, 0, 0, 0),
+                    padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
                     child: Text(
                       'Hobbies',
                       style: TextStyle(
@@ -246,8 +227,7 @@ class _UserPageState extends State<UserPage> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return Container(
-                              padding: const EdgeInsetsDirectional.symmetric(
-                                  horizontal: AppLayout.kHorizontalPadding),
+                              padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
                               width: AppLayout.kIconDimension,
                               child: Column(
                                 children: [
@@ -255,17 +235,22 @@ class _UserPageState extends State<UserPage> {
                                       borderRadius: BorderRadius.circular(20),
                                       child: Container(
                                         color: ui.Color(0xffffcc80),
-                                        child: Image.asset(
-                                          'assets/hobbies/${_hobbies[index]}.png',
-                                          fit: BoxFit.contain,
-                                        ),
+                                        child: allowHobbies
+                                            ? Image.asset(
+                                                'assets/hobbies/${_hobbies[index]}.png',
+                                                fit: BoxFit.contain,
+                                              )
+                                            : Container(
+                                                height: AppLayout.kIconDimension * 0.8,
+                                                width: AppLayout.kIconDimension * 0.8,
+                                              ),
                                       )),
-                                  Text(
-                                    _hobbies[index],
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold),
-                                  )
+                                  allowHobbies
+                                      ? Text(
+                                          _hobbies[index],
+                                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                        )
+                                      : Container()
                                 ],
                               ));
                         },
@@ -281,8 +266,7 @@ class _UserPageState extends State<UserPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(
-                        AppLayout.kHorizontalPadding, 0, 0, 0),
+                    padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
                     child: Text(
                       'Mentors',
                       style: TextStyle(
@@ -298,8 +282,7 @@ class _UserPageState extends State<UserPage> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return Container(
-                              padding: const EdgeInsetsDirectional.symmetric(
-                                  horizontal: AppLayout.kHorizontalPadding),
+                              padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
                               width: AppLayout.kIconDimension * 1.1,
                               child: Column(
                                 children: [
@@ -309,31 +292,22 @@ class _UserPageState extends State<UserPage> {
                                           color: ui.Color(0xffffcc80),
                                           child: downloadMentors
                                               ? Image(
-                                                  image: _mentorsPics[
-                                                          _mentors[index]]!
+                                                  image: _mentorsPics[_mentors[index]]!
                                                       .image, //TODO: prendere le immagini dal db
                                                   fit: BoxFit.cover,
-                                                  height:
-                                                      AppLayout.kIconDimension *
-                                                          0.8,
-                                                  width:
-                                                      AppLayout.kIconDimension *
-                                                          0.8,
+                                                  height: AppLayout.kIconDimension * 0.8,
+                                                  width: AppLayout.kIconDimension * 0.8,
                                                 )
                                               : Container(
-                                                  height:
-                                                      AppLayout.kIconDimension *
-                                                          0.8,
-                                                  width:
-                                                      AppLayout.kIconDimension *
-                                                          0.8,
+                                                  height: AppLayout.kIconDimension * 0.8,
+                                                  width: AppLayout.kIconDimension * 0.8,
                                                 ))),
-                                  Text(
-                                    _mentors[index],
-                                    style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold),
-                                  )
+                                  downloadMentors
+                                      ? Text(
+                                          _mentors[index],
+                                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                        )
+                                      : Container()
                                 ],
                               ));
                         },
@@ -352,8 +326,7 @@ class _UserPageState extends State<UserPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
-                          AppLayout.kHorizontalPadding, 0, 0, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
                       child: Text(
                         'Milestones',
                         style: TextStyle(
@@ -363,8 +336,7 @@ class _UserPageState extends State<UserPage> {
                       ),
                     ),
                     Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            0, 0, AppLayout.kHorizontalPadding, 0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, AppLayout.kHorizontalPadding, 0),
                         child: SizedBox(
                           width: 125,
                           height: 35,
@@ -378,7 +350,9 @@ class _UserPageState extends State<UserPage> {
                                 ScreenTransition(
                                   builder: (context) => newScreen,
                                 ),
-                              );
+                              ).then((_) {
+                                getMilestones();
+                              });
                             },
                           ),
                         ))
@@ -394,7 +368,10 @@ class _UserPageState extends State<UserPage> {
                   thickness: 2,
                 ),
                 downloadMilestones
-                    ? ListView.builder(
+                    ? SizedBox(
+                        child: ListView.builder(
+                        reverse: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: _milestones.length,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
@@ -405,34 +382,21 @@ class _UserPageState extends State<UserPage> {
                               Container(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                  downloadMilestones
-                                      ? _milestones.keys.toList()[index]
-                                      : '',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
+                                  downloadMilestones ? _milestones.keys.toList()[index] : '',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Container(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                  downloadMilestones
-                                      ? _milestones.values.toList()[index].item1
-                                      : '',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
+                                  downloadMilestones ? _milestones.values.toList()[index].item1 : '',
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                                 ),
                               ),
                               downloadMilestones
                                   ? Image(
-                                      image: _milestones.values
-                                          .toList()[index]
-                                          .item2
-                                          .image,
-                                      //width: AppLayout.kPicDimension,
-                                      width: MediaQuery.sizeOf(context).width *
-                                          0.8,
+                                      image: _milestones.values.toList()[index].item2.image,
+                                      width: MediaQuery.sizeOf(context).width * 0.8,
                                       fit: BoxFit.fitWidth,
                                       alignment: Alignment.center,
                                     )
@@ -443,7 +407,7 @@ class _UserPageState extends State<UserPage> {
                             ],
                           ));
                         },
-                      )
+                      ))
                     : Container(
                         height: AppLayout.kIconDimension * 0.8,
                         width: AppLayout.kIconDimension * 0.8,

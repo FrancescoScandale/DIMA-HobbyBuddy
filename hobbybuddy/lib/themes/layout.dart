@@ -46,4 +46,7 @@ class AppLayout {
 
   /// Pictures dimesions
   static const double kPicDimension = 500.0;
+
+  /// AppBar height
+  static const double kAppBarHeight = 50.0;
 }

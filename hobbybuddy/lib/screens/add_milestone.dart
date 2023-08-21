@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hobbybuddy/screens/settings.dart';
+import 'package:hobbybuddy/screens/homepage_user.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/button.dart';
@@ -27,6 +29,7 @@ class _AddMilestoneState extends State<AddMilestone> {
   final ImagePicker picker = ImagePicker();
   late File _imageFile;
   bool _imagePicked = false;
+  bool _notUploaded = true;
 
   _AddMilestoneState(String user) {
     _username = user;
@@ -46,6 +49,15 @@ class _AddMilestoneState extends State<AddMilestone> {
     });
   }
 
+  void uploadMilestone() async {
+    String ts = DateTime.timestamp().toString().split('.')[0].replaceAll(' ', '_');
+
+    FirebaseStorage.instance.ref().child('Users/$_username/milestones/$ts/caption.txt').putString(caption.text);
+    await FirebaseStorage.instance.ref().child('Users/$_username/milestones/$ts/pic.jpg').putFile(_imageFile);
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +66,8 @@ class _AddMilestoneState extends State<AddMilestone> {
         ),
         body: ListView(
           //padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
-          padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, AppLayout.kHorizontalPadding, 100),
+          padding:
+              const EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, AppLayout.kHorizontalPadding, 100),
           children: [
             Container(
               height: AppLayout.kVerticalPadding,
@@ -79,10 +92,11 @@ class _AddMilestoneState extends State<AddMilestone> {
               ),
             ),
             const SizedBox(height: 20),
-            _imagePicked ? Image.file(
-              _imageFile,
-              height: 500,
-              ) : Container(),
+            _imagePicked
+                ? Image.file(
+                    _imageFile,
+                  )
+                : Container(),
             const SizedBox(height: 10),
             Container(
                 margin: EdgeInsetsDirectional.symmetric(horizontal: 150),
@@ -93,18 +107,21 @@ class _AddMilestoneState extends State<AddMilestone> {
                     ),
                     child: const Icon(Icons.add_a_photo))),
             const SizedBox(height: 30),
-            MyButton(
-              text: 'Upload Milestone',
-              onPressed: () {}, //TODO: mettere su firebase
-            ),
+            _notUploaded
+                ? MyButton(
+                    text: 'Upload Milestone',
+                    onPressed: () {
+                      setState(() {
+                        _notUploaded = false;
+                      });
+                      uploadMilestone();
+                    },
+                  )
+                : MyButton(
+                    text: 'Uploading...',
+                    onPressed: () {},
+                  ),
           ],
         ));
   }
 }
-
-
-//TODO: used for the uploads
-// DateTime timestamp = DateTime.timestamp();
-// String ts = timestamp.toString().split('.')[0].replaceAll(' ', '_');
-    // print('timestamp -> $timestamp');
-    // print('used timestamp -> $ts');
