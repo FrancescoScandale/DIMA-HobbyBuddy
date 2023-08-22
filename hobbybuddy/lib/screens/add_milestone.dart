@@ -2,16 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:hobbybuddy/screens/settings.dart';
-import 'package:hobbybuddy/screens/homepage_user.dart';
-import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/button.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:hobbybuddy/widgets/app_bar.dart';
-import 'package:hobbybuddy/widgets/button_icon.dart';
 
 class AddMilestone extends StatefulWidget {
   const AddMilestone({Key? key, required this.user}) : super(key: key);
@@ -43,10 +38,14 @@ class _AddMilestoneState extends State<AddMilestone> {
 
   Future pickImage() async {
     final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _imageFile = File(pickedFile!.path);
-      _imagePicked = true;
-    });
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _imagePicked = true;
+      });
+    }
+
+    return;
   }
 
   void uploadMilestone() async {
@@ -84,10 +83,10 @@ class _AddMilestoneState extends State<AddMilestone> {
                 ),
                 // The validator receives the text that the user has entered.
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'false';
+                  if (value == null || value.isEmpty || value.trim().isEmpty) {
+                    return 'You missed to enter the caption...';
                   }
-                  return 'true';
+                  return null;
                 },
               ),
             ),
@@ -111,10 +110,22 @@ class _AddMilestoneState extends State<AddMilestone> {
                 ? MyButton(
                     text: 'Upload Milestone',
                     onPressed: () {
-                      setState(() {
-                        _notUploaded = false;
-                      });
-                      uploadMilestone();
+                      //if (_formKey.currentState!.validate()) {
+                      if (caption.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Need to insert a caption...")),
+                        );
+                      } else if (!_imagePicked) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Need to upload an image...")),
+                        );
+                      } else {
+                        setState(() {
+                          _notUploaded = false;
+                        });
+                        uploadMilestone();
+                      }
+                      //}
                     },
                   )
                 : MyButton(
