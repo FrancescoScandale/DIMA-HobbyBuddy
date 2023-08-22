@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hobbybuddy/screens/homepage_mentor.dart';
 import 'package:hobbybuddy/services/preferences.dart';
+import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 const double startingZoom = 17;
@@ -56,7 +58,7 @@ class MapState extends State<MapClass> {
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
-  void createMarker(String id, double lat, double lng, String windowTitle, String windowSnippet) async {
+  void createMarker(String id, double lat, double lng, String windowTitle, String windowMentor) async {
     Marker marker;
 
     final Uint8List markerIcon = await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
@@ -66,8 +68,16 @@ class MapState extends State<MapClass> {
       position: LatLng(lat, lng),
       infoWindow: InfoWindow(
         title: windowTitle, //hobby name
-        snippet: windowSnippet, //mentor
-        //onTap: ... -> TODO: this function could be used to see the mentor's profile
+        snippet: windowMentor, //mentor
+        onTap: () {
+            Widget newScreen = MentorPage(mentor: windowMentor);
+            Navigator.push(
+              context,
+              ScreenTransition(
+                builder: (context) => newScreen,
+              ),
+            );
+          }
       ),
       icon: BitmapDescriptor.fromBytes(markerIcon),
     );

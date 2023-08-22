@@ -49,4 +49,7 @@ class AppLayout {
 
   /// AppBar height
   static const double kAppBarHeight = 50.0;
+
+  /// Hobby icon dimension
+  static const double kHobbyDimension = 40.0;
 }

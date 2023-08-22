@@ -1,3 +1,8 @@
+/*
+  Separators for the upcoming classes in the firebase firestore db
+  Fields for the same upcoming class are separated by ;;
+*/
+
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,6 +12,7 @@ import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
+import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 class MentorPage extends StatefulWidget {
@@ -32,12 +38,12 @@ class _MentorPageState extends State<MentorPage> {
   Icon mentorNotFavourite = const Icon(
     Icons.favorite_border,
     color: Colors.red,
-    size: AppLayout.kIconSize / 2,
+    size: AppLayout.kIconSize,
   );
   Icon mentorFavourite = const Icon(
     Icons.favorite,
     color: Colors.red,
-    size: AppLayout.kIconSize / 2,
+    size: AppLayout.kIconSize,
   );
 
   _MentorPageState(String mentor) {
@@ -96,11 +102,13 @@ class _MentorPageState extends State<MentorPage> {
       getMentorPics();
       getInfo();
     }
+    FirebaseCrud.getUpcomingClasses(_mentor);
     return Scaffold(
-        appBar: const MyAppBar(
-          title: "Mentor Page",
-        ),
-        body: ListView(children: [
+      appBar: const MyAppBar(
+        title: "Mentor Page",
+      ),
+      body: ListView(
+        children: [
           Stack(
             //IMAGES
             children: [
@@ -156,34 +164,61 @@ class _MentorPageState extends State<MentorPage> {
                       ),
                     ],
                   )),
-              Padding(
+              MyIconButton(
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
-                child: MyIconButton(
-                  onTap: toggleLikeMentor,
-                  icon: favourite ? mentorFavourite : mentorNotFavourite,
-                ),
+                onTap: toggleLikeMentor,
+                icon: favourite ? mentorFavourite : mentorNotFavourite,
               ),
-              // MyIconButton(
-              //     margin: const EdgeInsets.only(right: 30),
-              //     onTap: () async {
-              //       Widget newScreen = Settings(
-              //         username: _username,
-              //         profilePicture: propic,
-              //       );
-              //       Navigator.push(
-              //         context,
-              //         ScreenTransition(
-              //           builder: (context) => newScreen,
-              //         ),
-              //       );
-              //     },
-              //     icon: const Icon(
-              //       Icons.settings_sharp,
-              //       size: 1.2 * AppLayout.kButtonHeight,
-              //     ))
             ],
           ),
-        ]));
+          Container(
+            height: AppLayout.kHeightSmall,
+          ),
+          Container(
+            alignment: AlignmentDirectional.topStart,
+            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            child: const Text(
+              "Upcoming Classes",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ContainerShadow(
+              margin: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, AppLayout.kHorizontalPadding, 0),
+              //HOBBIES
+              //color: ui.Color(0xffffcc80), //TODO?
+              child: ListView.builder(
+                itemCount: 5,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: downloadInfo ? Image.asset(
+                      'assets/hobbies/$_hobby.png',
+                      height: AppLayout.kHobbyDimension,
+                      fit: BoxFit.cover,
+                      color: Colors.yellow, //yellow, grey, orangeAccent
+                    ) : Container( //TODO: CHECK THESE DIMENSIONS
+                      width: 10,
+                      height: 10,
+                    ),
+                    title: Text('Skateboard'),
+                    trailing: Column(
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text("12/7"),
+                        Text("12:45")
+                      ],
+                    ),
+                  );
+                },
+              )),
+        ],
+      ),
+    );
   }
 }
 
