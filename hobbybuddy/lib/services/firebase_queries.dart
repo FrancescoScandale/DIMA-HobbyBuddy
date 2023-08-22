@@ -367,6 +367,22 @@ class FirebaseCrud {
     }
   }
 
+  static Future<String> getHobby(String mentor) async {
+    String hobby = '';
+    try {
+      await FirebaseFirestore.instance
+          .collection("mentors")
+          .where("name", isEqualTo: mentor.split(' ')[0])
+          .where("surname", isEqualTo: mentor.split(' ')[1])
+          .get()
+          .then((value) => hobby = value.docs[0]['hobby']);
+    } on FirebaseException catch (e) {
+      print(e.message!);
+    }
+
+    return hobby;
+  }
+
   ///operation = 'add' or 'remove' based on the update to be done on the database
   static Future<void> updateFavouriteMentors(String username, String mentor, String operation) async {
     List<String> mentors = [];

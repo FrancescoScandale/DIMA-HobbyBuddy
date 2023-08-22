@@ -1,32 +1,203 @@
-import 'dart:convert';
-import 'dart:ui' as ui;
+import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hobbybuddy/screens/add_milestone.dart';
-import 'package:hobbybuddy/screens/homepage_hobby.dart';
-import 'package:hobbybuddy/screens/homepage_mentor.dart';
-import 'package:hobbybuddy/screens/settings.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
-import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:hobbybuddy/widgets/button.dart';
+import 'package:hobbybuddy/themes/layout.dart';
+import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
-import 'package:hobbybuddy/widgets/container_shadow.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:tuple/tuple.dart';
-import 'package:hobbybuddy/widgets/app_bar.dart';
 
-class UserPage extends StatefulWidget {
-  const UserPage({Key? key, required this.user}) : super(key: key);
+class MentorPage extends StatefulWidget {
+  const MentorPage({Key? key, required this.mentor}) : super(key: key);
 
-  final String user;
+  final String mentor;
 
   @override
-  State<UserPage> createState() => _UserPageState(user);
+  State<MentorPage> createState() => _MentorPageState(mentor);
 }
+
+class _MentorPageState extends State<MentorPage> {
+  late String _mentor;
+  late String _hobby;
+  final double _backgroundPadding = 250;
+  late Image propic;
+  late Image background;
+  bool favourite = false;
+  bool completed = false;
+  bool downloadMentorPics = false;
+  bool downloadInfo = false;
+
+  Icon mentorNotFavourite = const Icon(
+    Icons.favorite_border,
+    color: Colors.red,
+    size: AppLayout.kIconSize / 2,
+  );
+  Icon mentorFavourite = const Icon(
+    Icons.favorite,
+    color: Colors.red,
+    size: AppLayout.kIconSize / 2,
+  );
+
+  _MentorPageState(String mentor) {
+    _mentor = mentor;
+  }
+
+  void checkCompletions() {
+    if (downloadMentorPics && downloadInfo) {
+      completed = true;
+      setState(() {});
+    }
+  }
+
+  void getInfo() async {
+    _hobby = await FirebaseCrud.getHobby(_mentor);
+
+    downloadInfo = true;
+    checkCompletions();
+  }
+
+  void getMentorPics() async {
+    Uint8List? propicData = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/propic.jpg').getData();
+    Uint8List? backgroundData = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/background.jpg').getData();
+
+    propic = Image.memory(propicData!);
+    background = Image.memory(backgroundData!);
+
+    downloadMentorPics = true;
+    checkCompletions();
+  }
+
+  ///toggles the bool in _mentors<Mentor,Like> to change the displayed icon, updates db and cache
+  void toggleLikeMentor() async {
+    String username = Preferences.getUsername()!;
+
+    favourite = !favourite;
+
+    if (favourite) {
+      //add the new favourite mentor in db
+      await FirebaseCrud.updateFavouriteMentors(username, _mentor, 'add');
+    } else {
+      //remove the favourite mentor from db
+      await FirebaseCrud.updateFavouriteMentors(username, _mentor, 'remove');
+    }
+
+    //update cache
+    await Preferences.setMentors(username);
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!completed) {
+      favourite = Preferences.getMentors()!.contains(_mentor);
+      getMentorPics();
+      getInfo();
+    }
+    return Scaffold(
+        appBar: const MyAppBar(
+          title: "Mentor Page",
+        ),
+        body: ListView(children: [
+          Stack(
+            //IMAGES
+            children: [
+              SizedBox(
+                  height: _backgroundPadding,
+                  width: MediaQuery.sizeOf(context).width,
+                  child: downloadMentorPics
+                      ? Image(
+                          image: background.image,
+                          alignment: Alignment.center,
+                          fit: BoxFit.fitHeight,
+                        )
+                      : Container()),
+              Container(
+                  padding: EdgeInsetsDirectional.fromSTEB(
+                      2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
+                    child: downloadMentorPics
+                        ? Image(
+                            image: propic.image,
+                            width: AppLayout.kProfilePicRadiusLarge,
+                            height: AppLayout.kProfilePicRadiusLarge,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(),
+                  ))
+            ],
+          ),
+          Row(
+            //INFO
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        downloadInfo ? _mentor : '',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        downloadInfo ? _hobby : '',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  )),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
+                child: MyIconButton(
+                  onTap: toggleLikeMentor,
+                  icon: favourite ? mentorFavourite : mentorNotFavourite,
+                ),
+              ),
+              // MyIconButton(
+              //     margin: const EdgeInsets.only(right: 30),
+              //     onTap: () async {
+              //       Widget newScreen = Settings(
+              //         username: _username,
+              //         profilePicture: propic,
+              //       );
+              //       Navigator.push(
+              //         context,
+              //         ScreenTransition(
+              //           builder: (context) => newScreen,
+              //         ),
+              //       );
+              //     },
+              //     icon: const Icon(
+              //       Icons.settings_sharp,
+              //       size: 1.2 * AppLayout.kButtonHeight,
+              //     ))
+            ],
+          ),
+        ]));
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
 
 class _UserPageState extends State<UserPage> {
   late String _username;
@@ -239,8 +410,7 @@ class _UserPageState extends State<UserPage> {
                               width: AppLayout.kIconDimension,
                               child: Column(
                                 children: [
-                                  MyIconButton(
-                                    icon: ClipRRect(
+                                  ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
                                       child: Container(
                                         color: ui.Color(0xffffcc80),
@@ -254,16 +424,6 @@ class _UserPageState extends State<UserPage> {
                                                 width: AppLayout.kIconDimension * 0.8,
                                               ),
                                       )),
-                                    onTap: () {
-                                        Widget newScreen = HomePageHobby(hobby: _hobbies[index],);
-                                        Navigator.push(
-                                          context,
-                                          ScreenTransition(
-                                            builder: (context) => newScreen,
-                                          ),
-                                        );
-                                      }
-                                    ),
                                   allowHobbies
                                       ? Text(
                                           _hobbies[index],
@@ -295,7 +455,7 @@ class _UserPageState extends State<UserPage> {
                     ),
                   ),
                   SizedBox(
-                      height: AppLayout.kIconDimension+10,
+                      height: AppLayout.kIconDimension,
                       child: ListView.builder(
                         itemCount: _mentors.length,
                         scrollDirection: Axis.horizontal,
@@ -305,15 +465,14 @@ class _UserPageState extends State<UserPage> {
                               width: AppLayout.kIconDimension * 1.1,
                               child: Column(
                                 children: [
-                                  MyIconButton(
-                                    icon: ClipRRect(
+                                  ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
                                       child: Container(
                                           color: ui.Color(0xffffcc80),
                                           child: downloadMentors
                                               ? Image(
                                                   image: _mentorsPics[_mentors[index]]!
-                                                      .image,
+                                                      .image, //TODO: prendere le immagini dal db
                                                   fit: BoxFit.cover,
                                                   height: AppLayout.kIconDimension * 0.8,
                                                   width: AppLayout.kIconDimension * 0.8,
@@ -322,18 +481,6 @@ class _UserPageState extends State<UserPage> {
                                                   height: AppLayout.kIconDimension * 0.8,
                                                   width: AppLayout.kIconDimension * 0.8,
                                                 ))),
-                                    onTap: () {
-                                        Widget newScreen = MentorPage(
-                                          mentor: _mentors[index],
-                                        );
-                                        Navigator.push(
-                                          context,
-                                          ScreenTransition(
-                                            builder: (context) => newScreen,
-                                          ),
-                                        );
-                                      }),
-                                  
                                   downloadMentors
                                       ? Text(
                                           _mentors[index],
@@ -450,3 +597,4 @@ class _UserPageState extends State<UserPage> {
         ));
   }
 }
+*/
