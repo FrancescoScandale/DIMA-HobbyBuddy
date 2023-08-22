@@ -1,7 +1,10 @@
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
+
+String logo = 'assets/logo.png';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -28,9 +31,57 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _surnameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
   bool _passwordInvisible = true;
+  bool _isUsernameNotUnique = false;
+
+  Future<bool> isUsernameUnique(String username) async {
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('users') // Change 'users' to your actual collection name
+        .where('username', isEqualTo: username)
+        .get();
+
+    return snapshot.docs.isEmpty;
+  }
+
+  Future<void> addUserToFirestore() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String username = _usernameController.text;
+    String name = _nameController.text;
+    String surname = _surnameController.text;
+
+    // Add a new document with automatic ID to the "users" collection
+    await FirebaseFirestore.instance.collection('users').add({
+      'email': email,
+      'friends': '',
+      'hobbies': '',
+      'location': '',
+      'mentors': '',
+      'password': password,
+      'receivedReq': '',
+      'sentReq': '',
+      'username': username,
+      'name': name,
+      'surname': surname,
+    });
+
+    // Proceed with any additional logic or navigation
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _nameController.dispose();
+    _surnameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +96,8 @@ class _SignUpFormState extends State<SignUpForm> {
             const SizedBox(height: 20),
             TextFormField(
               key: const Key("username_field"),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              controller: _usernameController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.face),
                 border: OutlineInputBorder(),
@@ -58,9 +111,15 @@ class _SignUpFormState extends State<SignUpForm> {
                 return null;
               },
             ),
+            if (_isUsernameNotUnique)
+              const Text(
+                'This username is already taken. Please choose a different one.',
+                style: TextStyle(color: Colors.red),
+              ),
             const SizedBox(height: 20),
             TextFormField(
               key: const Key("name_field"),
+              controller: _nameController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.perm_identity),
                 border: OutlineInputBorder(),
@@ -77,6 +136,7 @@ class _SignUpFormState extends State<SignUpForm> {
             const SizedBox(height: 20),
             TextFormField(
               key: const Key("surname_field"),
+              controller: _surnameController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.perm_identity),
                 border: OutlineInputBorder(),
@@ -93,6 +153,7 @@ class _SignUpFormState extends State<SignUpForm> {
             const SizedBox(height: 20),
             TextFormField(
               key: const Key("email_field"),
+              controller: _emailController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.mail),
                 border: OutlineInputBorder(),
@@ -113,6 +174,7 @@ class _SignUpFormState extends State<SignUpForm> {
             const SizedBox(height: 20),
             TextFormField(
               key: const Key("password_field"),
+              controller: _passwordController,
               obscureText: _passwordInvisible,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_open),
@@ -174,7 +236,28 @@ class _SignUpFormState extends State<SignUpForm> {
             MyButton(
               key: const Key("signup_button"),
               text: "Sign up",
-              onPressed: () async {},
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  String enteredUsername = _usernameController.text;
+                  bool isUnique = await isUsernameUnique(enteredUsername);
+
+                  if (isUnique) {
+                    // Username is unique, proceed with sign up logic
+                    await addUserToFirestore();
+                    setState(() {
+                      _isUsernameNotUnique = false;
+                    });
+                    // Show the success dialog
+                    // ignore: use_build_context_synchronously
+                    _showSignUpSuccessDialog(context);
+                  } else {
+                    // Username is not unique, show a warning
+                    setState(() {
+                      _isUsernameNotUnique = true;
+                    });
+                  }
+                }
+              },
             ),
             Container(
               margin: const EdgeInsets.all(20),
@@ -199,6 +282,42 @@ class _SignUpFormState extends State<SignUpForm> {
                 ],
               ),
             )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSignUpSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/logo.png',
+              width: 150,
+              height: 150,
+            ), // Replace with your app logo
+            const SizedBox(height: 16),
+            const Text(
+              'Thank you for joining Hobby Hobby!',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'You can now go back to the main page to log in.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context); // Go back to the main page
+              },
+              child: const Text('Back to Main Page'),
+            ),
           ],
         ),
       ),

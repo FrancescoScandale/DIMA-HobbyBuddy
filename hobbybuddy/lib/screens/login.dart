@@ -2,12 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 
 import 'package:hobbybuddy/widgets/screen_transition.dart';
-
+import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
 import 'package:hobbybuddy/main.dart';
 
-String logo = 'assets/logo.png';
+class LogInScreen extends StatelessWidget {
+  const LogInScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      // todo: remove appBar
+      body: ResponsiveWrapper(
+        hideNavigation: true,
+        child: LoginForm(),
+      ),
+    );
+  }
+}
 
 // Create a Form widget.
 class LoginForm extends StatefulWidget {
@@ -50,7 +63,7 @@ class _LoginFormState extends State<LoginForm> {
         children: [
           const SizedBox(height: 60),
           Image.asset(
-            logo, // Replace with your logo image path
+            'assets/logo.png', // Replace with your logo image path
             width: 150,
             height: 150,
           ),
@@ -58,12 +71,18 @@ class _LoginFormState extends State<LoginForm> {
           Text(
             "Welcome to Hobby Buddy!",
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .displayLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
           Text(
             "Log In",
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .headlineLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
           Form(
             key: _formKey,
@@ -106,7 +125,9 @@ class _LoginFormState extends State<LoginForm> {
                         });
                       },
                       icon: Icon(
-                        _passwordInvisible ? Icons.visibility_off : Icons.visibility,
+                        _passwordInvisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                     ),
                   ),
@@ -130,7 +151,9 @@ class _LoginFormState extends State<LoginForm> {
                           if (_formKey.currentState!.validate()) {
                             bool check = false;
                             //check if credentials present in db
-                            await FirebaseCrud.getUserPwd(username.text, password.text).then((values) async {
+                            await FirebaseCrud.getUserPwd(
+                                    username.text, password.text)
+                                .then((values) async {
                               if (values!.docs.isNotEmpty) {
                                 check = true;
 
@@ -153,14 +176,16 @@ class _LoginFormState extends State<LoginForm> {
                             } else {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Account not found...")),
+                                const SnackBar(
+                                    content: Text("Account not found...")),
                               );
                             }
                           }
                         },
                         child: const Text(
                           'Submit',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
