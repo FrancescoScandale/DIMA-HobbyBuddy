@@ -92,6 +92,7 @@ class FirebaseCrud {
     return result;
   }
 
+  /// retrieves all mentors and sets to true the ones that are favourite
   static Future<Map<String, bool>> getMentors(String hobby) async {
     Map<String, bool> result = {};
     List<String> favouriteMentors = [];

@@ -30,12 +30,13 @@ class UserPageState extends State<UserPage> {
   late String _username;
   final double _backgroundPadding = 250;
   late String _location = '';
-  List<String> _hobbies = Preferences.getHobbies()!;
-  List<String> _mentors = Preferences.getMentors()!;
+  List<String> _hobbies = [];
+  List<String> _mentors = [];
   Map<String, Image> _mentorsPics = {};
   Map<String, Tuple2<String, Image>> _milestones = {};
   late Image propic;
   late Image background;
+  bool downloadHobbies = false;
   bool downloadMentors = false;
   bool downloadMilestones = false;
   bool downloadLocations = false;
@@ -47,10 +48,33 @@ class UserPageState extends State<UserPage> {
   }
 
   void checkCompletions() {
-    if (downloadMentors && downloadMilestones && downloadLocations && downloadUserPics) {
+    if (downloadHobbies &&
+        downloadMentors &&
+        downloadMilestones &&
+        downloadLocations &&
+        downloadUserPics) {
       allowHobbies = true;
+
       setState(() {});
     }
+  }
+
+  void getHobbies() async {
+    _hobbies = await FirebaseCrud.getUserData(_username, 'hobbies');
+    downloadHobbies = true;
+    checkCompletions();
+  }
+
+  void getMentors() async {
+    _mentors = await FirebaseCrud.getUserData(_username, 'mentors');
+
+    for (int i = 0; i < _mentors.length; i++) {
+      String url = await FirebaseStorage.instance.ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
+      _mentorsPics[_mentors[i]] = Image.network(url);
+    }
+
+    downloadMentors = true;
+    checkCompletions();
   }
 
   void computeLocation() async {
@@ -63,31 +87,16 @@ class UserPageState extends State<UserPage> {
     checkCompletions();
   }
 
-  void getMentorsImages() async {
-    for (int i = 0; i < _mentors.length; i++) {
-      String url = await FirebaseStorage.instance.ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
-      _mentorsPics[_mentors[i]] = Image.network(url);
-    }
-
-    downloadMentors = true;
-    checkCompletions();
-  }
-
   void getMilestones() async {
-    ListResult result =
-        await FirebaseStorage.instance.ref().child('Users/${Preferences.getUsername()}/milestones/').listAll();
+    ListResult result = await FirebaseStorage.instance.ref().child('Users/$_username/milestones/').listAll();
 
     int len = (result.prefixes[0].fullPath.split('/')).length;
     for (Reference prefs in result.prefixes) {
       String tmp = prefs.fullPath.split('/')[len - 1];
-      Uint8List? cap = await FirebaseStorage.instance
-          .ref()
-          .child('Users/${Preferences.getUsername()}/milestones/$tmp/caption.txt')
-          .getData();
-      Uint8List? image = await FirebaseStorage.instance
-          .ref()
-          .child('Users/${Preferences.getUsername()}/milestones/$tmp/pic.jpg')
-          .getData();
+      Uint8List? cap =
+          await FirebaseStorage.instance.ref().child('Users/$_username/milestones/$tmp/caption.txt').getData();
+      Uint8List? image =
+          await FirebaseStorage.instance.ref().child('Users/$_username/milestones/$tmp/pic.jpg').getData();
       _milestones[tmp] = Tuple2(utf8.decode(cap!), Image.memory(image!));
     }
 
@@ -96,10 +105,8 @@ class UserPageState extends State<UserPage> {
   }
 
   void getUserPics() async {
-    Uint8List? propicData =
-        await FirebaseStorage.instance.ref().child('Users/${Preferences.getUsername()}/propic.jpg').getData();
-    Uint8List? backgroundData =
-        await FirebaseStorage.instance.ref().child('Users/${Preferences.getUsername()}/background.jpg').getData();
+    Uint8List? propicData = await FirebaseStorage.instance.ref().child('Users/$_username/propic.jpg').getData();
+    Uint8List? backgroundData = await FirebaseStorage.instance.ref().child('Users/$_username/background.jpg').getData();
 
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);
@@ -108,16 +115,16 @@ class UserPageState extends State<UserPage> {
     checkCompletions();
   }
 
-  static void newMilestone() {
-  }
+  static void newMilestone() {}
 
   @override
   Widget build(BuildContext context) {
     if (_location == '') {
-      computeLocation();
-      getMentorsImages();
-      getMilestones();
       getUserPics();
+      computeLocation();
+      getHobbies();
+      getMentors();
+      getMilestones();
     }
     return Scaffold(
         appBar: const MyAppBar(
