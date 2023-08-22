@@ -3,8 +3,7 @@ import 'package:hobbybuddy/widgets/button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
-
-String logo = 'assets/logo.png';
+import 'package:hobbybuddy/services/firebase_queries.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -38,15 +37,6 @@ class _SignUpFormState extends State<SignUpForm> {
   final _passwordController = TextEditingController();
   bool _passwordInvisible = true;
   bool _isUsernameNotUnique = false;
-
-  Future<bool> isUsernameUnique(String username) async {
-    final QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('users') // Change 'users' to your actual collection name
-        .where('username', isEqualTo: username)
-        .get();
-
-    return snapshot.docs.isEmpty;
-  }
 
   Future<void> addUserToFirestore() async {
     String email = _emailController.text;
@@ -239,7 +229,8 @@ class _SignUpFormState extends State<SignUpForm> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   String enteredUsername = _usernameController.text;
-                  bool isUnique = await isUsernameUnique(enteredUsername);
+                  bool isUnique =
+                      await FirebaseCrud.isUsernameUnique(enteredUsername);
 
                   if (isUnique) {
                     // Username is unique, proceed with sign up logic
