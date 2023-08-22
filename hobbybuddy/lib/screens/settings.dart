@@ -15,18 +15,21 @@ import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:hobbybuddy/screens/change_password.dart';
 import 'package:hobbybuddy/screens/friends_list.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
-import 'package:hobbybuddy/main.dart';
+import 'package:hobbybuddy/screens/login.dart';
 
 String logo = 'assets/logo.png';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key, required this.username, required this.profilePicture}) : super(key: key);
+  const Settings(
+      {Key? key, required this.username, required this.profilePicture})
+      : super(key: key);
 
   final String username;
   final Image profilePicture;
 
   @override
-  State<Settings> createState() => _SettingsScreenState(username, profilePicture);
+  State<Settings> createState() =>
+      _SettingsScreenState(username, profilePicture);
 }
 
 class _SettingsScreenState extends State<Settings> {
@@ -96,7 +99,8 @@ class _SettingsScreenState extends State<Settings> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 4, 0, 0),
                             child: Text(
                               Preferences.getEmail()!,
                               style: const TextStyle(
@@ -192,7 +196,7 @@ class _SettingsScreenState extends State<Settings> {
               height: 50, // Adjust the height as per your requirement
               child: ElevatedButton(
                 onPressed: () async {
-                  Widget newScreen = const Main();
+                  Widget newScreen = const LogInScreen(); //Main();
                   // ignore: use_build_context_synchronously
                   await Navigator.of(context, rootNavigator: true).push(
                     ScreenTransition(

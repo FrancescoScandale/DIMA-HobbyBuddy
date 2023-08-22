@@ -102,6 +102,7 @@ class _HomePScreenState extends State<HomePScreen> {
   @override
   void dispose() {
     _addressController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -298,23 +299,3 @@ class _HomePScreenState extends State<HomePScreen> {
     );
   }
 }
-/*child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        MyIconButton(
-                          icon: const Icon(Icons.sort_by_alpha_outlined),
-                          onTap: () {
-                            setState(() {
-                              alphabeticAsc = !alphabeticAsc;
-                              alphabeticAsc
-                                  ? _filteredHobbies.sort((a, b) => a
-                                      .toLowerCase()
-                                      .compareTo(b.toLowerCase()))
-                                  : _filteredHobbies.sort((a, b) => b
-                                      .toLowerCase()
-                                      .compareTo(a.toLowerCase()));
-                            });
-                          },
-                        ),
-                      ],
-                    ),*/

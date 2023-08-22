@@ -1,10 +1,10 @@
 import 'package:hobbybuddy/themes/layout.dart';
-import 'package:hobbybuddy/services/firebase_user.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:hobbybuddy/services/preferences.dart';
+import 'package:hobbybuddy/services/firebase_queries.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -21,9 +21,55 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
   bool _passwordInvisibleOld = true;
   bool _passwordInvisibleNew = true;
 
+  Future<void> changePassword() async {
+    try {
+      String newPassword = _passwordController.text;
+
+      // Retrieve the username from SharedPreferences
+      String? username = Preferences.getUsername();
+      await FirebaseCrud.updatePassword(newPassword, username!);
+
+      // Show a success message or navigate to a success screen
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Password Change'),
+          content: Text('Your password has been changed successfully.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      // Show an error message if the password change fails
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Password Change Error'),
+          content: Text('An error occurred while changing the password.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      print('Password change error: $e');
+    }
+  }
+
   @override
   void dispose() {
     // Clean up the controllers when the widget is disposed.
+    _currentPasswordController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -138,19 +184,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 MyButton(
                   onPressed: () async {
                     if (_formkey.currentState!.validate()) {
-                      bool reauthSuccess = await Provider.of<FirebaseUser>(
-                              context,
-                              listen: false)
-                          .reauthenticationCurrentUser(
-                              context: context,
-                              password: _currentPasswordController.text);
-                      if (reauthSuccess) {
-                        // ignore: use_build_context_synchronously
-                        await Provider.of<FirebaseUser>(context, listen: false)
-                            .updateCurrentUserPassword(
-                                context: context,
-                                newPassword: _passwordController.text);
-                      }
+                      await changePassword();
                     }
                   },
                   text: "Save",
