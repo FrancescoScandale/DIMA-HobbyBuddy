@@ -408,16 +408,15 @@ class FirebaseCrud {
           .where("surname", isEqualTo: mentor.split(' ')[1])
           .get()
           .then((value) {
-        String tmp = value.docs[0]['classes'][0]; //TODO: FINISH THE QUERY -> at 0 we have yellow;;Title description;;12/05;;9:21 -> return the [classes]
-        print(tmp);
-        return [];
+        for (var item in value.docs[0]['classes']) {
+          result.add(item);
+        }
+        return result;
       });
-      //({'password': password});
     } on FirebaseException catch (e) {
       print(e.message!);
-      return result;
     }
-
+    
     return result;
   }
 }
