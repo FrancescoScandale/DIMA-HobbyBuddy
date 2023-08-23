@@ -1,9 +1,12 @@
 /*
-  Separators for the upcoming classes in the firebase firestore db
-  Fields for the same upcoming class are separated by ;;
+  Legend for the upcoming classes in the firebase firestore db
+    Fields for the same upcoming class are separated by ;;
+    Tiers of difficulty are 1,2,3 (1 being the hardest -> gold)
 */
 
+import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +16,7 @@ import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
-import 'package:hobbybuddy/widgets/screen_transition.dart';
+import 'package:tuple/tuple.dart';
 
 class MentorPage extends StatefulWidget {
   const MentorPage({Key? key, required this.mentor}) : super(key: key);
@@ -31,11 +34,12 @@ class _MentorPageState extends State<MentorPage> {
   late Image propic;
   late Image background;
   List<String> _upcomingClasses = [];
+  List<Tuple2<String, Image>> _courses = [];
   bool completed = false;
   bool downloadMentorPics = false;
   bool downloadInfo = false;
   bool downloadClasses = false;
-  String stringa = 'Colors.yellow';
+  bool downloadCourses = false;
 
   bool favourite = false;
   Icon mentorNotFavourite = const Icon(
@@ -54,7 +58,7 @@ class _MentorPageState extends State<MentorPage> {
   }
 
   void checkCompletions() {
-    if (downloadMentorPics && downloadInfo && downloadClasses) {
+    if (downloadMentorPics && downloadInfo && downloadClasses && downloadCourses) {
       completed = true;
       setState(() {});
     }
@@ -85,7 +89,23 @@ class _MentorPageState extends State<MentorPage> {
     checkCompletions();
   }
 
-  ///toggles the bool in _mentors<Mentor,Like> to change the displayed icon, updates db and cache
+  void getCourses() async {
+    ListResult result = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/').listAll();
+
+    int len = (result.prefixes[0].fullPath.split('/')).length;
+    for (Reference prefs in result.prefixes) {
+      String tmp = prefs.fullPath.split('/')[len - 1];
+      Uint8List? title =
+          await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$tmp/title.txt').getData();
+      Uint8List? image = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$tmp/pic.jpg').getData();
+      _courses.add(Tuple2(utf8.decode(title!), Image.memory(image!)));
+    }
+
+    downloadCourses = true;
+    checkCompletions();
+  }
+
+  ///toggles the bool 'favourite' to change the displayed icon, updates db and cache
   void toggleLikeMentor() async {
     String username = Preferences.getUsername()!;
 
@@ -106,9 +126,28 @@ class _MentorPageState extends State<MentorPage> {
   }
 
   ///4294961979=yellow, 4288585374=grey, 4294945600=orangeAccent
-  Color convertColor(int index) {
+  ///Values obtained by using Colors.yellow.value
+  Color convertColor(int level) {
     Color result;
-    result = Color(int.parse(_upcomingClasses[index].split(';;')[0]));
+
+    print(Colors.yellow.value);
+
+    int colorCode = 0;
+    switch (level) {
+      case 1: //hard - yellow
+        colorCode = 4294961979; //Color
+        break;
+      case 2: //medium - grey
+        colorCode = 4288585374;
+        break;
+      case 3: //easy - orangeAccent
+        colorCode = 4294945600;
+        break;
+      default:
+        break;
+    }
+
+    result = Color(colorCode);
 
     return result;
   }
@@ -120,6 +159,7 @@ class _MentorPageState extends State<MentorPage> {
       getMentorPics();
       getInfo();
       getUpcomingClasses();
+      getCourses();
     }
     return Scaffold(
       appBar: const MyAppBar(
@@ -127,8 +167,8 @@ class _MentorPageState extends State<MentorPage> {
       ),
       body: ListView(
         children: [
+          //IMAGES
           Stack(
-            //IMAGES
             children: [
               SizedBox(
                   height: _backgroundPadding,
@@ -156,8 +196,8 @@ class _MentorPageState extends State<MentorPage> {
                   ))
             ],
           ),
+          //INFO
           Row(
-            //INFO
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
@@ -203,39 +243,125 @@ class _MentorPageState extends State<MentorPage> {
               ),
             ),
           ),
+          //UPCOMING CLASSES
           ContainerShadow(
-              margin: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, AppLayout.kHorizontalPadding, 0),
-              //HOBBIES
-              //color: ui.Color(0xffffcc80), //TODO?
-              child: ListView.builder(
-                itemCount: _upcomingClasses.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: downloadInfo
-                        ? Image.asset(
-                            'assets/hobbies/$_hobby.png',
-                            height: AppLayout.kHobbyDimension,
-                            fit: BoxFit.cover,
-                            color: convertColor(index),
-                          )
-                        : Container(
-                            width: 10,
-                            height: 10,
-                          ),
-                    title: Text(_upcomingClasses[index].split(';;')[1]),
-                    trailing: Column(
-                      children: [
-                        const SizedBox(
-                          height: 10,
+            margin: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, AppLayout.kHorizontalPadding, 0),
+            child: downloadInfo
+                ? ListView.builder(
+                    itemCount: _upcomingClasses.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Image.asset(
+                          'assets/hobbies/$_hobby.png',
+                          height: AppLayout.kHobbyDimension,
+                          fit: BoxFit.cover,
+                          color: convertColor(int.parse(_upcomingClasses[index].split(';;')[0])),
                         ),
-                        Text(_upcomingClasses[index].split(';;')[2]),
-                        Text(_upcomingClasses[index].split(';;')[3])
-                      ],
-                    ),
-                  );
-                },
-              )),
+                        title: Text(_upcomingClasses[index].split(';;')[1]),
+                        trailing: Column(
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(_upcomingClasses[index].split(';;')[2]),
+                            Text(_upcomingClasses[index].split(';;')[3])
+                          ],
+                        ),
+                      );
+                    },
+                  )
+                : const SizedBox(
+                    height: 150,
+                  ),
+          ),
+          Container(
+            height: AppLayout.kHeight,
+          ),
+          Container(
+            alignment: AlignmentDirectional.topStart,
+            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            child: const Text(
+              "Courses",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Container(
+            height: AppLayout.kHeightSmall,
+          ),
+          const Divider(
+            height: 0,
+            indent: AppLayout.kHorizontalPadding,
+            endIndent: AppLayout.kHorizontalPadding,
+            thickness: 2,
+          ),
+          //COURSES
+          Container(
+              child: downloadCourses
+                  ? GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _courses.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 0,
+                        crossAxisSpacing: 0,
+                        childAspectRatio: 1.0,
+                      ),
+                      itemBuilder: (context, index) {
+                        return MyIconButton(
+                          onTap: () {},
+                          icon: ContainerShadow(
+                            margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, AppLayout.kHeightSmall),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  //alignment: Alignment.center,
+                                  height: 120, // Adjust the image height as needed
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: const ui.Color(0xffffcc80),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(context).shadowColor.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 1,
+                                        offset: const Offset(0, 1.5),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Image(
+                                    image: _courses[index].item2.image,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(height: 8), // Spacing between image and title
+                                Container(
+                                  padding: EdgeInsetsDirectional.symmetric(horizontal: 8),
+                                  child:
+                                      Text(_courses[index].item1.split(';;')[1], style: const TextStyle(fontSize: 17)),
+                                ),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    alignment: AlignmentDirectional.bottomCenter,
+                                    width: 10,
+                                    height: 10,
+                                    color: convertColor(int.parse(_courses[index].item1.split(';;')[0])),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Container())
         ],
       ),
     );

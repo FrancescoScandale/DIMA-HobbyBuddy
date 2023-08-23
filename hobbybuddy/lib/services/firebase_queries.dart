@@ -125,7 +125,6 @@ class FirebaseCrud {
         String hobbiesData = snapshot.get("hobby");
         List<String> hobbyNames = hobbiesData.split(',');
         allHobbies.addAll(hobbyNames);
-        print('Check Favourite Hobby: $allHobbies');
       }
       return allHobbies;
     } catch (e) {
