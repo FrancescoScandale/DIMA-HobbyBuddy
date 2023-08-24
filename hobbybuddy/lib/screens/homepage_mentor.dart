@@ -10,12 +10,14 @@ import 'dart:ui' as ui;
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbybuddy/screens/courses.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
+import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:tuple/tuple.dart';
 
 class MentorPage extends StatefulWidget {
@@ -34,7 +36,7 @@ class _MentorPageState extends State<MentorPage> {
   late Image propic;
   late Image background;
   List<String> _upcomingClasses = [];
-  List<Tuple2<String, Image>> _courses = [];
+  Map<String, Tuple2<String, Image>> _courses = {};
   bool completed = false;
   bool downloadMentorPics = false;
   bool downloadInfo = false;
@@ -98,7 +100,7 @@ class _MentorPageState extends State<MentorPage> {
       Uint8List? title =
           await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$tmp/title.txt').getData();
       Uint8List? image = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$tmp/pic.jpg').getData();
-      _courses.add(Tuple2(utf8.decode(title!), Image.memory(image!)));
+      _courses[tmp] = Tuple2(utf8.decode(title!), Image.memory(image!));
     }
 
     downloadCourses = true;
@@ -125,23 +127,21 @@ class _MentorPageState extends State<MentorPage> {
     setState(() {});
   }
 
-  ///4294961979=yellow, 4288585374=grey, 4294945600=orangeAccent
+  ///1->4294198070=red, 2->4294961979=yellow, 3->4283215696=green
   ///Values obtained by using Colors.yellow.value
   Color convertColor(int level) {
     Color result;
 
-    print(Colors.yellow.value);
-
     int colorCode = 0;
     switch (level) {
-      case 1: //hard - yellow
-        colorCode = 4294961979; //Color
+      case 1: //hard - red
+        colorCode = 4294198070;
         break;
-      case 2: //medium - grey
-        colorCode = 4288585374;
+      case 2: //medium - yellow
+        colorCode = 4294961979;
         break;
-      case 3: //easy - orangeAccent
-        colorCode = 4294945600;
+      case 3: //easy - green
+        colorCode = 4283215696;
         break;
       default:
         break;
@@ -314,14 +314,22 @@ class _MentorPageState extends State<MentorPage> {
                       ),
                       itemBuilder: (context, index) {
                         return MyIconButton(
-                          onTap: () {},
+                          onTap: () {
+                            Widget newScreen = CoursesPage(mentor: _mentor,courseID: _courses.keys.elementAt(index));
+                            Navigator.push(
+                              context,
+                              ScreenTransition(
+                                builder: (context) => newScreen,
+                              ),
+                            );
+                          },
                           icon: ContainerShadow(
                             margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, AppLayout.kHeightSmall),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  //alignment: Alignment.center,
+                                  alignment: Alignment.center,
                                   height: 120, // Adjust the image height as needed
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -336,25 +344,28 @@ class _MentorPageState extends State<MentorPage> {
                                     ],
                                   ),
                                   child: Image(
-                                    image: _courses[index].item2.image,
+                                    image: _courses.values.elementAt(index).item2.image,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                                 const SizedBox(height: 8), // Spacing between image and title
                                 Container(
-                                  padding: EdgeInsetsDirectional.symmetric(horizontal: 8),
+                                  padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
                                   child:
-                                      Text(_courses[index].item1.split(';;')[1], style: const TextStyle(fontSize: 17)),
+                                      Text(_courses.values.elementAt(index).item1.split(';;')[1], style: const TextStyle(fontSize: 17)),
                                 ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    alignment: AlignmentDirectional.bottomCenter,
-                                    width: 10,
-                                    height: 10,
-                                    color: convertColor(int.parse(_courses[index].item1.split(';;')[0])),
+                                Expanded(
+                                    child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      color: convertColor(int.parse(_courses.values.elementAt(index).item1.split(';;')[0])),
+                                    ),
                                   ),
-                                )
+                                )),
                               ],
                             ),
                           ),
