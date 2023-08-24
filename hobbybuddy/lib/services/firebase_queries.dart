@@ -467,7 +467,7 @@ class FirebaseCrud {
   }
 
   static Future<void> updateUserInfo(
-      String user, String username, String name, String surname) async {
+      String user, String name, String surname) async {
     try {
       print('user: $user');
       FirebaseFirestore.instance
@@ -477,21 +477,18 @@ class FirebaseCrud {
           .then((value) {
         for (var doc in value.docs) {
           // Update the password field in each matching document
-          print('username: $username');
-          if (username.isNotEmpty) {
+
+          /*if (username.isNotEmpty) {
             doc.reference.update({'username': username});
             Preferences.setUsername(username);
-          }
+          }*/
 
-          print('username: $username');
           if (name.isNotEmpty) {
             doc.reference.update({'name': name});
           }
-          print('name: $name');
           if (surname.isNotEmpty) {
             doc.reference.update({'surname': surname});
           }
-          print('surname: $surname');
         }
       });
       //({'password': password});

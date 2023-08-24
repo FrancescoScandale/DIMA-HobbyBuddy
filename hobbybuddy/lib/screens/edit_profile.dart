@@ -19,10 +19,10 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  //final _usernameController = TextEditingController();
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
-  bool _isUsernameNotUnique = false;
+  // bool _isUsernameNotUnique = false;
 
   final double _backgroundPadding = 250;
   late Image propic;
@@ -30,16 +30,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool downloadUserPics = false;
 
   final ImagePicker picker = ImagePicker();
-  late File _imageFile;
-  bool _imagePicked = false;
+  late File _profileFile;
+  late File _backgroundFile;
+  bool _profilePicked = false;
+  bool _backgroundPicked = false;
 
   Future<void> updateUserToFirestore() async {
-    String username = _usernameController.text;
+    //String username = _usernameController.text;
     String name = _nameController.text;
     String surname = _surnameController.text;
     String? user = Preferences.getUsername();
+    if (_profilePicked) {
+      String profilePicPath = 'Users/$user/propic.jpg';
+      // Convert the selected image file to Uint8List
+      Uint8List profilePicData = await _profileFile.readAsBytes();
+      await FirebaseStorage.instance
+          .ref(profilePicPath)
+          .putData(profilePicData);
+    }
 
-    await FirebaseCrud.updateUserInfo(user!, username, name, surname);
+    if (_backgroundPicked) {
+      String backgroundPath = 'Users/$user/background.jpg';
+      // Convert the selected image file to Uint8List
+      Uint8List backgroundData = await _backgroundFile.readAsBytes();
+      await FirebaseStorage.instance
+          .ref(backgroundPath)
+          .putData(backgroundData);
+    }
+
+    await FirebaseCrud.updateUserInfo(user!, name, surname);
+
+    if (_profilePicked || _backgroundPicked) {
+      getUserPics(); // Fetch updated images
+      setState(() {
+        _profilePicked = false; // Reset flag
+        _backgroundPicked = false; // Reset flag
+      });
+    }
   }
 
   void getUserPics() async {
@@ -57,21 +84,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     background = Image.memory(backgroundData!);
 
     setState(() {
+      print("done");
       downloadUserPics = true;
     });
   }
 
-  Future pickImage() async {
+  Future<void> pickImage(bool isProfilePic) async {
     final XFile? pickedFile =
         await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _imageFile = File(pickedFile.path);
-        _imagePicked = true;
+        if (isProfilePic) {
+          _profileFile = File(pickedFile.path);
+          _profilePicked = true;
+        } else {
+          _backgroundFile = File(pickedFile.path);
+          _backgroundPicked = true;
+        }
       });
     }
-
-    return;
   }
 
   @override
@@ -82,7 +113,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    //_usernameController.dispose();
     _nameController.dispose();
     _surnameController.dispose();
     super.dispose();
@@ -111,7 +142,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           height: _backgroundPadding,
                           width: MediaQuery.sizeOf(context).width,
                           child: (() {
-                            if (downloadUserPics) {
+                            if (_backgroundPicked) {
+                              return Image.file(
+                                _backgroundFile, // Display the selected profile picture
+                                alignment: Alignment.center,
+                                fit: BoxFit.fitHeight,
+                              );
+                            } else if (downloadUserPics) {
                               return Image(
                                 image: background.image,
                                 alignment: Alignment.center,
@@ -126,18 +163,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           bottom: 75,
                           right: -8,
                           child: Container(
-                            margin: const EdgeInsets.all(
-                                16), // Adjust the margin as needed
+                            margin: const EdgeInsets.all(16),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 shape: const CircleBorder(),
                               ),
-                              child: Icon(
-                                Icons.close,
-                                color: Theme.of(context).colorScheme.error,
-                              ),
+                              child: _backgroundPicked
+                                  ? Icon(
+                                      Icons.close,
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    )
+                                  : Icon(
+                                      Icons.photo_camera,
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
                               onPressed: () {
-                                // Add your close icon functionality here
+                                if (_backgroundPicked) {
+                                  setState(() {
+                                    _backgroundPicked = false;
+                                  });
+                                } else {
+                                  pickImage(false);
+                                }
                               },
                             ),
                           ),
@@ -151,7 +200,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 borderRadius: BorderRadius.circular(
                                     AppLayout.kProfilePicRadiusLarge),
                                 child: (() {
-                                  if (downloadUserPics) {
+                                  if (_profilePicked) {
+                                    return Image.file(
+                                      _profileFile, // Display the selected profile picture
+                                      width: AppLayout.kProfilePicRadiusLarge,
+                                      height: AppLayout.kProfilePicRadiusLarge,
+                                      fit: BoxFit.cover,
+                                    );
+                                  } else if (downloadUserPics) {
                                     return Image(
                                       image: propic.image,
                                       width: AppLayout.kProfilePicRadiusLarge,
@@ -165,17 +221,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               Container(
                                 margin:
-                                    const EdgeInsets.only(top: 97, left: 60), //
+                                    const EdgeInsets.only(top: 97, left: 60),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     shape: const CircleBorder(),
                                   ),
-                                  child: Icon(
-                                    Icons.close,
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
+                                  child: _profilePicked
+                                      ? Icon(
+                                          Icons.close,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                        )
+                                      : Icon(
+                                          Icons.photo_camera,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                        ),
                                   onPressed: () {
-                                    // Add your close icon functionality here
+                                    if (_profilePicked) {
+                                      setState(() {
+                                        _profilePicked = false;
+                                      });
+                                    } else {
+                                      pickImage(true);
+                                    }
                                   },
                                 ),
                               ),
@@ -185,7 +256,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    TextFormField(
+                    /* TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       controller: _usernameController,
                       decoration: const InputDecoration(
@@ -208,7 +279,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         'This username is already taken. Please choose a different one.',
                         style: TextStyle(color: Colors.red),
                       ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 20),*/
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -248,13 +319,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         text: "Save",
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            String enteredUsername = _usernameController.text;
-                            bool isUnique = await FirebaseCrud.isUsernameUnique(
-                                enteredUsername);
+                            //String enteredUsername = _usernameController.text;
+                            //bool isUnique = await FirebaseCrud.isUsernameUnique(enteredUsername);
                             // Username is unique, proceed
-                            if (isUnique) {
-                              await updateUserToFirestore();
-                              setState(() {
+                            // if (isUnique) {
+                            await updateUserToFirestore();
+                            /*setState(() {
                                 _isUsernameNotUnique = false;
                               });
                               // ignore: use_build_context_synchronously
@@ -264,7 +334,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               setState(() {
                                 _isUsernameNotUnique = true;
                               });
-                            }
+                            }*/
                           }
                         }),
                     Container(height: AppLayout.kPaddingFromCreate),
