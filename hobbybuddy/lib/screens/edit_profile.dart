@@ -23,7 +23,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   // bool _isUsernameNotUnique = false;
-  bool notLoading = false;
+  bool loading = false;
 
   final double _backgroundPadding = 250;
   late Image propic;
@@ -64,6 +64,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _backgroundPicked = false; // Reset flag
       });
     }
+
+    loading = false;
+
+    setState(() {
+      
+    });
   }
 
   void getUserPics() async {
@@ -75,7 +81,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     background = Image.memory(backgroundData!);
 
     setState(() {
-      print("done");
       downloadUserPics = true;
     });
   }
@@ -298,7 +303,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const SizedBox(height: 50),
                     MyButton(
-                        text: notLoading ? "Save" : "Loading...",
+                        text: loading ? "Loading..." : "Save",
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             //String enteredUsername = _usernameController.text;
@@ -306,7 +311,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             // Username is unique, proceed
                             // if (isUnique) {
                             setState(() {
-                              notLoading = true;
+                              loading = true;
                             });
                             await updateUserToFirestore();
                             /*setState(() {
