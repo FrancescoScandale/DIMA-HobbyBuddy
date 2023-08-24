@@ -315,7 +315,7 @@ class _MentorPageState extends State<MentorPage> {
                       itemBuilder: (context, index) {
                         return MyIconButton(
                           onTap: () {
-                            Widget newScreen = CoursesPage(mentor: _mentor,courseID: _courses.keys.elementAt(index));
+                            Widget newScreen = CoursesPage(mentor: _mentor, title: _courses.values.elementAt(index).item1.split(';;')[1], courseID: _courses.keys.elementAt(index));
                             Navigator.push(
                               context,
                               ScreenTransition(
