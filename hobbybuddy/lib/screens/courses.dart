@@ -138,7 +138,6 @@ class _CoursesPageState extends State<CoursesPage> {
         String? url =
             await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$_courseID/$name').getDownloadURL();
 
-        //_vidsControllers[url] = VideoPlayerController.networkUrl(Uri.parse(url));
         _vidsControllers[url] = VideoPlayerWidget(url: url);
       }
     }
@@ -326,7 +325,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           allowScrubbing: true,
           colors: const VideoProgressColors(
               playedColor: Colors.red,
-              //playedColor: ui.Color(0xffffcc80),
               bufferedColor: Colors.grey,
               backgroundColor: Colors.black),
         ),
