@@ -14,7 +14,7 @@ import 'package:hobbybuddy/screens/home_page.dart';
 import 'package:hobbybuddy/screens/maps.dart';
 import 'package:hobbybuddy/screens/login.dart';
 import 'package:hobbybuddy/screens/homepage_user.dart';
-import 'package:hobbybuddy/screens/favourites.dart';
+import 'package:hobbybuddy/screens/friends_list.dart';
 
 String logo = 'assets/logo.png';
 
@@ -28,10 +28,6 @@ Future<void> main() async {
   runApp(MultiProvider(providers: [
     // DARK/LIGHT THEME
     ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager()),
-
-    // GLOBAL TAB CONTROLLER
-    ChangeNotifierProvider<CupertinoTabController>(
-        create: (context) => CupertinoTabController()),
   ], child: const Main()));
 }
 
@@ -62,43 +58,11 @@ class BottomNavigationBarApp extends StatefulWidget {
 
 class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
   int currentIndex = 0;
+
   final GlobalKey<NavigatorState> firstTabNavKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> secondTabNavKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> thirdTabNavKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> fourthTabNavKey = GlobalKey<NavigatorState>();
-
-  void changeTab(int index) {
-    // https://stackoverflow.com/questions/52298686/flutter-pop-to-root-when-bottom-navigation-tapped
-
-    if (currentIndex == index) {
-      switch (index) {
-        case 0:
-          firstTabNavKey.currentState?.popUntil((r) => r.isFirst);
-          break;
-        case 1:
-          secondTabNavKey.currentState?.popUntil((r) => r.isFirst);
-          break;
-        case 2:
-          thirdTabNavKey.currentState?.popUntil((r) => r.isFirst);
-          break;
-        case 3:
-          fourthTabNavKey.currentState?.popUntil((r) => r.isFirst);
-          break;
-      }
-    }
-    setState(() {
-      currentIndex = index;
-      Provider.of<CupertinoTabController>(context, listen: false).index =
-          currentIndex;
-    });
-  }
-
-  final Map<int, Widget> screens = {
-    0: HomePScreen(),
-    1: MapsScreen(),
-    2: FavouritesScreen(),
-    3: UserPage(user: Preferences.getUsername()!),
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -106,30 +70,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
       body: Stack(
         children: [
           CupertinoTabScaffold(
-            controller:
-                Provider.of<CupertinoTabController>(context, listen: true),
-            tabBar: CupertinoTabBar(
-              onTap: changeTab,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.map),
-                  label: 'Maps',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite),
-                  label: 'Favorites',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle),
-                  label: 'Profile',
-                ),
-              ],
-            ),
-            tabBuilder: (context, index) {
+            tabBuilder: (BuildContext context, int index) {
               switch (index) {
                 case 0:
                   return CupertinoTabView(
@@ -144,7 +85,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                 case 2:
                   return CupertinoTabView(
                     navigatorKey: thirdTabNavKey,
-                    builder: (context) => const FavouritesScreen(),
+                    builder: (context) => const MyFriendsScreen(),
                   );
                 case 3:
                   return CupertinoTabView(
@@ -156,6 +97,46 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                   return const CupertinoTabView();
               }
             },
+            tabBar: CupertinoTabBar(
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  label: 'Maps',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.groups),
+                  label: 'My Friends',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.account_circle),
+                  label: 'Profile',
+                ),
+              ],
+              onTap: (index) {
+                // back home only if not switching tab
+                if (currentIndex == index) {
+                  switch (index) {
+                    case 0:
+                      firstTabNavKey.currentState?.popUntil((r) => r.isFirst);
+                      break;
+                    case 1:
+                      secondTabNavKey.currentState?.popUntil((r) => r.isFirst);
+                      break;
+                    case 2:
+                      thirdTabNavKey.currentState?.popUntil((r) => r.isFirst);
+                      break;
+                    case 3:
+                      fourthTabNavKey.currentState?.popUntil((r) => r.isFirst);
+                      break;
+                  }
+                }
+                currentIndex = index;
+              },
+            ),
           ),
         ],
       ),

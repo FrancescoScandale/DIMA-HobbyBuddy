@@ -13,7 +13,7 @@ import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 
 import 'package:hobbybuddy/screens/change_password.dart';
-import 'package:hobbybuddy/screens/friends_list.dart';
+
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'package:hobbybuddy/screens/login.dart';
 
@@ -158,21 +158,6 @@ class _SettingsScreenState extends State<Settings> {
                   trailing: const Icon(Icons.navigate_next),
                   onTap: () {
                     Widget newScreen = const ChangePasswordScreen();
-                    // ignore: use_build_context_synchronously
-                    Navigator.push(
-                      context,
-                      ScreenTransition(
-                        builder: (context) => newScreen,
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.groups),
-                  title: const Text("My friends"),
-                  trailing: const Icon(Icons.navigate_next),
-                  onTap: () {
-                    Widget newScreen = const MyFriendsScreen();
                     // ignore: use_build_context_synchronously
                     Navigator.push(
                       context,

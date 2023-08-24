@@ -17,53 +17,15 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
   final _formkey = GlobalKey<FormState>();
   final _currentPasswordController = TextEditingController();
   final _passwordController = TextEditingController();
-
+  String? username = Preferences.getUsername();
   bool _passwordInvisibleOld = true;
   bool _passwordInvisibleNew = true;
 
   Future<void> changePassword() async {
-    try {
-      String newPassword = _passwordController.text;
-
-      // Retrieve the username from SharedPreferences
-      String? username = Preferences.getUsername();
-      await FirebaseCrud.updatePassword(newPassword, username!);
-
-      // Show a success message or navigate to a success screen
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Password Change'),
-          content: Text('Your password has been changed successfully.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close the dialog
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    } catch (e) {
-      // Show an error message if the password change fails
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Password Change Error'),
-          content: Text('An error occurred while changing the password.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close the dialog
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      print('Password change error: $e');
-    }
+    String newPassword = _passwordController.text;
+    // Retrieve the username from SharedPreferences
+    //String? username = Preferences.getUsername();
+    await FirebaseCrud.updatePassword(newPassword, username!);
   }
 
   @override
@@ -184,7 +146,18 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 MyButton(
                   onPressed: () async {
                     if (_formkey.currentState!.validate()) {
-                      await changePassword();
+                      //check if credentials present in db
+                      await FirebaseCrud.getUserPwd(
+                              username!, _currentPasswordController.text)
+                          .then((values) async {
+                        if (values!.docs.isNotEmpty) {
+                          await changePassword();
+                          // ignore: use_build_context_synchronously
+                          _showSuccessDialog(context);
+                        } else {
+                          _showInvalidDialog(context);
+                        }
+                      });
                     }
                   },
                   text: "Save",
@@ -194,6 +167,42 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Password Change'),
+        content: const Text('Your password has been changed successfully.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showInvalidDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Password Change'),
+        content: const Text('The password is not correct.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
