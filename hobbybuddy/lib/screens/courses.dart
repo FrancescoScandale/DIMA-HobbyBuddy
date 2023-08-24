@@ -6,8 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
-import 'package:hobbybuddy/widgets/button.dart';
-import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:video_player/video_player.dart';
 
