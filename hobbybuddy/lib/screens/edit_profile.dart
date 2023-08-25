@@ -57,19 +57,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     await FirebaseCrud.updateUserInfo(user!, name, surname);
 
-    if (_profilePicked || _backgroundPicked) {
-      getUserPics(); // Fetch updated images
-      setState(() {
-        _profilePicked = false; // Reset flag
-        _backgroundPicked = false; // Reset flag
-      });
-    }
-
-    loading = false;
-
-    setState(() {
-      
-    });
+    Navigator.pop(context);
   }
 
   void getUserPics() async {
@@ -117,7 +105,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(title: "Edit Profile"),
+      appBar: MyAppBar(
+        title: "Edit Profile",
+        automaticallyImplyLeading: loading ? false : true,
+      ),
       body: Builder(
         builder: (BuildContext context) {
           return ResponsiveWrapper(

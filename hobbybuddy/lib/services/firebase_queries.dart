@@ -398,15 +398,9 @@ class FirebaseCrud {
     }
   }
 
-  static Future<void> updateUserInfo(
-      String user, String name, String surname) async {
+  static Future<void> updateUserInfo(String user, String name, String surname) async {
     try {
-      print('user: $user');
-      FirebaseFirestore.instance
-          .collection("users")
-          .where("username", isEqualTo: user)
-          .get()
-          .then((value) {
+      FirebaseFirestore.instance.collection("users").where("username", isEqualTo: user).get().then((value) {
         for (var doc in value.docs) {
           // Update the password field in each matching document
 
@@ -455,7 +449,28 @@ class FirebaseCrud {
     } on FirebaseException catch (e) {
       print(e.message!);
     }
-    
+
+    return result;
+  }
+
+  static Future<List<String>> getUserNameSurname(String username) async {
+    List<String> result = [];
+    try {
+      result = await FirebaseFirestore.instance
+          .collection("users")
+          .where("username", isEqualTo: username)
+          .get()
+          .then((value) {
+        for (var doc in value.docs) {
+          result.add(doc['name']);
+          result.add(doc[('surname')]);
+        }
+        return result;
+      });
+    } on FirebaseException catch (e) {
+      print(e.message!);
+    }
+
     return result;
   }
 }

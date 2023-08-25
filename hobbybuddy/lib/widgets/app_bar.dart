@@ -7,12 +7,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? upRightActions;
   final ShapeBorder? shape;
+  final bool automaticallyImplyLeading;
 
   const MyAppBar({
     super.key,
     required this.title,
     this.upRightActions,
     this.shape,
+    this.automaticallyImplyLeading = true
   });
 
   @override
@@ -26,6 +28,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: upRightActions,
       scrolledUnderElevation: 0,
+      automaticallyImplyLeading: automaticallyImplyLeading,
     );
   }
 }

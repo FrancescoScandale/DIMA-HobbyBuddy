@@ -60,8 +60,9 @@ class _AddMilestoneState extends State<AddMilestone> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const MyAppBar(
+        appBar: MyAppBar(
           title: "Add New Milestone",
+          automaticallyImplyLeading: _notUploaded ? true : false,
         ),
         body: ListView(
           //padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),

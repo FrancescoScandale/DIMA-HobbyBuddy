@@ -20,16 +20,13 @@ import 'package:hobbybuddy/screens/login.dart';
 String logo = 'assets/logo.png';
 
 class Settings extends StatefulWidget {
-  const Settings(
-      {Key? key, required this.username, required this.profilePicture})
-      : super(key: key);
+  const Settings({Key? key, required this.username, required this.profilePicture}) : super(key: key);
 
   final String username;
   final Image profilePicture;
 
   @override
-  State<Settings> createState() =>
-      _SettingsScreenState(username, profilePicture);
+  State<Settings> createState() => _SettingsScreenState(username, profilePicture);
 }
 
 class _SettingsScreenState extends State<Settings> {
@@ -99,8 +96,7 @@ class _SettingsScreenState extends State<Settings> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0, 4, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                             child: Text(
                               Preferences.getEmail()!,
                               style: const TextStyle(
@@ -132,8 +128,7 @@ class _SettingsScreenState extends State<Settings> {
                   value: Preferences.getBool('isDark'),
                   onChanged: (newValue) {
                     setState(() {
-                      Provider.of<ThemeManager>(context, listen: false)
-                          .toggleTheme(newValue);
+                      Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
                     });
                   },
                   secondary: const Icon(Icons.dark_mode_rounded),
