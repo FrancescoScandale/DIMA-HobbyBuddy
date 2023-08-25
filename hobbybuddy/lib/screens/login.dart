@@ -56,9 +56,8 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Scrollbar(
-      controller: PrimaryScrollController.of(context),
       child: ListView(
-        controller: PrimaryScrollController.of(context),
+        controller: ScrollController(),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           const SizedBox(height: 60),
@@ -93,6 +92,7 @@ class _LoginFormState extends State<LoginForm> {
                   height: 25,
                 ),
                 TextFormField(
+                  key: const Key("u_field"),
                   controller: username,
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.face),
@@ -110,6 +110,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 const SizedBox(height: 25),
                 TextFormField(
+                  key: const Key("p_field"),
                   controller: password,
                   obscureText: _passwordInvisible,
                   decoration: InputDecoration(
@@ -146,6 +147,7 @@ class _LoginFormState extends State<LoginForm> {
                     child: SizedBox(
                       height: 40,
                       child: ElevatedButton(
+                        key: const Key("go_login"),
                         onPressed: () async {
                           // Validate returns true if the form is valid, or false otherwise.
                           if (_formKey.currentState!.validate()) {
@@ -202,7 +204,7 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     ),
                     TextButton(
-                      key: const Key("log_in_to_sign_up_screen"),
+                      key: const Key("go_sign_up"),
                       onPressed: () async {
                         Widget newScreen = const SignUpScreen();
                         await Navigator.of(context, rootNavigator: false).push(
