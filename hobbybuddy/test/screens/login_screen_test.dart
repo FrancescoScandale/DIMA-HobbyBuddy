@@ -15,7 +15,7 @@ void main() async {
       find.byWidgetPredicate((widget) => widget is TextFormField),
       findsNWidgets(2),
     );
-    await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
     expect(
       find.byWidgetPredicate((widget) => widget is ElevatedButton),
       findsNWidgets(2),
