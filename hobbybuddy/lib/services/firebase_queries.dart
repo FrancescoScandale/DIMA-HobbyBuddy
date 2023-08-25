@@ -434,6 +434,8 @@ class FirebaseCrud {
 
   static Future<List<String>> getUpcomingClasses(String mentor) async {
     List<String> result = [];
+    String ts = DateTime.timestamp().toString().split('.')[0].replaceAll(' ', '_');
+
     try {
       result = await FirebaseFirestore.instance
           .collection("mentors")
@@ -442,7 +444,16 @@ class FirebaseCrud {
           .get()
           .then((value) {
         for (var item in value.docs[0]['classes']) {
-          result.add(item);
+          List<String> dates = item.split(';;')[2].split('/');
+          String time = item.split(';;')[3];
+
+          dates = dates.reversed.toList();
+          String date = dates.join('-');
+
+          String comparedTS = '${date}_$time';
+          if (comparedTS.compareTo(ts) >= 0) {
+            result.add(item);
+          }
         }
         return result;
       });
