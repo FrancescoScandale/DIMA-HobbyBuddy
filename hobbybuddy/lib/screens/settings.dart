@@ -1,32 +1,29 @@
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
-
 import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-
 import 'package:hobbybuddy/widgets/app_bar.dart';
-
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
-
 import 'package:hobbybuddy/screens/change_password.dart';
-
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'package:hobbybuddy/screens/login.dart';
 
 String logo = 'assets/logo.png';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key, required this.username, required this.profilePicture}) : super(key: key);
+  const Settings(
+      {Key? key, required this.username, required this.profilePicture})
+      : super(key: key);
 
   final String username;
   final Image profilePicture;
 
   @override
-  State<Settings> createState() => _SettingsScreenState(username, profilePicture);
+  State<Settings> createState() =>
+      _SettingsScreenState(username, profilePicture);
 }
 
 class _SettingsScreenState extends State<Settings> {
@@ -96,7 +93,8 @@ class _SettingsScreenState extends State<Settings> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 4, 0, 0),
                             child: Text(
                               Preferences.getEmail()!,
                               style: const TextStyle(
@@ -128,7 +126,8 @@ class _SettingsScreenState extends State<Settings> {
                   value: Preferences.getBool('isDark'),
                   onChanged: (newValue) {
                     setState(() {
-                      Provider.of<ThemeManager>(context, listen: false).toggleTheme(newValue);
+                      Provider.of<ThemeManager>(context, listen: false)
+                          .toggleTheme(newValue);
                     });
                   },
                   secondary: const Icon(Icons.dark_mode_rounded),

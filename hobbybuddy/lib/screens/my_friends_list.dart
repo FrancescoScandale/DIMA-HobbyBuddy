@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 import 'package:hobbybuddy/services/preferences.dart';
