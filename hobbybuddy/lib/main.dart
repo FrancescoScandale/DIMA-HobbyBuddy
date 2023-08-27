@@ -1,12 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:hobbybuddy/firebase_options.dart';
-
 import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:provider/provider.dart';
-
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/themes/app_theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,8 +11,6 @@ import 'package:hobbybuddy/screens/maps.dart';
 import 'package:hobbybuddy/screens/login.dart';
 import 'package:hobbybuddy/screens/homepage_user.dart';
 import 'package:hobbybuddy/screens/friends_list.dart';
-
-String logo = 'assets/logo.png';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
