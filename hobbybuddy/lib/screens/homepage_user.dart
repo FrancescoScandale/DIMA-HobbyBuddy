@@ -9,7 +9,6 @@ import 'package:hobbybuddy/screens/homepage_hobby.dart';
 import 'package:hobbybuddy/screens/homepage_mentor.dart';
 import 'package:hobbybuddy/screens/settings.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
-import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/button.dart';
@@ -76,8 +75,7 @@ class _UserPageState extends State<UserPage> {
     _mentors = await FirestoreCrud.getUserData(_username, 'mentors');
 
     for (int i = 0; i < _mentors.length; i++) {
-      String url = await StorageCrud.getStorage().ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
-      String url2 = await StorageCrud.getStorage().ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
+      String url = await FirebaseStorage.instance.ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
       _mentorsPics[_mentors[i]] = Image.network(url);
     }
 
@@ -96,15 +94,15 @@ class _UserPageState extends State<UserPage> {
   }
 
   void getMilestones() async {
-    ListResult result = await StorageCrud.getStorage().ref().child('Users/$_username/milestones/').listAll();
+    ListResult result = await FirebaseStorage.instance.ref().child('Users/$_username/milestones/').listAll();
 
     int len = (result.prefixes[0].fullPath.split('/')).length;
     for (Reference prefs in result.prefixes) {
       String tmp = prefs.fullPath.split('/')[len - 1];
       Uint8List? cap =
-          await StorageCrud.getStorage().ref().child('Users/$_username/milestones/$tmp/caption.txt').getData();
+          await FirebaseStorage.instance.ref().child('Users/$_username/milestones/$tmp/caption.txt').getData();
       Uint8List? image =
-          await StorageCrud.getStorage().ref().child('Users/$_username/milestones/$tmp/pic.jpg').getData();
+          await FirebaseStorage.instance.ref().child('Users/$_username/milestones/$tmp/pic.jpg').getData();
       _milestones[tmp] = Tuple2(utf8.decode(cap!), Image.memory(image!));
     }
 
@@ -113,8 +111,8 @@ class _UserPageState extends State<UserPage> {
   }
 
   void getUserPics() async {
-    Uint8List? propicData = await StorageCrud.getStorage().ref().child('Users/$_username/propic.jpg').getData();
-    Uint8List? backgroundData = await StorageCrud.getStorage().ref().child('Users/$_username/background.jpg').getData();
+    Uint8List? propicData = await FirebaseStorage.instance.ref().child('Users/$_username/propic.jpg').getData();
+    Uint8List? backgroundData = await FirebaseStorage.instance.ref().child('Users/$_username/background.jpg').getData();
 
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);

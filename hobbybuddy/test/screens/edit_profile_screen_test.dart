@@ -31,10 +31,6 @@ void main() async {
     await firestore.collection("users").add({
       'username': 'marta',
     });
-    // const filename = 'logo.png';
-    // final storageRef = storage.ref().child(filename);
-    // final localImage = await rootBundle.load("assets/$filename");
-    // final task = await storageRef.putData(localImage.buffer.asUint8List());
     final storageRefpropic = storage.ref().child('Users/marta/propic.jpg');
     final storageRefbackground = storage.ref().child('Users/marta/background.jpg');
     final localImage = await rootBundle.load("assets/logo.png");

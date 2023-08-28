@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/button.dart';
 import 'package:image_picker/image_picker.dart';
@@ -52,8 +51,8 @@ class _AddMilestoneState extends State<AddMilestone> {
   void uploadMilestone() async {
     String ts = DateTime.timestamp().toString().split('.')[0].replaceAll(' ', '_');
 
-    StorageCrud.getStorage().ref().child('Users/$_username/milestones/$ts/caption.txt').putString(caption.text);
-    await StorageCrud.getStorage().ref().child('Users/$_username/milestones/$ts/pic.jpg').putFile(_imageFile);
+    FirebaseStorage.instance.ref().child('Users/$_username/milestones/$ts/caption.txt').putString(caption.text);
+    await FirebaseStorage.instance.ref().child('Users/$_username/milestones/$ts/pic.jpg').putFile(_imageFile);
 
     Navigator.pop(context);
   }

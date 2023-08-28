@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
@@ -105,7 +104,7 @@ class _CoursesPageState extends State<CoursesPage> {
 
   void retrieveText() async {
     Uint8List? result =
-        await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID/text.txt').getData();
+        await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$_courseID/text.txt').getData();
     text = utf8.decode(result!);
     returned = setupText();
 
@@ -114,14 +113,14 @@ class _CoursesPageState extends State<CoursesPage> {
   }
 
   void retrievePics() async {
-    ListResult result = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID').listAll();
+    ListResult result = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$_courseID').listAll();
 
     for (Reference item in result.items) {
       String name = item.fullPath.split('/').last;
       if (name.contains('picture')) {
         //TODO: all downloads can be done with this method... which doesn't rely on a specific name/extension!
         Uint8List? tmp =
-            await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID/$name').getData();
+            await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$_courseID/$name').getData();
         _images.add(Image.memory(tmp!));
       }
     }
@@ -131,13 +130,13 @@ class _CoursesPageState extends State<CoursesPage> {
   }
 
   void retrieveVids() async {
-    ListResult result = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID').listAll();
+    ListResult result = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$_courseID').listAll();
 
     for (Reference item in result.items) {
       String name = item.fullPath.split('/').last;
       if (name.contains('video')) {
         String? url =
-            await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID/$name').getDownloadURL();
+            await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$_courseID/$name').getDownloadURL();
 
         _vidsControllers[url] = VideoPlayerWidget(url: url);
       }
