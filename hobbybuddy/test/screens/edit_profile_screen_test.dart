@@ -2,7 +2,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show Uint8List, rootBundle;
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'package:hobbybuddy/services/preferences.dart';
