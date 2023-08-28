@@ -47,6 +47,7 @@ class Preferences {
   }
 
   static List<String>? getMentors() {
+    print('heloo');
     return _prefs.getStringList('mentors');
   }
 

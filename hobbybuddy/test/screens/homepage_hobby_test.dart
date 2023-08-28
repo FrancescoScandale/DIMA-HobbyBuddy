@@ -7,61 +7,66 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/homepage_hobby.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
 import 'package:hobbybuddy/services/preferences.dart';
+import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final firestore = FakeFirebaseFirestore();
-final storage = MockFirebaseStorage();
-
-class MockFirebaseCrud extends Mock implements FirebaseCrud {}
 
 void main() async {
   setUp(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-        //options: DefaultFirebaseOptions.currentPlatform,
-        );
 
     SharedPreferences.setMockInitialValues({
-      'flutter.isDark': true,
-      'flutter.username': 'francesco',
-      'flutter.hobbies': [],
-      'flutter.mentors': [],
+      'isDark': true,
+      'username': 'francesco',
+      'hobbies': ['Skateboard', 'Chess'],
+      'mentors': ['Emma Watson'],
     });
     await Preferences.init();
-    FirebaseCrud.init(firebaseInstance: firestore);
+
+    FirebaseCrud.init(firestore);
+    await firestore.collection("users").add({
+      'username': 'francesco',
+      'hobbies': ['Skateboard'],
+      'mentors': ['Emma Watson'],
+    });
   });
 
   testWidgets('HomePage hobby', (tester) async {
     const String hobby = 'Skateboard';
     await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider<FirebaseCrud>(
-            create: (context) => MockFirebaseCrud(),
-          ),
-          Provider<FirebaseStorage>(
-            create: (context) => storage,
-          ),
-        ],
-        child: const MaterialApp(
-          home: HomePageHobby(
-            hobby: hobby,
-          ),
+      MaterialApp(
+        home: HomePageHobby(
+          hobby: hobby,
         ),
       ),
     );
-    await tester.pumpAndSettle();
 
     expect(
-      find.byElementType(Image),
-      //find.byWidgetPredicate((widget) => widget is TextFormField),
+      find.text('Skateboard'),
       findsOneWidget,
     );
-    // expect(
-    //   find.byWidgetPredicate((widget) => widget is MyButton),
-    //   findsOneWidget,
-    // );
+
+    expect(
+      find.byWidgetPredicate((widget) => widget is Image),
+      findsOneWidget,
+    );
+
+    expect(
+      find.byWidgetPredicate((widget) => widget is MyIconButton),
+      findsOneWidget,
+    );
+    expect(
+      find.byIcon(Icons.favorite),
+      findsOneWidget,
+    );
+    await tester.tap(find.byIcon(Icons.favorite));
+
+    await tester.pump();
+    expect(
+      find.byIcon(Icons.favorite_border),
+      findsOneWidget,
+    );
   });
 }

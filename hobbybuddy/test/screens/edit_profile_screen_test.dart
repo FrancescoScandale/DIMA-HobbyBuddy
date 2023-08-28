@@ -1,4 +1,5 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final firestore = FakeFirebaseFirestore();
 final storage = MockFirebaseStorage();
@@ -29,6 +31,7 @@ void main() async {
     await firestore.collection("users").add({
       'username': 'marta',
     });
+    FirebaseCrud.init(firestore);
     const filename = 'logo.png';
     final storageRef = storage.ref().child(filename);
     final localImage = await rootBundle.load("assets/$filename");
@@ -40,18 +43,8 @@ void main() async {
     testWidgets('EditProfileScreen renders correctly', (tester) async {
       await Preferences.init();
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider<FirebaseCrud>(
-              create: (context) => MockFirebaseCrud(),
-            ),
-            Provider<FirebaseStorage>(
-              create: (context) => storage,
-            ),
-          ],
-          child: const MaterialApp(
-            home: EditProfileScreen(),
-          ),
+        MaterialApp(
+          home: EditProfileScreen(),
         ),
       );
       await tester.pumpAndSettle();
