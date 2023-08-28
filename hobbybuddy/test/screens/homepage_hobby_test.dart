@@ -25,7 +25,7 @@ void main() async {
     });
     await Preferences.init();
 
-    FirebaseCrud.init(firestore);
+    FirebaseCrud.init(firebaseInstance: firestore);
     await firestore.collection("users").add({
       'username': 'francesco',
       'hobbies': ['Skateboard'],
