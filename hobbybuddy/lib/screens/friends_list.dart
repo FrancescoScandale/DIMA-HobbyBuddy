@@ -132,10 +132,12 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 5),
-                                      backgroundColor: const Color.fromRGBO(
-                                          255, 204, 128, 1),
                                     ),
-                                    child: const Text('Accept'),
+                                    child: const Text(
+                                      'Accept',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                   ElevatedButton(
                                     onPressed: () async {
