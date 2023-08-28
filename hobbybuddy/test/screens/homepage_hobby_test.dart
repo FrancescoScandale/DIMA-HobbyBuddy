@@ -21,9 +21,9 @@ void main() async {
   setUp(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
-      //options: DefaultFirebaseOptions.currentPlatform,
-    );
-    
+        //options: DefaultFirebaseOptions.currentPlatform,
+        );
+
     SharedPreferences.setMockInitialValues({
       'flutter.isDark': true,
       'flutter.username': 'francesco',
@@ -31,6 +31,7 @@ void main() async {
       'flutter.mentors': [],
     });
     await Preferences.init();
+    FirebaseCrud.init(firebaseInstance: firestore);
   });
 
   testWidgets('HomePage hobby', (tester) async {

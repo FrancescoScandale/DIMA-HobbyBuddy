@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/firebase_options.dart';
+import 'package:hobbybuddy/services/firebase_queries.dart';
 import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:hobbybuddy/services/preferences.dart';
@@ -18,7 +19,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  //init the cache instance and the firebase instance
   await Preferences.init();
+  FirebaseCrud.init();
+
   runApp(MultiProvider(providers: [
     // DARK/LIGHT THEME
     ChangeNotifierProvider<ThemeManager>(create: (context) => ThemeManager()),
@@ -84,8 +88,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                 case 3:
                   return CupertinoTabView(
                     navigatorKey: fourthTabNavKey,
-                    builder: (context) =>
-                        UserPage(user: Preferences.getUsername()!),
+                    builder: (context) => UserPage(user: Preferences.getUsername()!),
                   );
                 default:
                   return const CupertinoTabView();
