@@ -41,7 +41,7 @@ class Main extends StatelessWidget {
       themeMode: Provider.of<ThemeManager>(context).themeMode,
       initialRoute: '/',
       home: const Scaffold(
-        body: LoginForm(),
+        body: LogInScreen(),
       ),
     );
   }

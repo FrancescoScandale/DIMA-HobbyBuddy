@@ -31,7 +31,7 @@ class LogInScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
-                    .headlineLarge
+                    .displayMedium
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -39,10 +39,10 @@ class LogInScreen extends StatelessWidget {
                 "Log In",
                 style: Theme.of(context)
                     .textTheme
-                    .displayLarge
+                    .displaySmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 15),
               LoginForm(),
             ],
           ),
@@ -78,7 +78,6 @@ class _LoginFormState extends State<LoginForm> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          const SizedBox(height: 25),
           TextFormField(
             key: const Key("u_field"),
             controller: username,
