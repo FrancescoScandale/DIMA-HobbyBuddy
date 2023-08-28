@@ -3,7 +3,7 @@ import 'package:hobbybuddy/widgets/button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -230,7 +230,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 if (_formKey.currentState!.validate()) {
                   String enteredUsername = _usernameController.text;
                   bool isUnique =
-                      await FirebaseCrud.isUsernameUnique(enteredUsername);
+                      await FirestoreCrud.isUsernameUnique(enteredUsername);
 
                   if (isUnique) {
                     // Username is unique, proceed with sign up logic

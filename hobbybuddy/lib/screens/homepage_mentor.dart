@@ -11,7 +11,8 @@ import 'dart:ui' as ui;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/screens/courses.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
+import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
@@ -67,15 +68,15 @@ class _MentorPageState extends State<MentorPage> {
   }
 
   void getInfo() async {
-    _hobby = await FirebaseCrud.getHobby(_mentor);
+    _hobby = await FirestoreCrud.getHobby(_mentor);
 
     downloadInfo = true;
     checkCompletions();
   }
 
   void getMentorPics() async {
-    Uint8List? propicData = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/propic.jpg').getData();
-    Uint8List? backgroundData = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/background.jpg').getData();
+    Uint8List? propicData = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/propic.jpg').getData();
+    Uint8List? backgroundData = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/background.jpg').getData();
 
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);
@@ -85,21 +86,21 @@ class _MentorPageState extends State<MentorPage> {
   }
 
   void getUpcomingClasses() async {
-    _upcomingClasses = await FirebaseCrud.getUpcomingClasses(_mentor);
+    _upcomingClasses = await FirestoreCrud.getUpcomingClasses(_mentor);
 
     downloadClasses = true;
     checkCompletions();
   }
 
   void getCourses() async {
-    ListResult result = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/').listAll();
+    ListResult result = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/').listAll();
 
     int len = (result.prefixes[0].fullPath.split('/')).length;
     for (Reference prefs in result.prefixes) {
       String tmp = prefs.fullPath.split('/')[len - 1];
       Uint8List? title =
-          await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$tmp/title.txt').getData();
-      Uint8List? image = await FirebaseStorage.instance.ref().child('Mentors/$_mentor/courses/$tmp/pic.jpg').getData();
+          await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$tmp/title.txt').getData();
+      Uint8List? image = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$tmp/pic.jpg').getData();
       _courses[tmp] = Tuple2(utf8.decode(title!), Image.memory(image!));
     }
 
@@ -115,10 +116,10 @@ class _MentorPageState extends State<MentorPage> {
 
     if (favourite) {
       //add the new favourite mentor in db
-      await FirebaseCrud.updateFavouriteMentors(username, _mentor, 'add');
+      await FirestoreCrud.updateFavouriteMentors(username, _mentor, 'add');
     } else {
       //remove the favourite mentor from db
-      await FirebaseCrud.updateFavouriteMentors(username, _mentor, 'remove');
+      await FirestoreCrud.updateFavouriteMentors(username, _mentor, 'remove');
     }
 
     //update cache

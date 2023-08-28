@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
 import 'package:hobbybuddy/main.dart';
 
@@ -138,7 +138,7 @@ class _LoginFormState extends State<LoginForm> {
                     if (_formKey.currentState!.validate()) {
                       bool check = false;
                       //check if credentials present in db
-                      await FirebaseCrud.getUserPwd(
+                      await FirestoreCrud.getUserPwd(
                               username.text, password.text)
                           .then((values) async {
                         if (values!.docs.isNotEmpty) {

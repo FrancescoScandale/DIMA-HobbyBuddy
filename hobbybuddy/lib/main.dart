@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/firebase_options.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
+import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:hobbybuddy/services/preferences.dart';
@@ -21,7 +23,8 @@ Future<void> main() async {
 
   //init the cache instance and the firebase instance
   await Preferences.init();
-  FirebaseCrud.init();
+  FirestoreCrud.init();
+  StorageCrud.init();
 
   runApp(MultiProvider(providers: [
     // DARK/LIGHT THEME

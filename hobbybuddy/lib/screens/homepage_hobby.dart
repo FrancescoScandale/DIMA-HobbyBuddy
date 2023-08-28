@@ -8,7 +8,7 @@ import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/container_shadow.dart';
 
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 import 'package:hobbybuddy/widgets/app_bar.dart';
@@ -63,10 +63,10 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
     if (checkFavouriteHobby) {
       //add the new favourite hobby in db
-      await FirebaseCrud.updateFavouriteHobbies(username, _hobby, 'add');
+      await FirestoreCrud.updateFavouriteHobbies(username, _hobby, 'add');
     } else {
       //remove the favourite hobby from db
-      await FirebaseCrud.updateFavouriteHobbies(username, _hobby, 'remove');
+      await FirestoreCrud.updateFavouriteHobbies(username, _hobby, 'remove');
     }
 
     //update cache
@@ -83,10 +83,10 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
     if (_mentors[mentor]!) {
       //add the new favourite mentor in db
-      await FirebaseCrud.updateFavouriteMentors(username, mentor, 'add');
+      await FirestoreCrud.updateFavouriteMentors(username, mentor, 'add');
     } else {
       //remove the favourite mentor from db
-      await FirebaseCrud.updateFavouriteMentors(username, mentor, 'remove');
+      await FirestoreCrud.updateFavouriteMentors(username, mentor, 'remove');
     }
 
     //update cache
@@ -104,7 +104,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     if (_mentors.isEmpty) {
       //TODO: passando da un hobby all'altro, questo potrebbe avere bisogno di essere
       //inizializzato di nuovo... se la schermata è nuova invece dovrebbe essere a posto
-      _mentors = await FirebaseCrud.getMentors(_hobby);
+      _mentors = await FirestoreCrud.getMentors(_hobby);
       setState(() {});
     }
   }

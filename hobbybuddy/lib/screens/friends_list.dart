@@ -3,7 +3,7 @@ import 'package:hobbybuddy/screens/my_friends_list.dart';
 import 'package:hobbybuddy/screens/search_friend_list.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/themes/layout.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 
@@ -21,7 +21,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   late final TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   Future<List<String>> receivedRequestsFuture =
-      FirebaseCrud.getReceivedRequest(Preferences.getUsername()!);
+      FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
   bool _isShrink = false;
   bool _showRedCircle = false;
 
@@ -115,13 +115,13 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                                 children: [
                                   ElevatedButton(
                                     onPressed: () async {
-                                      await FirebaseCrud.removeSentRequest(
+                                      await FirestoreCrud.removeSentRequest(
                                           request, Preferences.getUsername()!);
-                                      await FirebaseCrud.removeReceivedRequest(
+                                      await FirestoreCrud.removeReceivedRequest(
                                           Preferences.getUsername()!, request);
-                                      await FirebaseCrud.addFriend(
+                                      await FirestoreCrud.addFriend(
                                           Preferences.getUsername()!, request);
-                                      await FirebaseCrud.addFriend(
+                                      await FirestoreCrud.addFriend(
                                           request, Preferences.getUsername()!);
                                       setState(() {
                                         receivedRequests.remove(request);
@@ -141,9 +141,9 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                                   ),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      await FirebaseCrud.removeSentRequest(
+                                      await FirestoreCrud.removeSentRequest(
                                           request, Preferences.getUsername()!);
-                                      await FirebaseCrud.removeReceivedRequest(
+                                      await FirestoreCrud.removeReceivedRequest(
                                           Preferences.getUsername()!, request);
                                       setState(() {
                                         receivedRequests.remove(request);

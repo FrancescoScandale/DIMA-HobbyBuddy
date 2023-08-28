@@ -1,6 +1,5 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -10,17 +9,18 @@ import 'package:hobbybuddy/services/preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 
 final firestore = FakeFirebaseFirestore();
 final storage = MockFirebaseStorage();
 
-class MockFirebaseCrud extends Mock implements FirebaseCrud {}
+class MockFirebaseCrud extends Mock implements FirestoreCrud {}
 
 void main() async {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
+    FirestoreCrud.init(firebaseInstance: firestore);
+    StorageCrud.init(storageInstance: storage);
 
     // Set up fake Firestore instance
     SharedPreferences.setMockInitialValues({
@@ -31,20 +31,32 @@ void main() async {
     await firestore.collection("users").add({
       'username': 'marta',
     });
-    FirebaseCrud.init(firestore);
-    const filename = 'logo.png';
-    final storageRef = storage.ref().child(filename);
-    final localImage = await rootBundle.load("assets/$filename");
-    final task = await storageRef.putData(localImage.buffer.asUint8List());
+    // const filename = 'logo.png';
+    // final storageRef = storage.ref().child(filename);
+    // final localImage = await rootBundle.load("assets/$filename");
+    // final task = await storageRef.putData(localImage.buffer.asUint8List());
+    final storageRefpropic = storage.ref().child('Users/marta/propic.jpg');
+    final storageRefbackground = storage.ref().child('Users/marta/background.jpg');
+    final localImage = await rootBundle.load("assets/logo.png");
+    final task = await storageRefpropic.putData(localImage.buffer.asUint8List());
+    final task2 = await storageRefbackground.putData(localImage.buffer.asUint8List());
     print(task.ref.fullPath);
+    print(task2.ref.fullPath);
   });
 
   group('Settings screen test', () {
     testWidgets('EditProfileScreen renders correctly', (tester) async {
       await Preferences.init();
       await tester.pumpWidget(
-        MaterialApp(
-          home: EditProfileScreen(),
+        MultiProvider(
+          providers: [
+            Provider<FirestoreCrud>(
+              create: (context) => MockFirebaseCrud(),
+            ),
+          ],
+          child: const MaterialApp(
+            home: EditProfileScreen(),
+          ),
         ),
       );
       await tester.pumpAndSettle();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/themes/layout.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/screens/homepage_user.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
@@ -51,7 +51,7 @@ class _MyFriendsListState extends State<MyFriendsList> {
   Future<void> retriveFriends() async {
     String username = Preferences.getUsername()!;
     if (_friends.isEmpty) {
-      List<String> friends = await FirebaseCrud.getFriends(username);
+      List<String> friends = await FirestoreCrud.getFriends(username);
       setState(() {
         _friends = friends;
         _filteredFriends = _friends;
@@ -249,8 +249,8 @@ class _MyFriendsListState extends State<MyFriendsList> {
         _filteredFriends.remove(friendName);
       });
 
-      await FirebaseCrud.removeFriend(Preferences.getUsername()!, friendName);
-      await FirebaseCrud.removeFriend(friendName, Preferences.getUsername()!);
+      await FirestoreCrud.removeFriend(Preferences.getUsername()!, friendName);
+      await FirestoreCrud.removeFriend(friendName, Preferences.getUsername()!);
     }
   }
 }

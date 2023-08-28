@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:hobbybuddy/screens/friends_list.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +13,7 @@ import 'package:hobbybuddy/screens/search_friend_list.dart';
 final firestore = FakeFirebaseFirestore();
 
 // Create a mock class for FirebaseCrud
-class MockFirebaseCrud extends Mock implements FirebaseCrud {
+class MockFirebaseCrud extends Mock implements FirestoreCrud {
   static Future<List<String>> getReceivedRequest(String username) async {
     print('getReceivedRequest method called with username: $username');
     try {
@@ -112,6 +112,7 @@ void main() {
 
   setUp(() async {
     // Set up fake Firestore instance
+    FirestoreCrud.init(firebaseInstance: firestore);
     SharedPreferences.setMockInitialValues({
       "username": "mockUser",
     });
@@ -131,7 +132,7 @@ void main() {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider<FirebaseCrud>(
+          Provider<FirestoreCrud>(
             create: (context) => MockFirebaseCrud(),
           ),
         ],

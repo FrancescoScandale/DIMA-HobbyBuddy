@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/themes/layout.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/screens/homepage_user.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
@@ -51,7 +51,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
   Future<void> retriveUsers() async {
     String username = Preferences.getUsername()!;
     if (_friends.isEmpty) {
-      List<String> friends = await FirebaseCrud.getAllOtherUsernames(username);
+      List<String> friends = await FirestoreCrud.getAllOtherUsernames(username);
       setState(() {
         _friends = friends;
         _filteredFriends = _friends;
@@ -62,7 +62,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
   Future<void> retriveSentRequests() async {
     String username = Preferences.getUsername()!;
     if (_pendingRequests.isEmpty) {
-      List<String> sentRequests = await FirebaseCrud.getSentRequest(username);
+      List<String> sentRequests = await FirestoreCrud.getSentRequest(username);
       setState(() {
         _pendingRequests = sentRequests;
       });
@@ -270,8 +270,8 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
         _pendingRequests.add(friendName); // Add friend to pending requests
       });
 
-      await FirebaseCrud.addSentRequest(Preferences.getUsername()!, friendName);
-      await FirebaseCrud.addReceivedRequest(
+      await FirestoreCrud.addSentRequest(Preferences.getUsername()!, friendName);
+      await FirestoreCrud.addReceivedRequest(
           friendName, Preferences.getUsername()!);
     }
   }
@@ -332,9 +332,9 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
         _pendingRequests.remove(friendName);
       });
 
-      await FirebaseCrud.removeSentRequest(
+      await FirestoreCrud.removeSentRequest(
           Preferences.getUsername()!, friendName);
-      await FirebaseCrud.removeReceivedRequest(
+      await FirestoreCrud.removeReceivedRequest(
           friendName, Preferences.getUsername()!);
     }
   }

@@ -1,12 +1,12 @@
+import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/widgets/button.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -45,25 +45,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       String profilePicPath = 'Users/$user/propic.jpg';
       // Convert the selected image file to Uint8List
       Uint8List profilePicData = await _profileFile.readAsBytes();
-      await FirebaseStorage.instance.ref(profilePicPath).putData(profilePicData);
+      await StorageCrud.getStorage().ref(profilePicPath).putData(profilePicData);
     }
 
     if (_backgroundPicked) {
       String backgroundPath = 'Users/$user/background.jpg';
       // Convert the selected image file to Uint8List
       Uint8List backgroundData = await _backgroundFile.readAsBytes();
-      await FirebaseStorage.instance.ref(backgroundPath).putData(backgroundData);
+      await StorageCrud.getStorage().ref(backgroundPath).putData(backgroundData);
     }
 
-    await FirebaseCrud.updateUserInfo(user!, name, surname);
+    await FirestoreCrud.updateUserInfo(user!, name, surname);
 
     Navigator.pop(context);
   }
 
   void getUserPics() async {
     String? username = Preferences.getUsername();
-    Uint8List? propicData = await FirebaseStorage.instance.ref().child('Users/$username/propic.jpg').getData();
-    Uint8List? backgroundData = await FirebaseStorage.instance.ref().child('Users/$username/background.jpg').getData();
+    Uint8List? propicData = await StorageCrud.getStorage().ref().child('Users/$username/propic.jpg').getData();
+    Uint8List? backgroundData = await StorageCrud.getStorage().ref().child('Users/$username/background.jpg').getData();
 
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);

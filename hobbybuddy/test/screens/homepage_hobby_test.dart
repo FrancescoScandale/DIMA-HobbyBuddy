@@ -1,20 +1,17 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/homepage_hobby.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
-import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final firestore = FakeFirebaseFirestore();
 
 void main() async {
   setUp(() async {
+    FirestoreCrud.init(firebaseInstance: firestore);
     WidgetsFlutterBinding.ensureInitialized();
 
     SharedPreferences.setMockInitialValues({
@@ -25,7 +22,6 @@ void main() async {
     });
     await Preferences.init();
 
-    FirebaseCrud.init(firebaseInstance: firestore);
     await firestore.collection("users").add({
       'username': 'francesco',
       'hobbies': ['Skateboard'],

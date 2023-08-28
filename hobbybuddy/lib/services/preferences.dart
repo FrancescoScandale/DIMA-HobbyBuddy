@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 
 /// A class to manage the app's shared preferences
 class Preferences {
@@ -33,7 +33,7 @@ class Preferences {
   }
 
   static Future<bool> setHobbies(String username) async {
-    List<String> hobbies = await FirebaseCrud.getUserData(username, 'hobbies');
+    List<String> hobbies = await FirestoreCrud.getUserData(username, 'hobbies');
     return await _prefs.setStringList('hobbies', hobbies);
   }
 
@@ -42,7 +42,7 @@ class Preferences {
   }
 
   static Future<bool> setMentors(String username) async {
-    List<String> mentors = await FirebaseCrud.getUserData(username, 'mentors');
+    List<String> mentors = await FirestoreCrud.getUserData(username, 'mentors');
     return await _prefs.setStringList('mentors', mentors);
   }
 
@@ -52,7 +52,7 @@ class Preferences {
   }
 
   static Future<bool> setEmail(String username) async {
-    String email = await FirebaseCrud.getEmail(username);
+    String email = await FirestoreCrud.getEmail(username);
     return await _prefs.setString('email', email);
   }
 

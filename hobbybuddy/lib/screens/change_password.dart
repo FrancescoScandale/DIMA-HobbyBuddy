@@ -4,7 +4,7 @@ import 'package:hobbybuddy/widgets/button.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -25,7 +25,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
     String newPassword = _passwordController.text;
     // Retrieve the username from SharedPreferences
     //String? username = Preferences.getUsername();
-    await FirebaseCrud.updatePassword(newPassword, username!);
+    await FirestoreCrud.updatePassword(newPassword, username!);
   }
 
   @override
@@ -147,7 +147,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                   onPressed: () async {
                     if (_formkey.currentState!.validate()) {
                       //check if credentials present in db
-                      await FirebaseCrud.getUserPwd(
+                      await FirestoreCrud.getUserPwd(
                               username!, _currentPasswordController.text)
                           .then((values) async {
                         if (values!.docs.isNotEmpty) {

@@ -5,7 +5,7 @@ import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
-import 'package:hobbybuddy/services/firebase_queries.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/screens/homepage_hobby.dart';
 import 'package:hobbybuddy/widgets/button_icon.dart';
 
@@ -88,7 +88,7 @@ class _HomePScreenState extends State<HomePScreen> {
 
   Future<void> retriveHobbies() async {
     if (_hobbies.isEmpty) {
-      List<String> hobbies = await FirebaseCrud.getHobbies();
+      List<String> hobbies = await FirestoreCrud.getHobbies();
       setState(() {
         _hobbies = hobbies;
         _filteredHobbies = _hobbies;

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:hobbybuddy/services/preferences.dart';
 
-class FirebaseCrud {
+class FirestoreCrud {
   static late FirebaseFirestore fi; //firebase instance
 
   static void init({FirebaseFirestore? firebaseInstance}) {

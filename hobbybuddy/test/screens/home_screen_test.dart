@@ -1,13 +1,17 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/home_page.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final firestore = FakeFirebaseFirestore();
 void main() {
   group('home page screen test', () {
     // Mock SharedPreferences initialization
     setUp(() {
+      FirestoreCrud.init(firebaseInstance: firestore);
       SharedPreferences.setMockInitialValues({
         'hobbies': ['chess'],
       });
@@ -29,8 +33,7 @@ void main() {
       expect(find.byType(TextField), findsOneWidget);
 
       // Use find.byWidgetPredicate to find ContainerShadow
-      final containerFinder =
-          find.byWidgetPredicate((widget) => widget is Container);
+      final containerFinder = find.byWidgetPredicate((widget) => widget is Container);
       expect(containerFinder, findsOneWidget);
 
       await tester.tap(containerFinder);
