@@ -44,16 +44,9 @@ void main() async {
     testWidgets('EditProfileScreen renders correctly', (tester) async {
       await Preferences.init();
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider<FirestoreCrud>(
-              create: (context) => MockFirebaseCrud(),
-            ),
-          ],
-          child: const MaterialApp(
+        const MaterialApp(
             home: EditProfileScreen(),
           ),
-        ),
       );
       await tester.pumpAndSettle();
       // Verify that the AppBar title is correct.
