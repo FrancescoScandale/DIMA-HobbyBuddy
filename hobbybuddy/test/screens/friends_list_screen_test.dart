@@ -14,7 +14,7 @@ final firestore = FakeFirebaseFirestore();
 
 void main() {
   setUp(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+    TestWidgetsFlutterBinding.ensureInitialized();
     // Set up fake Firestore instance
     SharedPreferences.setMockInitialValues({
       "username": "friend0",

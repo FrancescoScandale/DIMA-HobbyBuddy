@@ -1,35 +1,36 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/settings.dart';
-import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../mock/mock_app_theme.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
+
+final firestore = FakeFirebaseFirestore();
 
 void main() async {
-  setUp(() {
+  setUp(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    FirestoreCrud.init(firebaseInstance: firestore);
+
     SharedPreferences.setMockInitialValues({
       'username': 'marta',
       'email': 'marta@gmail.com',
       'isDark': false,
+    });
+    await firestore.collection("users").add({
+      'username': 'marta',
+      'email': 'marta@gmail.com',
     });
   });
   group('Settings screen test', () {
     testWidgets('SettingsScreen renders correctly', (tester) async {
       await Preferences.init();
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider<ThemeManager>(
-              create: (context) => MockThemeManger(),
-            ),
-          ],
-          child: MaterialApp(
-            home: Settings(
-              username: 'marta',
-              profilePicture: Image.asset('assets/logo.png'),
-            ),
+        MaterialApp(
+          home: Settings(
+            username: 'marta',
+            profilePicture: Image.asset('assets/logo.png'),
           ),
         ),
       );

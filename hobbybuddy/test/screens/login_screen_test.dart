@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
+import 'package:hobbybuddy/services/firebase_firestore.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:hobbybuddy/services/firebase_storage.dart';
 
-//class MockNavigatorObserver extends Mock implements NavigatorObserver {}
-
+final firestore = FakeFirebaseFirestore();
 void main() {
-  //setUp(() {
-  // Mock SharedPreferences initialization
-  // SharedPreferences.setMockInitialValues({});
-  //});
+  setUp(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    FirestoreCrud.init(firebaseInstance: firestore);
+    StorageCrud.init(storageInstance: MockFirebaseStorage());
+
+    // Set up fake Firestore instance
+    SharedPreferences.setMockInitialValues({
+      'username': 'marta',
+      'name': 'marta',
+      'surname': 'radaelli',
+    });
+    await firestore
+        .collection("users")
+        .add({'username': 'marta', 'password': '12345678'});
+  });
   testWidgets('LogInScreen renders correctly with button', (tester) async {
-    //await Preferences.init();
     await tester.pumpWidget(
       MaterialApp(
         home: LogInScreen(),
-        //navigatorObservers: [MockNavigatorObserver()],
       ),
     );
 
@@ -28,13 +41,11 @@ void main() {
     expect(button, findsOneWidget);
 
     // Fill in the username and password fields
-    await tester.enterText(userField, 'testusername');
-    await tester.enterText(passwordField, 'testpassword');
+    await tester.enterText(userField, 'marta');
+    await tester.enterText(passwordField, '12345678');
 
     // Tap the login button
     await tester.tap(button);
     await tester.pumpAndSettle();
-
-    // Add more assertions if needed based on your app's behavior
   });
 }
