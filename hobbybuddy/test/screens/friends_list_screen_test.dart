@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:hobbybuddy/screens/friends_list.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:provider/provider.dart';
+import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hobbybuddy/screens/my_friends_list.dart';
 import 'package:hobbybuddy/screens/search_friend_list.dart';
@@ -13,132 +12,57 @@ import 'package:hobbybuddy/screens/search_friend_list.dart';
 final firestore = FakeFirebaseFirestore();
 
 // Create a mock class for FirebaseCrud
-class MockFirebaseCrud extends Mock implements FirestoreCrud {
-  static Future<List<String>> getReceivedRequest(String username) async {
-    print('getReceivedRequest method called with username: $username');
-    try {
-      final userDoc = await firestore
-          .collection("users")
-          .where("username", isEqualTo: username)
-          .get();
-
-      if (userDoc.docs.isNotEmpty) {
-        String receivedRequestString =
-            userDoc.docs[0].get("receivedReq") as String;
-        List<String> receivedRequests = receivedRequestString.isNotEmpty
-            ? receivedRequestString.split(',')
-            : [];
-        return receivedRequests;
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-    return [];
-  }
-
-  static Future<void> removeSentRequest(
-      String user, String friendToRemove) async {
-    try {
-      final userDoc = await firestore
-          .collection("users")
-          .where("username", isEqualTo: user)
-          .get();
-
-      if (userDoc.docs.isNotEmpty) {
-        String tmp = userDoc.docs[0].get("sentReq");
-        List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
-        friendList.remove(friendToRemove);
-        String updatedFriendString = friendList.join(',');
-        await userDoc.docs[0].reference
-            .update({'sentReq': updatedFriendString});
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  static Future<void> removeReceivedRequest(
-      String user, String friendToRemove) async {
-    try {
-      final userDoc = await firestore
-          .collection("users")
-          .where("username", isEqualTo: user)
-          .get();
-
-      if (userDoc.docs.isNotEmpty) {
-        String tmp = userDoc.docs[0].get("receivedReq");
-        List<String> friendList = tmp.isNotEmpty ? tmp.split(',') : [];
-
-        friendList.remove(friendToRemove);
-
-        String updatedFriendString = friendList.join(',');
-
-        await userDoc.docs[0].reference
-            .update({'receivedReq': updatedFriendString});
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  static Future<void> addFriend(String user, String friendToAdd) async {
-    try {
-      final userDoc = await firestore
-          .collection("users")
-          .where("username", isEqualTo: user)
-          .get();
-
-      if (userDoc.docs.isNotEmpty) {
-        String tmp = userDoc.docs[0].get("friends") as String;
-        List<String> friendList = tmp.split(',');
-        friendList.add(friendToAdd);
-        String updatedFriendString = friendList.join(',');
-        await userDoc.docs[0].reference
-            .update({'friends': updatedFriendString});
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-}
-
-class CustomBindings extends AutomatedTestWidgetsFlutterBinding {
-  @override
-  bool get overrideHttpClient => false;
-}
 
 void main() {
-  CustomBindings();
-
   setUp(() async {
+    WidgetsFlutterBinding.ensureInitialized();
     // Set up fake Firestore instance
     FirestoreCrud.init(firebaseInstance: firestore);
     SharedPreferences.setMockInitialValues({
-      "username": "mockUser",
+      "username": "friend0",
+    });
+    await Preferences.init();
+    FirestoreCrud.init(firebaseInstance: firestore);
+    await firestore.collection("users").add({
+      "username": "friend0",
+      "receivedReq": "friend1,friend2", // example received requests
+      "sentReq": "", // example sent requests
+      "friends": "friend5", // example friends
     });
     await firestore.collection("users").add({
-      "username": "mockUser",
-      "receivedReq": "friend1,friend2", // example received requests
-      "sentReq": "friend3,friend4", // example sent requests
-      "friends": "friend5,friend6", // example friends
+      "username": "friend1",
+      "receivedReq": "",
+      "sentReq": "friend0", // example sent requests
+      "friends": "friend5",
+    });
+    await firestore.collection("users").add({
+      "username": "friend2",
+      "receivedReq": "",
+      "sentReq": "friend0", // example sent requests
+      "friends": "friend6",
+    });
+    await firestore.collection("users").add({
+      "username": "friend5",
+      "receivedReq": "",
+      "sentReq": "", // example sent requests
+      "friends": "friend0,friend1",
+    });
+    await firestore.collection("users").add({
+      "username": "friend6",
+      "receivedReq": "",
+      "sentReq": "", // example sent requests
+      "friends": "friend0,friend2",
     });
   });
 
-  testWidgets('MyFriendsScreen renders correctly with an empty dialog',
+  testWidgets(
+      'MyFriendsScreen renders correctly and user can interact with friendship request dialog',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await Preferences.init();
 
     await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider<FirestoreCrud>(
-            create: (context) => MockFirebaseCrud(),
-          ),
-        ],
-        child: const MaterialApp(
-          home: MyFriendsScreen(),
-        ),
+      const MaterialApp(
+        home: MyFriendsScreen(),
       ),
     );
     await tester.pumpAndSettle();
@@ -148,11 +72,15 @@ void main() {
 
     expect(find.byType(TabBarView), findsOneWidget);
     expect(find.byType(MyFriendsList), findsOneWidget);
+    expect(find.text('friend5'), findsOneWidget);
     //change tabBar view
     await tester.tap(find.text("Explore"));
     await tester.pumpAndSettle();
     //check if found
     expect(find.byType(SearchFriendsList), findsOneWidget);
+    expect(find.text('friend1'), findsOneWidget);
+    expect(find.text('friend2'), findsOneWidget);
+    expect(find.text('friend6'), findsOneWidget);
     //change tabBar view
     await tester.tap(find.text("My friends"));
     await tester.pumpAndSettle();
@@ -165,6 +93,10 @@ void main() {
     // Verify that the dialog appears
     final dialog = find.byWidgetPredicate((widget) => widget is AlertDialog);
     expect(dialog, findsOneWidget);
+    expect(find.text('friend1'), findsOneWidget);
+    await tester.tap(find.text('Accept').first);
+    expect(find.text('friend2'), findsOneWidget);
+    await tester.tap(find.text("Decline").last);
 
     // Verify that the dialog closes
     await tester.tap(find.text('Close'));
@@ -172,5 +104,62 @@ void main() {
 
     // Verify that the title is still visible
     expect(find.text('Friends Explorer'), findsOneWidget);
+    await tester.tap(find.text("Explore"));
+    await tester.pumpAndSettle();
+    //check if found
+    expect(find.byType(SearchFriendsList), findsOneWidget);
+    expect(find.text('friend1'), findsNothing);
+    expect(find.text('friend2'), findsOneWidget);
+    //change tabBar view
+    await tester.tap(find.text("My friends"));
+    await tester.pumpAndSettle();
+    expect(find.text('friend1'), findsOneWidget);
+    expect(find.text('friend2'), findsNothing);
+    expect(find.text('friend5'), findsOneWidget);
   });
+/*
+  testWidgets('MyFriendsScreen renders correctly and user delete friend',
+      (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: MyFriendsScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Verify that the title is visible
+    expect(find.text('Friends Explorer'), findsOneWidget);
+
+    expect(find.byType(TabBarView), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('friend5'), findsOneWidget);
+    expect(find.text('friend6'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.person_remove).first);
+    await tester.pumpAndSettle();
+    final dialog = find.byWidgetPredicate((widget) => widget is AlertDialog);
+    expect(dialog, findsOneWidget);
+
+    await tester.tap(find.text('Remove'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('friend5'), findsNothing);
+    expect(find.text('friend6'), findsOneWidget);
+    await tester.tap(find.text("Explore"));
+    await tester.pumpAndSettle();
+
+    expect(find.text('friend5'), findsOneWidget);
+  });
+
+  testWidgets('MyFriendsScreen renders correctly and user delete friend',
+      (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: MyFriendsScreen(),
+      ),
+    );
+  });*/
 }
