@@ -45,14 +45,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       String profilePicPath = 'Users/$user/propic.jpg';
       // Convert the selected image file to Uint8List
       Uint8List profilePicData = await _profileFile.readAsBytes();
-      await StorageCrud.getStorage().ref(profilePicPath).putData(profilePicData);
+      await StorageCrud.getStorage()
+          .ref(profilePicPath)
+          .putData(profilePicData);
     }
 
     if (_backgroundPicked) {
       String backgroundPath = 'Users/$user/background.jpg';
       // Convert the selected image file to Uint8List
       Uint8List backgroundData = await _backgroundFile.readAsBytes();
-      await StorageCrud.getStorage().ref(backgroundPath).putData(backgroundData);
+      await StorageCrud.getStorage()
+          .ref(backgroundPath)
+          .putData(backgroundData);
     }
 
     await FirestoreCrud.updateUserInfo(user!, name, surname);
@@ -62,8 +66,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void getUserPics() async {
     String? username = Preferences.getUsername();
-    Uint8List? propicData = await StorageCrud.getStorage().ref().child('Users/$username/propic.jpg').getData();
-    Uint8List? backgroundData = await StorageCrud.getStorage().ref().child('Users/$username/background.jpg').getData();
+    Uint8List? propicData = await StorageCrud.getStorage()
+        .ref()
+        .child('Users/$username/propic.jpg')
+        .getData();
+    Uint8List? backgroundData = await StorageCrud.getStorage()
+        .ref()
+        .child('Users/$username/background.jpg')
+        .getData();
 
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);
@@ -74,7 +84,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> pickImage(bool isProfilePic) async {
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         if (isProfilePic) {
@@ -125,6 +136,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Stack(
                       children: [
                         SizedBox(
+                          key: const Key('backgImage'),
                           height: _backgroundPadding,
                           width: MediaQuery.sizeOf(context).width,
                           child: (() {
@@ -157,11 +169,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               child: _backgroundPicked
                                   ? Icon(
                                       Icons.close,
-                                      color: Theme.of(context).colorScheme.error,
+                                      color:
+                                          Theme.of(context).colorScheme.error,
                                     )
                                   : Icon(
                                       Icons.photo_camera,
-                                      color: Theme.of(context).colorScheme.error,
+                                      color:
+                                          Theme.of(context).colorScheme.error,
                                     ),
                               onPressed: () {
                                 if (_backgroundPicked) {
@@ -181,7 +195,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           child: Stack(
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
+                                borderRadius: BorderRadius.circular(
+                                    AppLayout.kProfilePicRadiusLarge),
                                 child: (() {
                                   if (_profilePicked) {
                                     return Image.file(
@@ -203,7 +218,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 })(),
                               ),
                               Container(
-                                margin: const EdgeInsets.only(top: 97, left: 60),
+                                margin:
+                                    const EdgeInsets.only(top: 97, left: 60),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     shape: const CircleBorder(),
@@ -211,11 +227,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   child: _profilePicked
                                       ? Icon(
                                           Icons.close,
-                                          color: Theme.of(context).colorScheme.error,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
                                         )
                                       : Icon(
                                           Icons.photo_camera,
-                                          color: Theme.of(context).colorScheme.error,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
                                         ),
                                   onPressed: () {
                                     if (_profilePicked) {
