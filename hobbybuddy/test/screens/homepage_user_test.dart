@@ -35,20 +35,27 @@ void main() async {
     });
 
     //propic
-    final Reference storageRefpropic = StorageCrud.getStorage().ref().child('Users/francesco/propic.jpg');
+    final Reference storageRefpropic =
+        StorageCrud.getStorage().ref().child('Users/francesco/propic.jpg');
     final ByteData propic = await rootBundle.load("assets/pics/propic.jpg");
     await storageRefpropic.putData(propic.buffer.asUint8List());
     //background
-    final Reference storageRefbackground = StorageCrud.getStorage().ref().child('Users/francesco/background.jpg');
-    final ByteData background = await rootBundle.load("assets/pics/background.jpg");
+    final Reference storageRefbackground =
+        StorageCrud.getStorage().ref().child('Users/francesco/background.jpg');
+    final ByteData background =
+        await rootBundle.load("assets/pics/background.jpg");
     await storageRefbackground.putData(background.buffer.asUint8List());
     //milestone
     const String title = '2023-08-14_14:15:10';
-    final Reference milestoneRefpic = StorageCrud.getStorage().ref().child('Users/francesco/milestones/$title/pic.jpg');
-    final ByteData milestonePic = await rootBundle.load("assets/pics/lowqualitybackground.jpg");
+    final Reference milestoneRefpic = StorageCrud.getStorage()
+        .ref()
+        .child('Users/francesco/milestones/$title/pic.jpg');
+    final ByteData milestonePic =
+        await rootBundle.load("assets/pics/lowqualitybackground.jpg");
     await milestoneRefpic.putData(milestonePic.buffer.asUint8List());
-    final Reference milestoneRefcaption =
-        StorageCrud.getStorage().ref().child('Users/francesco/milestones/$title/caption.txt');
+    final Reference milestoneRefcaption = StorageCrud.getStorage()
+        .ref()
+        .child('Users/francesco/milestones/$title/caption.txt');
     const String caption = 'This is a caption';
     await milestoneRefcaption.putData(Uint8List.fromList(utf8.encode(caption)));
   });

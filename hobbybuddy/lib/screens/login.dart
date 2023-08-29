@@ -29,12 +29,18 @@ class LogInScreen extends StatelessWidget {
               Text(
                 "Welcome to Hobby Buddy!",
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .displayMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               Text(
                 "Log In",
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .displaySmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
               LoginForm(),
@@ -142,7 +148,9 @@ class _LoginFormState extends State<LoginForm> {
                     if (_formKey.currentState!.validate()) {
                       bool check = false;
                       //check if credentials present in db
-                      await FirestoreCrud.getUserPwd(username.text, password.text).then((values) async {
+                      await FirestoreCrud.getUserPwd(
+                              username.text, password.text)
+                          .then((values) async {
                         if (values!.docs.isNotEmpty) {
                           check = true;
 
@@ -168,7 +176,9 @@ class _LoginFormState extends State<LoginForm> {
                         });
                         // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Account not found...")),
+                          const SnackBar(
+                              key: const Key("wrongLogin"),
+                              content: Text("Account not found...")),
                         );
                       }
                     }

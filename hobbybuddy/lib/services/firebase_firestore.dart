@@ -28,6 +28,24 @@ class FirestoreCrud {
     }
   }
 
+  static Future<void> addUserToFirestore(String email, String password,
+      String username, String name, String surname) async {
+    // Add a new document with automatic ID to the "users" collection
+    await fi.collection('users').add({
+      'email': email,
+      'friends': '',
+      'hobbies': '',
+      'location': '',
+      'mentors': '',
+      'password': password,
+      'receivedReq': '',
+      'sentReq': '',
+      'username': username,
+      'name': name,
+      'surname': surname,
+    });
+  }
+
   ///function used to retrieve user mentors and hobbies
   ///data can be equal to 'hobbies' or 'mentors'
   static Future<List<String>> getUserData(String user, String data) async {
@@ -433,10 +451,9 @@ class FirestoreCrud {
 
   static Future<bool> isUsernameUnique(String username) async {
     final QuerySnapshot snapshot = await fi
-        .collection('users') // Change 'users' to your actual collection name
+        .collection('users')
         .where('username', isEqualTo: username)
         .get();
-
     return snapshot.docs.isEmpty;
   }
 

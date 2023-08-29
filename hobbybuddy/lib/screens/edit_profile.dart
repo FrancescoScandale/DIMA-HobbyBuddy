@@ -314,6 +314,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const SizedBox(height: 50),
                     MyButton(
+                        key: const Key('saveB'),
                         text: loading ? "Loading..." : "Save",
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
@@ -345,25 +346,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Profile'),
-        content: const Text('Your profile has been updated successfully.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close the dialog
-              //Navigator.pop(context); // Go back
-            },
-            child: const Text('OK'),
-          ),
-        ],
       ),
     );
   }
