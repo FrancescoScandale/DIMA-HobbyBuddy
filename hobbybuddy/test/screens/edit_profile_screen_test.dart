@@ -6,7 +6,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/edit_profile.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';

@@ -47,29 +47,27 @@ class _UserPageState extends State<UserPage> {
   bool downloadLocations = false;
   bool downloadUserPics = false;
   bool downloadNameSurname = false;
-  bool allowHobbies = false;
 
   _UserPageState(String user) {
     _username = user;
   }
 
-  void checkCompletions() {
-    if (downloadHobbies &&
-        downloadMentors &&
-        downloadMilestones &&
-        downloadLocations &&
-        downloadUserPics &&
-        downloadNameSurname) {
-      allowHobbies = true;
-
-      setState(() {});
-    }
+  @override
+  void initState() {
+    getUserPics();
+    getNameSurname();
+    computeLocation();
+    getHobbies();
+    getMentors();
+    getMilestones();
+    super.initState();
   }
 
   void getHobbies() async {
     _hobbies = await FirestoreCrud.getUserData(_username, 'hobbies');
-    downloadHobbies = true;
-    checkCompletions();
+    setState(() {
+      downloadHobbies = true;
+    });
   }
 
   void getMentors() async {
@@ -80,8 +78,9 @@ class _UserPageState extends State<UserPage> {
       _mentorsPics[_mentors[i]] = Image.network(url);
     }
 
-    downloadMentors = true;
-    checkCompletions();
+    setState(() {
+      downloadMentors = true;
+    });
   }
 
   void computeLocation() async {
@@ -90,8 +89,9 @@ class _UserPageState extends State<UserPage> {
         await placemarkFromCoordinates(double.parse(coordinates[0]), double.parse(coordinates[1]));
     _location = '${addresses[0].street!}, ${addresses[0].locality!}';
 
-    downloadLocations = true;
-    checkCompletions();
+    setState(() {
+      downloadLocations = true;
+    });
   }
 
   void getMilestones() async {
@@ -107,8 +107,9 @@ class _UserPageState extends State<UserPage> {
       _milestones[tmp] = Tuple2(utf8.decode(cap!), Image.memory(image!));
     }
 
-    downloadMilestones = true;
-    checkCompletions();
+    setState(() {
+      downloadMilestones = true;
+    });
   }
 
   void getUserPics() async {
@@ -118,8 +119,9 @@ class _UserPageState extends State<UserPage> {
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);
 
-    downloadUserPics = true;
-    checkCompletions();
+    setState(() {
+      downloadUserPics = true;
+    });
   }
 
   void getNameSurname() async {
@@ -128,20 +130,13 @@ class _UserPageState extends State<UserPage> {
     _name = result[0];
     _surname = result[1];
 
-    downloadNameSurname = true;
-    checkCompletions();
+    setState(() {
+      downloadNameSurname = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_location == '') {
-      getUserPics();
-      getNameSurname();
-      computeLocation();
-      getHobbies();
-      getMentors();
-      getMilestones();
-    }
     return Scaffold(
         appBar: const MyAppBar(
           title: "Profile Page",
@@ -264,7 +259,7 @@ class _UserPageState extends State<UserPage> {
                                           borderRadius: BorderRadius.circular(20),
                                           child: Container(
                                             color: ui.Color(0xffffcc80),
-                                            child: allowHobbies
+                                            child: downloadHobbies
                                                 ? Image.asset(
                                                     'assets/hobbies/${_hobbies[index]}.png',
                                                     fit: BoxFit.contain,
@@ -285,7 +280,7 @@ class _UserPageState extends State<UserPage> {
                                           ),
                                         );
                                       }),
-                                  allowHobbies
+                                  downloadHobbies
                                       ? Text(
                                           _hobbies[index],
                                           style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
@@ -427,7 +422,6 @@ class _UserPageState extends State<UserPage> {
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return ContainerShadow(
-                              //color: ui.Color(0xffffcc80), //TODO?
                               child: Column(
                             children: [
                               Container(
