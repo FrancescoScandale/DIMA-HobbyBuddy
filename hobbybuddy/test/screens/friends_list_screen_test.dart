@@ -4,7 +4,6 @@ import 'package:hobbybuddy/screens/friends_list.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hobbybuddy/screens/my_friends_list.dart';
 import 'package:hobbybuddy/screens/search_friend_list.dart';
@@ -17,7 +16,6 @@ void main() {
   setUp(() async {
     WidgetsFlutterBinding.ensureInitialized();
     // Set up fake Firestore instance
-    FirestoreCrud.init(firebaseInstance: firestore);
     SharedPreferences.setMockInitialValues({
       "username": "friend0",
     });
