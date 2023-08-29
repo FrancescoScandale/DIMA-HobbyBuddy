@@ -29,18 +29,12 @@ class LogInScreen extends StatelessWidget {
               Text(
                 "Welcome to Hobby Buddy!",
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .displayMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               Text(
                 "Log In",
-                style: Theme.of(context)
-                    .textTheme
-                    .displaySmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
               LoginForm(),
@@ -64,6 +58,7 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
   bool _passwordInvisible = true;
+  bool pressed = false;
 
   @override
   void dispose() {
@@ -90,6 +85,9 @@ class _LoginFormState extends State<LoginForm> {
             // The validator receives the text that the user has entered.
             validator: (value1) {
               if (value1 == null || value1.isEmpty) {
+                setState(() {
+                  pressed = false;
+                });
                 return 'Username not found';
               }
               return null;
@@ -120,6 +118,9 @@ class _LoginFormState extends State<LoginForm> {
             // The validator receives the text that the user has entered.
             validator: (value2) {
               if (value2 == null || value2.isEmpty) {
+                setState(() {
+                  pressed = false;
+                });
                 return 'Password not found';
               }
               return null;
@@ -134,13 +135,14 @@ class _LoginFormState extends State<LoginForm> {
                 child: ElevatedButton(
                   key: const Key("go_login"),
                   onPressed: () async {
+                    setState(() {
+                      pressed = true;
+                    });
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
                       bool check = false;
                       //check if credentials present in db
-                      await FirestoreCrud.getUserPwd(
-                              username.text, password.text)
-                          .then((values) async {
+                      await FirestoreCrud.getUserPwd(username.text, password.text).then((values) async {
                         if (values!.docs.isNotEmpty) {
                           check = true;
 
@@ -161,6 +163,9 @@ class _LoginFormState extends State<LoginForm> {
                           ),
                         );
                       } else {
+                        setState(() {
+                          pressed = false;
+                        });
                         // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Account not found...")),
@@ -168,8 +173,8 @@ class _LoginFormState extends State<LoginForm> {
                       }
                     }
                   },
-                  child: const Text(
-                    'Submit',
+                  child: Text(
+                    pressed ? 'Checking...' : 'Submit',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

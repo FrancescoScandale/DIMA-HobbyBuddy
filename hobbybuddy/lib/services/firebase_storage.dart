@@ -4,7 +4,7 @@ class StorageCrud {
   static late FirebaseStorage fs;
 
   static void init({FirebaseStorage? storageInstance}) {
-    fs = storageInstance ?? StorageCrud.getStorage();
+    fs = storageInstance ?? FirebaseStorage.instance;
   }
 
   static FirebaseStorage getStorage() {
