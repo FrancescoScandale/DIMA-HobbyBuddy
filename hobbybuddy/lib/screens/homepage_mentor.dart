@@ -38,7 +38,6 @@ class _MentorPageState extends State<MentorPage> {
   late Image background;
   List<String> _upcomingClasses = [];
   Map<String, Tuple2<String, Image>> _courses = {};
-  bool completed = false;
   bool downloadMentorPics = false;
   bool downloadInfo = false;
   bool downloadClasses = false;
@@ -60,18 +59,21 @@ class _MentorPageState extends State<MentorPage> {
     _mentor = mentor;
   }
 
-  void checkCompletions() {
-    if (downloadMentorPics && downloadInfo && downloadClasses && downloadCourses) {
-      completed = true;
-      setState(() {});
-    }
+  @override
+  void initState() {
+    favourite = Preferences.getMentors()!.contains(_mentor);
+    getMentorPics();
+    getInfo();
+    getUpcomingClasses();
+    getCourses();
+    super.initState();
   }
 
   void getInfo() async {
     _hobby = await FirestoreCrud.getHobby(_mentor);
-
-    downloadInfo = true;
-    checkCompletions();
+    setState(() {
+      downloadInfo = true;
+    });
   }
 
   void getMentorPics() async {
@@ -81,15 +83,17 @@ class _MentorPageState extends State<MentorPage> {
     propic = Image.memory(propicData!);
     background = Image.memory(backgroundData!);
 
-    downloadMentorPics = true;
-    checkCompletions();
+    setState(() {
+      downloadMentorPics = true;
+    });
   }
 
   void getUpcomingClasses() async {
     _upcomingClasses = await FirestoreCrud.getUpcomingClasses(_mentor);
 
-    downloadClasses = true;
-    checkCompletions();
+    setState(() {
+      downloadClasses = true;
+    });
   }
 
   void getCourses() async {
@@ -104,8 +108,9 @@ class _MentorPageState extends State<MentorPage> {
       _courses[tmp] = Tuple2(utf8.decode(title!), Image.memory(image!));
     }
 
-    downloadCourses = true;
-    checkCompletions();
+    setState(() {
+      downloadCourses = true;
+    });
   }
 
   ///toggles the bool 'favourite' to change the displayed icon, updates db and cache
@@ -155,13 +160,6 @@ class _MentorPageState extends State<MentorPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!completed) {
-      favourite = Preferences.getMentors()!.contains(_mentor);
-      getMentorPics();
-      getInfo();
-      getUpcomingClasses();
-      getCourses();
-    }
     return Scaffold(
       appBar: const MyAppBar(
         title: "Mentor Page",
@@ -316,7 +314,10 @@ class _MentorPageState extends State<MentorPage> {
                       itemBuilder: (context, index) {
                         return MyIconButton(
                           onTap: () {
-                            Widget newScreen = CoursesPage(mentor: _mentor, title: _courses.values.elementAt(index).item1.split(';;')[1], courseID: _courses.keys.elementAt(index));
+                            Widget newScreen = CoursesPage(
+                                mentor: _mentor,
+                                title: _courses.values.elementAt(index).item1.split(';;')[1],
+                                courseID: _courses.keys.elementAt(index));
                             Navigator.push(
                               context,
                               ScreenTransition(
@@ -352,8 +353,8 @@ class _MentorPageState extends State<MentorPage> {
                                 const SizedBox(height: 8), // Spacing between image and title
                                 Container(
                                   padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-                                  child:
-                                      Text(_courses.values.elementAt(index).item1.split(';;')[1], style: const TextStyle(fontSize: 17)),
+                                  child: Text(_courses.values.elementAt(index).item1.split(';;')[1],
+                                      style: const TextStyle(fontSize: 17)),
                                 ),
                                 Expanded(
                                     child: Align(
@@ -363,7 +364,8 @@ class _MentorPageState extends State<MentorPage> {
                                     child: Container(
                                       width: 10,
                                       height: 10,
-                                      color: convertColor(int.parse(_courses.values.elementAt(index).item1.split(';;')[0])),
+                                      color: convertColor(
+                                          int.parse(_courses.values.elementAt(index).item1.split(';;')[0])),
                                     ),
                                   ),
                                 )),
