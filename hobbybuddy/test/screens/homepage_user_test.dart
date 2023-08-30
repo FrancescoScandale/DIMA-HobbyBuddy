@@ -16,6 +16,8 @@ import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+
+
 final firestore = FakeFirebaseFirestore();
 
 final mockLocation = Location(
@@ -25,19 +27,13 @@ final mockLocation = Location(
 );
 
 final mockPlacemark = Placemark(
-  // administrativeArea: 'Overijssel',
-  // country: 'Netherlands',
-  // isoCountryCode: 'NL',
   locality: 'Milano',
-  // name: 'Gronausestraat',
-  // postalCode: '',
   street: 'Via Cavour 7',
-  // subAdministrativeArea: 'Enschede',
-  // subLocality: 'Enschmarke',
-  // subThoroughfare: '',
-  // thoroughfare: 'Gronausestraat'
 );
 
+//there were renderflex errors in mentors (Container and Column went outside borders)
+//they were solved by wrapping the column in a SingleChildScrollView()
+//reference of the solution: homepage_user.dart - row 328
 void main() async {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -111,7 +107,7 @@ void main() async {
       // Find Image widgets
       expect(
         find.byType(Image),
-        findsNWidgets(2),
+        findsNWidgets(8),
       );
     });
   });
@@ -119,11 +115,6 @@ void main() async {
 
 // ignore: prefer_mixin
 class MockGeocodingPlatform extends Mock with MockPlatformInterfaceMixin implements GeocodingPlatform {
-  // with
-  //     // ignore: prefer_mixin
-  //     MockPlatformInterfaceMixin
-  // implements
-  //     GeocodingPlatform {
   @override
   Future<List<Location>> locationFromAddress(
     String address, {
