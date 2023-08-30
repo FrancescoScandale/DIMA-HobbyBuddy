@@ -33,8 +33,8 @@ void main() {
   });
   testWidgets('LogInScreen renders correctly with button', (tester) async {
     await Preferences.init();
-    tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(1080, 1920);
     await tester.pumpWidget(
       MaterialApp(
         home: LogInScreen(),
@@ -65,8 +65,8 @@ void main() {
   });
 
   testWidgets('LogInScreen renders correctly and logs user', (tester) async {
-    tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(1080, 1920);
     await tester.pumpWidget(
       MaterialApp(
         home: LogInScreen(),
@@ -104,8 +104,8 @@ void main() {
 
   testWidgets('LogInScreen renders correctly and checks wrong user',
       (tester) async {
-    tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(1080, 1920);
     await tester.pumpWidget(
       MaterialApp(
         home: LogInScreen(),

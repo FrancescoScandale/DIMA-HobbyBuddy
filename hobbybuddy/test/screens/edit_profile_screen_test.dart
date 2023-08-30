@@ -101,8 +101,8 @@ void main() async {
 
   group('EditProfileScreen test', () {
     testWidgets('EditProfileScreen saves new name and surname', (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
-      tester.binding.window.devicePixelRatioTestValue = 1.0;
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1080, 1920);
       await Preferences.init();
       await tester.pumpWidget(
         const MaterialApp(
@@ -170,9 +170,8 @@ void main() async {
     });
 
     testWidgets('EditProfileScreen handles image changes', (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
-      tester.binding.window.devicePixelRatioTestValue = 1.0;
-
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1080, 1920);
       await Preferences.init();
       await tester.pumpWidget(
         const MaterialApp(
