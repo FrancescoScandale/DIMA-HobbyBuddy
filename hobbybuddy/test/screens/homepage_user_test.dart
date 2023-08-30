@@ -91,7 +91,7 @@ void main() async {
   });
 
   group('Settings screen test', () {
-    testWidgets('EditProfileScreen renders correctly', (tester) async {
+    testWidgets('User\'s homepage renders correctly', (tester) async {
       await Preferences.init();
       await tester.pumpWidget(
         const MaterialApp(

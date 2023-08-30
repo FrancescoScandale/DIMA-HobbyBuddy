@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/homepage_hobby.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:hobbybuddy/widgets/button_icon.dart';
+import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final firestore = FakeFirebaseFirestore();
@@ -18,18 +18,42 @@ void main() async {
       'isDark': true,
       'username': 'francesco',
       'hobbies': ['Skateboard', 'Chess'],
-      'mentors': ['Emma Watson'],
+      'mentors': ['Emma Watson', 'Ben Affleck', 'Lewis Hamilton'],
     });
     await Preferences.init();
 
     await firestore.collection("users").add({
       'username': 'francesco',
-      'hobbies': ['Skateboard'],
-      'mentors': ['Emma Watson'],
+      'hobbies': ['Skateboard', 'Chess'],
+      'mentors': ['Emma Watson', 'Ben Affleck', 'Lewis Hamilton'],
+    });
+
+    await firestore.collection('mentors').add({
+      'name': 'Ben',
+      'surname': 'Affleck',
+      'hobby': 'Skateboard',
+    });
+
+    await firestore.collection('mentors').add({
+      'name': 'Lewis',
+      'surname': 'Hamilton',
+      'hobby': 'Skateboard',
+    });
+
+    await firestore.collection('mentors').add({
+      'name': 'Emma',
+      'surname': 'Watson',
+      'hobby': 'Chess',
+    });
+
+    await firestore.collection('mentors').add({
+      'name': 'John',
+      'surname': 'Travolta',
+      'hobby': 'Skateboard',
     });
   });
 
-  testWidgets('HomePage hobby', (tester) async {
+  testWidgets('Hobby\'s homepage renders correctly', (tester) async {
     const String hobby = 'Skateboard';
     await tester.pumpWidget(
       MaterialApp(
@@ -38,31 +62,52 @@ void main() async {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(
-      find.text('Skateboard'),
+      find.text('Home Page Hobby'),
+      findsOneWidget,
+    );
+    expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              widget.image.toString().contains('Skateboard.png'),
+        ),
+        findsOneWidget);
+
+    expect(
+      find.byWidgetPredicate((widget) =>
+          widget is Text && widget.toString().contains('Skateboard')),
       findsOneWidget,
     );
 
     expect(
-      find.byWidgetPredicate((widget) => widget is Image),
+      find.byWidgetPredicate(
+          (widget) => widget is Text && widget.toString().contains('Mentors')),
       findsOneWidget,
     );
+    expect(find.byType(ContainerShadow), findsOneWidget);
+    expect(find.byType(ListTile), findsNWidgets(3));
 
-    expect(
-      find.byWidgetPredicate((widget) => widget is MyIconButton),
-      findsOneWidget,
-    );
+    expect(find.byIcon(Icons.favorite), findsNWidgets(3));
+    expect(find.byIcon(Icons.favorite_outline), findsNWidgets(1));
+
+    await tester.tap(find.byIcon(Icons.favorite_outline));
+    await tester.pumpAndSettle();
     expect(
       find.byIcon(Icons.favorite),
-      findsOneWidget,
+      findsNWidgets(4),
     );
-    await tester.tap(find.byIcon(Icons.favorite));
+    assert(Preferences.getMentors()!.length==4);
 
-    await tester.pump();
+    await tester.tap(find.byKey(const Key('toggleHobby')));
+    await tester.pumpAndSettle();
     expect(
-      find.byIcon(Icons.favorite_border),
-      findsOneWidget,
+      find.byIcon(Icons.favorite),
+      findsNWidgets(3),
     );
+    assert(!Preferences.getHobbies()!.contains('Skateboard'));
   });
 }

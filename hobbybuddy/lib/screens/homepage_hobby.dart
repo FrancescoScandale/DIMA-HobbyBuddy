@@ -102,8 +102,6 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
   void retrieveMentors() async {
     if (_mentors.isEmpty) {
-      //TODO: passando da un hobby all'altro, questo potrebbe avere bisogno di essere
-      //inizializzato di nuovo... se la schermata è nuova invece dovrebbe essere a posto
       _mentors = await FirestoreCrud.getMentors(_hobby);
       setState(() {});
     }
@@ -161,6 +159,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 padding: const EdgeInsetsDirectional.fromSTEB(
                     0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
                 child: MyIconButton(
+                  key: const Key('toggleHobby'),
                   onTap: toggleFavouriteHobby,
                   icon:
                       checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,
