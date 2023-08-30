@@ -230,7 +230,6 @@ class _UserPageState extends State<UserPage> {
             ),
             ContainerShadow(
               //HOBBIES
-              //color: ui.Color(0xffffcc80), //TODO?
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,7 +279,12 @@ class _UserPageState extends State<UserPage> {
                                           ScreenTransition(
                                             builder: (context) => newScreen,
                                           ),
-                                        );
+                                        ).then((value) {
+                                          setState(() {
+                                            downloadHobbies = false;
+                                          });
+                                          getHobbies();
+                                        });
                                       }),
                                   downloadHobbies
                                       ? Text(
@@ -321,7 +325,8 @@ class _UserPageState extends State<UserPage> {
                           return Container(
                               padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
                               width: AppLayout.kIconDimension * 1.1,
-                              child: Column(
+                              child: SingleChildScrollView(
+                                  child: Column(
                                 children: [
                                   MyIconButton(
                                       icon: ClipRRect(
@@ -348,7 +353,12 @@ class _UserPageState extends State<UserPage> {
                                           ScreenTransition(
                                             builder: (context) => newScreen,
                                           ),
-                                        );
+                                        ).then((value) {
+                                          setState(() {
+                                            downloadMentors = false;
+                                          });
+                                          getMentors();
+                                        });
                                       }),
                                   downloadMentors
                                       ? Text(
@@ -357,7 +367,7 @@ class _UserPageState extends State<UserPage> {
                                         )
                                       : Container()
                                 ],
-                              ));
+                              )));
                         },
                       ))
                 ],
@@ -399,6 +409,9 @@ class _UserPageState extends State<UserPage> {
                                   builder: (context) => newScreen,
                                 ),
                               ).then((_) {
+                                setState(() {
+                                  downloadMilestones = false;
+                                });
                                 getMilestones();
                               });
                             },
