@@ -94,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
                 setState(() {
                   pressed = false;
                 });
-                return 'Username not found';
+                return 'Please enter your username';
               }
               return null;
             },
@@ -127,7 +127,7 @@ class _LoginFormState extends State<LoginForm> {
                 setState(() {
                   pressed = false;
                 });
-                return 'Password not found';
+                return 'Please enter your password';
               }
               return null;
             },
@@ -176,9 +176,7 @@ class _LoginFormState extends State<LoginForm> {
                         });
                         // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              key: const Key("wrongLogin"),
-                              content: Text("Account not found...")),
+                          const SnackBar(content: Text("Account not found...")),
                         );
                       }
                     }
