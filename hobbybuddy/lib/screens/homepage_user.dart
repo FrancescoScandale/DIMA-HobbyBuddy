@@ -143,338 +143,345 @@ class _UserPageState extends State<UserPage> {
         appBar: const MyAppBar(
           title: "Profile Page",
         ),
-        body: ListView(
-          children: [
-            Stack(
-              //IMAGES
+        body: RefreshIndicator(
+            child: ListView(
               children: [
-                SizedBox(
-                    height: _backgroundPadding,
-                    width: MediaQuery.sizeOf(context).width,
-                    child: downloadUserPics
-                        ? Image(
-                            image: background.image,
-                            alignment: Alignment.center,
-                            fit: BoxFit.cover,
-                          )
-                        : Container()),
-                Container(
-                    padding: EdgeInsetsDirectional.fromSTEB(
-                        2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadius),
-                      child: downloadUserPics
-                          ? Image(
-                              image: propic.image,
-                              width: AppLayout.kProfilePicRadiusLarge,
-                              height: AppLayout.kProfilePicRadiusLarge,
-                              fit: BoxFit.cover,
-                            )
-                          : Container(),
-                    ))
-              ],
-            ),
-            Row(
-              //INFO
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(
-                        AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          downloadNameSurname ? _name + ' ' + _surname : '',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          _location,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    )),
-                Preferences.getUsername() == _username
-                    ? MyIconButton(
-                        margin: const EdgeInsets.only(right: 30),
-                        onTap: () async {
-                          Widget newScreen = Settings(
-                            username: _username,
-                            profilePicture: propic,
-                          );
-                          Navigator.push(
-                            context,
-                            ScreenTransition(
-                              builder: (context) => newScreen,
-                            ),
-                          ).then((_) {
-                            downloadUserPics = false;
-                            downloadNameSurname = false;
-                            getUserPics();
-                            getNameSurname();
-                          });
-                          ;
-                        },
-                        icon: const Icon(
-                          Icons.settings_sharp,
-                          size: 1.2 * AppLayout.kButtonHeight,
+                Stack(
+                  //IMAGES
+                  children: [
+                    SizedBox(
+                        height: _backgroundPadding,
+                        width: MediaQuery.sizeOf(context).width,
+                        child: downloadUserPics
+                            ? Image(
+                                image: background.image,
+                                alignment: Alignment.center,
+                                fit: BoxFit.cover,
+                              )
+                            : Container()),
+                    Container(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadius),
+                          child: downloadUserPics
+                              ? Image(
+                                  image: propic.image,
+                                  width: AppLayout.kProfilePicRadiusLarge,
+                                  height: AppLayout.kProfilePicRadiusLarge,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(),
                         ))
-                    : Container()
-              ],
-            ),
-            ContainerShadow(
-              //HOBBIES
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
-                    child: Text(
-                      'Hobbies',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                      height: AppLayout.kIconDimension,
-                      child: ListView.builder(
-                        itemCount: _hobbies.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Container(
-                              padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
-                              width: AppLayout.kIconDimension,
-                              child: Column(
-                                children: [
-                                  MyIconButton(
-                                      icon: ClipRRect(
-                                          borderRadius: BorderRadius.circular(20),
-                                          child: Container(
-                                            color: ui.Color(0xffffcc80),
-                                            child: downloadHobbies
-                                                ? Image.asset(
-                                                    'assets/hobbies/${_hobbies[index]}.png',
-                                                    fit: BoxFit.contain,
-                                                  )
-                                                : Container(
-                                                    height: AppLayout.kIconDimension * 0.8,
-                                                    width: AppLayout.kIconDimension * 0.8,
-                                                  ),
-                                          )),
-                                      onTap: () {
-                                        Widget newScreen = HomePageHobby(
-                                          hobby: _hobbies[index],
-                                        );
-                                        Navigator.push(
-                                          context,
-                                          ScreenTransition(
-                                            builder: (context) => newScreen,
-                                          ),
-                                        ).then((value) {
-                                          setState(() {
-                                            downloadHobbies = false;
-                                          });
-                                          getHobbies();
-                                        });
-                                      }),
-                                  downloadHobbies
-                                      ? Text(
-                                          _hobbies[index],
-                                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                        )
-                                      : Container()
-                                ],
-                              ));
-                        },
-                      ))
-                ],
-              ),
-            ),
-            ContainerShadow(
-              //MENTORS
-              //color: ui.Color(0xffffcc80), //TODO?
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
-                    child: Text(
-                      'Mentors',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                      height: AppLayout.kIconDimension + 10,
-                      child: ListView.builder(
-                        itemCount: _mentors.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Container(
-                              padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
-                              width: AppLayout.kIconDimension * 1.1,
-                              child: SingleChildScrollView(
-                                  child: Column(
-                                children: [
-                                  MyIconButton(
-                                      icon: ClipRRect(
-                                          borderRadius: BorderRadius.circular(20),
-                                          child: Container(
-                                              color: ui.Color(0xffffcc80),
-                                              child: downloadMentors
-                                                  ? Image(
-                                                      image: _mentorsPics[_mentors[index]]!.image,
-                                                      fit: BoxFit.cover,
-                                                      height: AppLayout.kIconDimension * 0.8,
-                                                      width: AppLayout.kIconDimension * 0.8,
-                                                    )
-                                                  : Container(
-                                                      height: AppLayout.kIconDimension * 0.8,
-                                                      width: AppLayout.kIconDimension * 0.8,
-                                                    ))),
-                                      onTap: () {
-                                        Widget newScreen = MentorPage(
-                                          mentor: _mentors[index],
-                                        );
-                                        Navigator.push(
-                                          context,
-                                          ScreenTransition(
-                                            builder: (context) => newScreen,
-                                          ),
-                                        ).then((value) {
-                                          setState(() {
-                                            downloadMentors = false;
-                                          });
-                                          getMentors();
-                                        });
-                                      }),
-                                  downloadMentors
-                                      ? Text(
-                                          _mentors[index],
-                                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                        )
-                                      : Container()
-                                ],
-                              )));
-                        },
-                      ))
-                ],
-              ),
-            ),
-            Column(
-              //MILESTONES
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: AppLayout.kHeight,
+                  ],
                 ),
                 Row(
+                  //INFO
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
-                      child: Text(
-                        'Milestones',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
                     Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, AppLayout.kHorizontalPadding, 0),
-                        child: SizedBox(
-                          width: 125,
-                          height: 35,
-                          child: MyButton(
-                            text: '+ Milestone',
-                            edge: 5,
-                            onPressed: () async {
-                              Widget newScreen = AddMilestone(user: _username);
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              downloadNameSurname ? _name + ' ' + _surname : '',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              _location,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )),
+                    Preferences.getUsername() == _username
+                        ? MyIconButton(
+                            margin: const EdgeInsets.only(right: 30),
+                            onTap: () async {
+                              Widget newScreen = Settings(
+                                username: _username,
+                                profilePicture: propic,
+                              );
                               Navigator.push(
                                 context,
                                 ScreenTransition(
                                   builder: (context) => newScreen,
                                 ),
                               ).then((_) {
-                                setState(() {
-                                  downloadMilestones = false;
-                                });
-                                getMilestones();
+                                downloadUserPics = false;
+                                downloadNameSurname = false;
+                                getUserPics();
+                                getNameSurname();
                               });
+                              ;
                             },
-                          ),
-                        ))
+                            icon: const Icon(
+                              Icons.settings_sharp,
+                              size: 1.2 * AppLayout.kButtonHeight,
+                            ))
+                        : Container()
                   ],
                 ),
-                Container(
-                  height: AppLayout.kHeightSmall,
+                ContainerShadow(
+                  //HOBBIES
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                        child: Text(
+                          'Hobbies',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                          height: AppLayout.kIconDimension,
+                          child: ListView.builder(
+                            itemCount: _hobbies.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                  padding:
+                                      const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                                  width: AppLayout.kIconDimension,
+                                  child: Column(
+                                    children: [
+                                      MyIconButton(
+                                          icon: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: Container(
+                                                color: ui.Color(0xffffcc80),
+                                                child: downloadHobbies
+                                                    ? Image.asset(
+                                                        'assets/hobbies/${_hobbies[index]}.png',
+                                                        fit: BoxFit.contain,
+                                                      )
+                                                    : Container(
+                                                        height: AppLayout.kIconDimension * 0.8,
+                                                        width: AppLayout.kIconDimension * 0.8,
+                                                      ),
+                                              )),
+                                          onTap: () {
+                                            Widget newScreen = HomePageHobby(
+                                              hobby: _hobbies[index],
+                                            );
+                                            Navigator.push(
+                                              context,
+                                              ScreenTransition(
+                                                builder: (context) => newScreen,
+                                              ),
+                                            ).then((value) {
+                                              setState(() {
+                                                downloadHobbies = false;
+                                              });
+                                              getHobbies();
+                                            });
+                                          }),
+                                      downloadHobbies
+                                          ? Text(
+                                              _hobbies[index],
+                                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                            )
+                                          : Container()
+                                    ],
+                                  ));
+                            },
+                          ))
+                    ],
+                  ),
                 ),
-                const Divider(
-                  height: 0,
-                  indent: AppLayout.kHorizontalPadding,
-                  endIndent: AppLayout.kHorizontalPadding,
-                  thickness: 2,
+                ContainerShadow(
+                  //MENTORS
+                  //color: ui.Color(0xffffcc80), //TODO?
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                        child: Text(
+                          'Mentors',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                          height: AppLayout.kIconDimension + 10,
+                          child: ListView.builder(
+                            itemCount: _mentors.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                  padding:
+                                      const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                                  width: AppLayout.kIconDimension * 1.1,
+                                  child: SingleChildScrollView(
+                                      child: Column(
+                                    children: [
+                                      MyIconButton(
+                                          icon: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: Container(
+                                                  color: ui.Color(0xffffcc80),
+                                                  child: downloadMentors
+                                                      ? Image(
+                                                          image: _mentorsPics[_mentors[index]]!.image,
+                                                          fit: BoxFit.cover,
+                                                          height: AppLayout.kIconDimension * 0.8,
+                                                          width: AppLayout.kIconDimension * 0.8,
+                                                        )
+                                                      : Container(
+                                                          height: AppLayout.kIconDimension * 0.8,
+                                                          width: AppLayout.kIconDimension * 0.8,
+                                                        ))),
+                                          onTap: () {
+                                            Widget newScreen = MentorPage(
+                                              mentor: _mentors[index],
+                                            );
+                                            Navigator.push(
+                                              context,
+                                              ScreenTransition(
+                                                builder: (context) => newScreen,
+                                              ),
+                                            ).then((value) {
+                                              setState(() {
+                                                downloadMentors = false;
+                                              });
+                                              getMentors();
+                                            });
+                                          }),
+                                      downloadMentors
+                                          ? Text(
+                                              _mentors[index],
+                                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                            )
+                                          : Container()
+                                    ],
+                                  )));
+                            },
+                          ))
+                    ],
+                  ),
                 ),
-                downloadMilestones
-                    ? SizedBox(
-                        child: ListView.builder(
-                        reverse: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _milestones.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ContainerShadow(
-                              child: Column(
-                            children: [
-                              Container(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  downloadMilestones ? _milestones.keys.toList()[index] : '',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                ),
+                Column(
+                  //MILESTONES
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: AppLayout.kHeight,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                          child: Text(
+                            'Milestones',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, AppLayout.kHorizontalPadding, 0),
+                            child: SizedBox(
+                              width: 125,
+                              height: 35,
+                              child: MyButton(
+                                text: '+ Milestone',
+                                edge: 5,
+                                onPressed: () async {
+                                  Widget newScreen = AddMilestone(user: _username);
+                                  Navigator.push(
+                                    context,
+                                    ScreenTransition(
+                                      builder: (context) => newScreen,
+                                    ),
+                                  ).then((_) {
+                                    setState(() {
+                                      downloadMilestones = false;
+                                    });
+                                    getMilestones();
+                                  });
+                                },
                               ),
-                              Container(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  downloadMilestones ? _milestones.values.toList()[index].item1 : '',
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              downloadMilestones
-                                  ? Image(
-                                      image: _milestones.values.toList()[index].item2.image,
-                                      width: MediaQuery.sizeOf(context).width * 0.8,
-                                      fit: BoxFit.fitWidth,
-                                      alignment: Alignment.center,
-                                    )
-                                  : Container(
-                                      height: AppLayout.kIconDimension * 0.8,
-                                      width: AppLayout.kIconDimension * 0.8,
-                                    )
-                            ],
-                          ));
-                        },
-                      ))
-                    : Container(
-                        height: AppLayout.kIconDimension * 0.8,
-                        width: AppLayout.kIconDimension * 0.8,
-                      )
+                            ))
+                      ],
+                    ),
+                    Container(
+                      height: AppLayout.kHeightSmall,
+                    ),
+                    const Divider(
+                      height: 0,
+                      indent: AppLayout.kHorizontalPadding,
+                      endIndent: AppLayout.kHorizontalPadding,
+                      thickness: 2,
+                    ),
+                    downloadMilestones
+                        ? SizedBox(
+                            child: ListView.builder(
+                            reverse: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: _milestones.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return ContainerShadow(
+                                  child: Column(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      downloadMilestones ? _milestones.keys.toList()[index] : '',
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      downloadMilestones ? _milestones.values.toList()[index].item1 : '',
+                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  downloadMilestones
+                                      ? Image(
+                                          image: _milestones.values.toList()[index].item2.image,
+                                          width: MediaQuery.sizeOf(context).width * 0.8,
+                                          fit: BoxFit.fitWidth,
+                                          alignment: Alignment.center,
+                                        )
+                                      : Container(
+                                          height: AppLayout.kIconDimension * 0.8,
+                                          width: AppLayout.kIconDimension * 0.8,
+                                        )
+                                ],
+                              ));
+                            },
+                          ))
+                        : Container(
+                            height: AppLayout.kIconDimension * 0.8,
+                            width: AppLayout.kIconDimension * 0.8,
+                          )
+                  ],
+                ),
               ],
             ),
-          ],
-        ));
+            onRefresh: () async {
+              getHobbies();
+              getMentors();
+            }));
   }
 }
