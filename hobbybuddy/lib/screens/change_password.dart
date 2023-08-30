@@ -53,6 +53,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
               children: [
                 const SizedBox(height: 20),
                 TextFormField(
+                  key: const Key("currentP"),
                   controller: _currentPasswordController,
                   obscureText: _passwordInvisibleOld,
                   decoration: InputDecoration(
@@ -83,6 +84,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
+                  key: const Key("newP"),
                   controller: _passwordController,
                   obscureText: _passwordInvisibleNew,
                   decoration: InputDecoration(
@@ -114,6 +116,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
+                  key: const Key("newP2"),
                   obscureText: _passwordInvisibleNew,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.vpn_key_rounded),

@@ -28,6 +28,24 @@ class FirestoreCrud {
     }
   }
 
+  static Future<void> addUserToFirestore(String email, String password,
+      String username, String name, String surname) async {
+    // Add a new document with automatic ID to the "users" collection
+    await fi.collection('users').add({
+      'email': email,
+      'friends': '',
+      'hobbies': '',
+      'location': '',
+      'mentors': '',
+      'password': password,
+      'receivedReq': '',
+      'sentReq': '',
+      'username': username,
+      'name': name,
+      'surname': surname,
+    });
+  }
+
   ///function used to retrieve user mentors and hobbies
   ///data can be equal to 'hobbies' or 'mentors'
   static Future<List<String>> getUserData(String user, String data) async {
@@ -273,7 +291,7 @@ class FirestoreCrud {
 
       for (var doc in snapshot.docs) {
         String username = doc.get("username") as String;
-        if (username != user) {
+        if (username != user && !result.contains(username)) {
           result.add(username);
         }
       }
@@ -290,7 +308,6 @@ class FirestoreCrud {
   ///operation = 'add' or 'remove' based on the update to be done on the database
   static Future<void> updateFavouriteHobbies(
       String username, String hobby, String operation) async {
-    print("entrato nel cruuudddd");
     List<String> hobbies = [];
     String id = '';
 
@@ -434,10 +451,9 @@ class FirestoreCrud {
 
   static Future<bool> isUsernameUnique(String username) async {
     final QuerySnapshot snapshot = await fi
-        .collection('users') // Change 'users' to your actual collection name
+        .collection('users')
         .where('username', isEqualTo: username)
         .get();
-
     return snapshot.docs.isEmpty;
   }
 

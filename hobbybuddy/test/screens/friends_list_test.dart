@@ -4,7 +4,6 @@ import 'package:hobbybuddy/screens/friends_list.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hobbybuddy/screens/my_friends_list.dart';
 import 'package:hobbybuddy/screens/search_friend_list.dart';
@@ -15,9 +14,8 @@ final firestore = FakeFirebaseFirestore();
 
 void main() {
   setUp(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+    TestWidgetsFlutterBinding.ensureInitialized();
     // Set up fake Firestore instance
-    FirestoreCrud.init(firebaseInstance: firestore);
     SharedPreferences.setMockInitialValues({
       "username": "friend0",
     });
@@ -27,7 +25,7 @@ void main() {
       "username": "friend0",
       "receivedReq": "friend1,friend2", // example received requests
       "sentReq": "", // example sent requests
-      "friends": "friend5", // example friends
+      "friends": "friend5,friend4", // example friends
     });
     await firestore.collection("users").add({
       "username": "friend1",
@@ -40,6 +38,18 @@ void main() {
       "receivedReq": "",
       "sentReq": "friend0", // example sent requests
       "friends": "friend6",
+    });
+    await firestore.collection("users").add({
+      "username": "friend3",
+      "receivedReq": "",
+      "sentReq": "", // example sent requests
+      "friends": "",
+    });
+    await firestore.collection("users").add({
+      "username": "friend4",
+      "receivedReq": "",
+      "sentReq": "", // example sent requests
+      "friends": "friend0",
     });
     await firestore.collection("users").add({
       "username": "friend5",
@@ -73,6 +83,7 @@ void main() {
     expect(find.byType(TabBarView), findsOneWidget);
     expect(find.byType(MyFriendsList), findsOneWidget);
     expect(find.text('friend5'), findsOneWidget);
+    expect(find.text('friend4'), findsOneWidget);
     //change tabBar view
     await tester.tap(find.text("Explore"));
     await tester.pumpAndSettle();
@@ -116,9 +127,10 @@ void main() {
     expect(find.text('friend1'), findsOneWidget);
     expect(find.text('friend2'), findsNothing);
     expect(find.text('friend5'), findsOneWidget);
+    expect(find.text('friend4'), findsOneWidget);
   });
-/*
-  testWidgets('MyFriendsScreen renders correctly and user delete friend',
+
+  testWidgets('MyFriendsScreen renders correctly and user can delete friend',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
 
@@ -129,30 +141,40 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Verify that the title is visible
     expect(find.text('Friends Explorer'), findsOneWidget);
 
     expect(find.byType(TabBarView), findsOneWidget);
     expect(find.byType(TextField), findsOneWidget);
+
+    await tester.tap(find.text("Explore"));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SearchFriendsList), findsOneWidget);
+    expect(find.text('friend5'), findsNothing);
+    await tester.tap(find.text("My friends"));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MyFriendsList), findsOneWidget);
     expect(find.text('friend5'), findsOneWidget);
-    expect(find.text('friend6'), findsOneWidget);
+    expect(find.text('friend4'), findsOneWidget);
+
     await tester.tap(find.byIcon(Icons.person_remove).first);
     await tester.pumpAndSettle();
     final dialog = find.byWidgetPredicate((widget) => widget is AlertDialog);
     expect(dialog, findsOneWidget);
-
     await tester.tap(find.text('Remove'));
     await tester.pumpAndSettle();
-
     expect(find.text('friend5'), findsNothing);
-    expect(find.text('friend6'), findsOneWidget);
+
     await tester.tap(find.text("Explore"));
     await tester.pumpAndSettle();
+    expect(find.byType(SearchFriendsList), findsOneWidget);
 
     expect(find.text('friend5'), findsOneWidget);
   });
 
-  testWidgets('MyFriendsScreen renders correctly and user delete friend',
+  testWidgets(
+      'MyFriendsScreen renders correctly and user can send friendship request',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
 
@@ -161,5 +183,31 @@ void main() {
         home: MyFriendsScreen(),
       ),
     );
-  });*/
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Explore"));
+    await tester.pumpAndSettle();
+    expect(find.text('friend2'), findsOneWidget);
+
+    expect(find.byIcon(Icons.add_circle), findsNWidgets(4));
+    await tester.tap(find.byIcon(Icons.add_circle).first);
+    await tester.pumpAndSettle();
+
+    final dialog = find.byWidgetPredicate((widget) => widget is AlertDialog);
+    expect(dialog, findsOneWidget);
+    await tester.tap(find.text('Send'));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.add_circle), findsNWidgets(3));
+    expect(find.byIcon(Icons.pending), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.pending).first);
+    await tester.pumpAndSettle();
+
+    final dialog2 = find.byWidgetPredicate((widget) => widget is AlertDialog);
+    expect(dialog2, findsOneWidget);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.add_circle), findsNWidgets(4));
+    expect(find.byIcon(Icons.pending), findsNothing);
+  });
 }

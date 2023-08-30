@@ -1,6 +1,5 @@
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
@@ -37,31 +36,6 @@ class _SignUpFormState extends State<SignUpForm> {
   final _passwordController = TextEditingController();
   bool _passwordInvisible = true;
   bool _isUsernameNotUnique = false;
-
-  Future<void> addUserToFirestore() async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
-    String username = _usernameController.text;
-    String name = _nameController.text;
-    String surname = _surnameController.text;
-
-    // Add a new document with automatic ID to the "users" collection
-    await FirebaseFirestore.instance.collection('users').add({
-      'email': email,
-      'friends': '',
-      'hobbies': '',
-      'location': '',
-      'mentors': '',
-      'password': password,
-      'receivedReq': '',
-      'sentReq': '',
-      'username': username,
-      'name': name,
-      'surname': surname,
-    });
-
-    // Proceed with any additional logic or navigation
-  }
 
   @override
   void dispose() {
@@ -231,10 +205,15 @@ class _SignUpFormState extends State<SignUpForm> {
                   String enteredUsername = _usernameController.text;
                   bool isUnique =
                       await FirestoreCrud.isUsernameUnique(enteredUsername);
-
                   if (isUnique) {
+                    String email = _emailController.text;
+                    String password = _passwordController.text;
+                    String username = _usernameController.text;
+                    String name = _nameController.text;
+                    String surname = _surnameController.text;
                     // Username is unique, proceed with sign up logic
-                    await addUserToFirestore();
+                    await FirestoreCrud.addUserToFirestore(
+                        email, password, username, name, surname);
                     setState(() {
                       _isUsernameNotUnique = false;
                     });
