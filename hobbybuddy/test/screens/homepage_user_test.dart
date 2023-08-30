@@ -10,13 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/services/preferences.dart';
+import 'package:hobbybuddy/widgets/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
-
 
 final firestore = FakeFirebaseFirestore();
 
@@ -41,13 +40,16 @@ void main() async {
     StorageCrud.init(storageInstance: MockFirebaseStorage());
     GeocodingPlatform.instance = MockGeocodingPlatform();
 
-    // Set up fake Firestore instance
+    //setup preferences
     SharedPreferences.setMockInitialValues({
       'username': 'francesco',
-      'hobbies': [],
-      'mentors': [],
+      'hobbies': ['Skateboard'],
+      'mentors': ['Ben Affleck'],
       'email': '',
     });
+    await Preferences.init();
+
+    //setup fake firestore
     await firestore.collection("users").add({
       'username': 'francesco',
       'hobbies': 'Frisbee,Badminton,Chess,Skateboard',
@@ -55,6 +57,12 @@ void main() async {
       'name': 'Francesco',
       'surname': 'Scandale',
       'location': '45.4905447,9.2303139'
+    });
+    await firestore.collection('mentors').add({
+      'name': 'Ben',
+      'surname': 'Affleck',
+      'hobby': 'Skateboard',
+      'classes': ['1;;We\'ll try to achieve a kickflip!;;15/09/2023;;9:21']
     });
 
     //propic
@@ -68,13 +76,25 @@ void main() async {
     final ByteData background =
         await rootBundle.load("assets/pics/background.jpg");
     await storageRefbackground.putData(background.buffer.asUint8List());
+
     //mentors
-    final Reference JTRefpropic = StorageCrud.getStorage().ref().child('Mentors/John Travolta/propic.jpg');
+    final Reference JTRefpropic = StorageCrud.getStorage()
+        .ref()
+        .child('Mentors/John Travolta/propic.jpg');
     final ByteData JTpropic = await rootBundle.load("assets/pics/propic.jpg");
     await JTRefpropic.putData(JTpropic.buffer.asUint8List());
-    final Reference BFRefpropic = StorageCrud.getStorage().ref().child('Mentors/Ben Affleck/propic.jpg');
-    final ByteData BFpropic = await rootBundle.load("assets/pics/propic.jpg");
-    await BFRefpropic.putData(BFpropic.buffer.asUint8List());
+
+    final Reference BARefpropic =
+        StorageCrud.getStorage().ref().child('Mentors/Ben Affleck/propic.jpg');
+    final ByteData BApropic = await rootBundle.load("assets/pics/propic.jpg");
+    await BARefpropic.putData(BApropic.buffer.asUint8List());
+    final Reference BARefbackground = StorageCrud.getStorage()
+        .ref()
+        .child('Mentors/Ben Affleck/background.jpg');
+    final ByteData BAbackground =
+        await rootBundle.load("assets/pics/lowqualitybackground.jpg");
+    await BARefbackground.putData(BAbackground.buffer.asUint8List());
+
     //milestone
     const String title = '2023-08-14_14:15:10';
     final Reference milestoneRefpic = StorageCrud.getStorage()
@@ -90,9 +110,10 @@ void main() async {
     await milestoneRefcaption.putData(Uint8List.fromList(utf8.encode(caption)));
   });
 
-  group('Settings screen test', () {
+  group('User homepage screen test', () {
     testWidgets('User\'s homepage renders correctly', (tester) async {
-      await Preferences.init();
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1080, 1920);
       await tester.pumpWidget(
         const MaterialApp(
           home: UserPage(
@@ -101,20 +122,78 @@ void main() async {
         ),
       );
       await tester.pumpAndSettle();
-      // Verify that the AppBar title is correct.
+
+      //appBar
       expect(find.text('Profile Page'), findsOneWidget);
-      await tester.pumpAndSettle();
-      // Find Image widgets
+
+      //images (hobbies and others)
       expect(
-        find.byType(Image),
-        findsNWidgets(8),
+          find.byWidgetPredicate(
+              (widget) => widget is Image && widget.image is AssetImage,
+              skipOffstage: false),
+          findsNWidgets(4));
+      expect(
+          find.byWidgetPredicate(
+              (widget) => widget is Image && widget.image is MemoryImage,
+              skipOffstage: false),
+          findsNWidgets(5));
+
+      expect(find.byIcon(Icons.settings_sharp), findsOneWidget);
+      expect(find.byType(MyButton), findsOneWidget);
+    });
+
+    testWidgets('User\'s homepage behavior', (tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1080, 1920);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: UserPage(
+            user: 'francesco',
+          ),
+        ),
       );
+      await tester.pumpAndSettle();
+
+      //create navigator to go to previous screen
+      final NavigatorState navigator = tester.state(find.byType(Navigator));
+
+      //go to settings
+      await tester.tap(find.byIcon(Icons.settings_sharp));
+      await tester.pumpAndSettle();
+      expect(find.text('Settings'), findsOneWidget);
+      navigator.pop();
+      await tester.pumpAndSettle();
+
+      // go to hobby
+      await tester.tap(find.image(
+          Image.asset('assets/hobbies/Skateboard.png').image,
+          skipOffstage: true));
+      await tester.pumpAndSettle();
+      expect(find.text('Home Page Hobby'), findsOneWidget);
+      navigator.pop();
+      await tester.pumpAndSettle();
+
+      //go to mentor
+      await tester.tap(find.byKey(const Key('Ben Affleck')));
+      await tester.pumpAndSettle();
+      expect(find.text('Mentor Page'), findsOneWidget);
+      navigator.pop();
+      await tester.pumpAndSettle();
+
+      // //go to add milestones
+      await tester.tap(find.text('+ Milestone', skipOffstage: false));
+      await tester.pumpAndSettle();
+      expect(find.text('Add New Milestone'), findsOneWidget);
+      navigator.pop();
+      await tester.pumpAndSettle();
     });
   });
 }
 
 // ignore: prefer_mixin
-class MockGeocodingPlatform extends Mock with MockPlatformInterfaceMixin implements GeocodingPlatform {
+class MockGeocodingPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements GeocodingPlatform {
   @override
   Future<List<Location>> locationFromAddress(
     String address, {

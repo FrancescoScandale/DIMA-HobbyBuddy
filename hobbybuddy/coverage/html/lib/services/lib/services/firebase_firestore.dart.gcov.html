@@ -31,13 +31,13 @@
             <td class="headerValue">lcov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryLo">69.3&nbsp;%</td>
-            <td class="headerCovTableEntry">267</td>
-            <td class="headerCovTableEntry">185</td>
+            <td class="headerCovTableEntryMed">78.1&nbsp;%</td>
+            <td class="headerCovTableEntry">269</td>
+            <td class="headerCovTableEntry">210</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2023-08-30 19:54:52</td>
+            <td class="headerValue">2023-08-31 00:20:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -130,20 +130,20 @@
 <span id="L68"><span class="lineNum">      68</span>              :   }</span>
 <span id="L69"><span class="lineNum">      69</span>              : </span>
 <span id="L70"><span class="lineNum">      70</span>              :   /// retrieves all mentors and sets to true the ones that are favourite</span>
-<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;Map&lt;String, bool&gt;&gt; getMentors(String hobby) async {</span></span>
-<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">           1 :     Map&lt;String, bool&gt; result = {};</span></span>
-<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">           1 :     List&lt;String&gt; favouriteMentors = [];</span></span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC tlaBgGNC">           2 :   static Future&lt;Map&lt;String, bool&gt;&gt; getMentors(String hobby) async {</span></span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">           2 :     Map&lt;String, bool&gt; result = {};</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">           2 :     List&lt;String&gt; favouriteMentors = [];</span></span>
 <span id="L74"><span class="lineNum">      74</span>              : </span>
 <span id="L75"><span class="lineNum">      75</span>              :     try {</span>
-<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           1 :       favouriteMentors = Preferences.getMentors()!;</span></span>
-<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">           1 :       result = await fi</span></span>
-<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">           1 :           .collection(&quot;mentors&quot;)</span></span>
-<span id="L79"><span class="lineNum">      79</span> <span class="tlaGNC">           1 :           .where(&quot;hobby&quot;, isEqualTo: hobby)</span></span>
-<span id="L80"><span class="lineNum">      80</span> <span class="tlaGNC">           1 :           .get()</span></span>
-<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">           2 :           .then((values) {</span></span>
-<span id="L82"><span class="lineNum">      82</span> <span class="tlaGNC">           2 :         for (var doc in values.docs) {</span></span>
-<span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">           4 :           String tmp = doc['name'] + ' ' + doc['surname'];</span></span>
-<span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">           2 :           result[tmp] = favouriteMentors.contains(tmp);</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           2 :       favouriteMentors = Preferences.getMentors()!;</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">           2 :       result = await fi</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">           2 :           .collection(&quot;mentors&quot;)</span></span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaGNC">           2 :           .where(&quot;hobby&quot;, isEqualTo: hobby)</span></span>
+<span id="L80"><span class="lineNum">      80</span> <span class="tlaGNC">           2 :           .get()</span></span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">           4 :           .then((values) {</span></span>
+<span id="L82"><span class="lineNum">      82</span> <span class="tlaGNC">           4 :         for (var doc in values.docs) {</span></span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">           8 :           String tmp = doc['name'] + ' ' + doc['surname'];</span></span>
+<span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">           4 :           result[tmp] = favouriteMentors.contains(tmp);</span></span>
 <span id="L85"><span class="lineNum">      85</span>              :         }</span>
 <span id="L86"><span class="lineNum">      86</span>              : </span>
 <span id="L87"><span class="lineNum">      87</span>              :         return result; //result = [[name0 surname0, true],[name1 surname1, false]]</span>
@@ -368,210 +368,214 @@
 <span id="L306"><span class="lineNum">     306</span>              :   }</span>
 <span id="L307"><span class="lineNum">     307</span>              : </span>
 <span id="L308"><span class="lineNum">     308</span>              :   ///operation = 'add' or 'remove' based on the update to be done on the database</span>
-<span id="L309"><span class="lineNum">     309</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;void&gt; updateFavouriteHobbies(String username, String hobby, String operation) async {</span></span>
-<span id="L310"><span class="lineNum">     310</span> <span class="tlaGNC">           1 :     List&lt;String&gt; hobbies = [];</span></span>
-<span id="L311"><span class="lineNum">     311</span>              :     String id = '';</span>
-<span id="L312"><span class="lineNum">     312</span>              : </span>
-<span id="L313"><span class="lineNum">     313</span> <span class="tlaGNC">           1 :     hobbies = Preferences.getHobbies()!;</span></span>
-<span id="L314"><span class="lineNum">     314</span> <span class="tlaGNC">           3 :     if (hobbies.contains(hobby) &amp;&amp; operation.compareTo('remove') == 0) {</span></span>
-<span id="L315"><span class="lineNum">     315</span> <span class="tlaGNC">           1 :       hobbies.remove(hobby);</span></span>
-<span id="L316"><span class="lineNum">     316</span> <span class="tlaUNC tlaBgUNC">           0 :     } else if (!hobbies.contains(hobby) &amp;&amp; operation.compareTo('add') == 0) {</span></span>
-<span id="L317"><span class="lineNum">     317</span> <span class="tlaUNC">           0 :       hobbies.add(hobby);</span></span>
-<span id="L318"><span class="lineNum">     318</span>              :     }</span>
-<span id="L319"><span class="lineNum">     319</span>              : </span>
-<span id="L320"><span class="lineNum">     320</span>              :     try {</span>
-<span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC tlaBgGNC">           1 :       await fi</span></span>
-<span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
-<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
-<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">           1 :           .get()</span></span>
-<span id="L325"><span class="lineNum">     325</span> <span class="tlaGNC">           5 :           .then((value) =&gt; id = value.docs[0].id);</span></span>
-<span id="L326"><span class="lineNum">     326</span> <span class="tlaGNC">           1 :       await fi</span></span>
-<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
-<span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">           1 :           .doc(id)</span></span>
-<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">           3 :           .update({'hobbies': hobbies.join(',')});</span></span>
-<span id="L330"><span class="lineNum">     330</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
-<span id="L331"><span class="lineNum">     331</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
-<span id="L332"><span class="lineNum">     332</span>              :     }</span>
-<span id="L333"><span class="lineNum">     333</span>              :   }</span>
-<span id="L334"><span class="lineNum">     334</span>              : </span>
-<span id="L335"><span class="lineNum">     335</span> <span class="tlaUNC">           0 :   static Future&lt;String&gt; getHobby(String mentor) async {</span></span>
-<span id="L336"><span class="lineNum">     336</span>              :     String hobby = '';</span>
-<span id="L337"><span class="lineNum">     337</span>              :     try {</span>
-<span id="L338"><span class="lineNum">     338</span> <span class="tlaUNC">           0 :       await fi</span></span>
-<span id="L339"><span class="lineNum">     339</span> <span class="tlaUNC">           0 :           .collection(&quot;mentors&quot;)</span></span>
-<span id="L340"><span class="lineNum">     340</span> <span class="tlaUNC">           0 :           .where(&quot;name&quot;, isEqualTo: mentor.split(' ')[0])</span></span>
-<span id="L341"><span class="lineNum">     341</span> <span class="tlaUNC">           0 :           .where(&quot;surname&quot;, isEqualTo: mentor.split(' ')[1])</span></span>
-<span id="L342"><span class="lineNum">     342</span> <span class="tlaUNC">           0 :           .get()</span></span>
-<span id="L343"><span class="lineNum">     343</span> <span class="tlaUNC">           0 :           .then((value) =&gt; hobby = value.docs[0]['hobby']);</span></span>
-<span id="L344"><span class="lineNum">     344</span> <span class="tlaUNC">           0 :     } on FirebaseException catch (e) {</span></span>
-<span id="L345"><span class="lineNum">     345</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
-<span id="L346"><span class="lineNum">     346</span>              :     }</span>
-<span id="L347"><span class="lineNum">     347</span>              : </span>
-<span id="L348"><span class="lineNum">     348</span>              :     return hobby;</span>
-<span id="L349"><span class="lineNum">     349</span>              :   }</span>
-<span id="L350"><span class="lineNum">     350</span>              : </span>
-<span id="L351"><span class="lineNum">     351</span>              :   ///operation = 'add' or 'remove' based on the update to be done on the database</span>
-<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;void&gt; updateFavouriteMentors(</span></span>
-<span id="L353"><span class="lineNum">     353</span>              :       String username, String mentor, String operation) async {</span>
-<span id="L354"><span class="lineNum">     354</span> <span class="tlaGNC">           1 :     List&lt;String&gt; mentors = [];</span></span>
-<span id="L355"><span class="lineNum">     355</span>              :     String id = '';</span>
-<span id="L356"><span class="lineNum">     356</span>              : </span>
-<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">           1 :     mentors = Preferences.getMentors()!;</span></span>
-<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">           1 :     if (mentors.contains(mentor) &amp;&amp; operation.compareTo('remove') == 0) {</span></span>
-<span id="L359"><span class="lineNum">     359</span> <span class="tlaUNC tlaBgUNC">           0 :       mentors.remove(mentor);</span></span>
-<span id="L360"><span class="lineNum">     360</span> <span class="tlaGNC tlaBgGNC">           3 :     } else if (!mentors.contains(mentor) &amp;&amp; operation.compareTo('add') == 0) {</span></span>
-<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">           1 :       mentors.add(mentor);</span></span>
-<span id="L362"><span class="lineNum">     362</span>              :     }</span>
-<span id="L363"><span class="lineNum">     363</span>              : </span>
-<span id="L364"><span class="lineNum">     364</span>              :     try {</span>
-<span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">           1 :       await fi</span></span>
-<span id="L366"><span class="lineNum">     366</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
-<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
-<span id="L368"><span class="lineNum">     368</span> <span class="tlaGNC">           1 :           .get()</span></span>
-<span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC">           5 :           .then((value) =&gt; id = value.docs[0].id);</span></span>
-<span id="L370"><span class="lineNum">     370</span> <span class="tlaGNC">           1 :       await fi</span></span>
-<span id="L371"><span class="lineNum">     371</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
-<span id="L372"><span class="lineNum">     372</span> <span class="tlaGNC">           1 :           .doc(id)</span></span>
-<span id="L373"><span class="lineNum">     373</span> <span class="tlaGNC">           3 :           .update({'mentors': mentors.join(',')});</span></span>
-<span id="L374"><span class="lineNum">     374</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
-<span id="L375"><span class="lineNum">     375</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
-<span id="L376"><span class="lineNum">     376</span>              :     }</span>
-<span id="L377"><span class="lineNum">     377</span>              :   }</span>
-<span id="L378"><span class="lineNum">     378</span>              : </span>
-<span id="L379"><span class="lineNum">     379</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;List&lt;String&gt;&gt; getAddress(String username) async {</span></span>
-<span id="L380"><span class="lineNum">     380</span>              :     List&lt;String&gt; coordinates;</span>
-<span id="L381"><span class="lineNum">     381</span> <span class="tlaGNC">           1 :     coordinates = await fi</span></span>
-<span id="L382"><span class="lineNum">     382</span> <span class="tlaGNC">           1 :         .collection('users')</span></span>
-<span id="L383"><span class="lineNum">     383</span> <span class="tlaGNC">           1 :         .where(&quot;username&quot;, isEqualTo: username)</span></span>
-<span id="L384"><span class="lineNum">     384</span> <span class="tlaGNC">           1 :         .get()</span></span>
-<span id="L385"><span class="lineNum">     385</span> <span class="tlaGNC">           2 :         .then((value) {</span></span>
-<span id="L386"><span class="lineNum">     386</span> <span class="tlaGNC">           5 :       return value.docs[0]['location'].toString().split(',');</span></span>
-<span id="L387"><span class="lineNum">     387</span>              :     });</span>
-<span id="L388"><span class="lineNum">     388</span>              :     return coordinates;</span>
-<span id="L389"><span class="lineNum">     389</span>              :   }</span>
-<span id="L390"><span class="lineNum">     390</span>              : </span>
-<span id="L391"><span class="lineNum">     391</span> <span class="tlaUNC tlaBgUNC">           0 :   static Future&lt;String&gt; getEmail(String username) async {</span></span>
-<span id="L392"><span class="lineNum">     392</span> <span class="tlaUNC">           0 :     String email = await fi</span></span>
-<span id="L393"><span class="lineNum">     393</span> <span class="tlaUNC">           0 :         .collection('users')</span></span>
-<span id="L394"><span class="lineNum">     394</span> <span class="tlaUNC">           0 :         .where(&quot;username&quot;, isEqualTo: username)</span></span>
-<span id="L395"><span class="lineNum">     395</span> <span class="tlaUNC">           0 :         .get()</span></span>
-<span id="L396"><span class="lineNum">     396</span> <span class="tlaUNC">           0 :         .then((value) {</span></span>
-<span id="L397"><span class="lineNum">     397</span> <span class="tlaUNC">           0 :       return value.docs[0]['email'].toString();</span></span>
-<span id="L398"><span class="lineNum">     398</span>              :     });</span>
-<span id="L399"><span class="lineNum">     399</span>              : </span>
-<span id="L400"><span class="lineNum">     400</span>              :     return email;</span>
-<span id="L401"><span class="lineNum">     401</span>              :   }</span>
-<span id="L402"><span class="lineNum">     402</span>              : </span>
-<span id="L403"><span class="lineNum">     403</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;void&gt; updatePassword(String password, String username) async {</span></span>
-<span id="L404"><span class="lineNum">     404</span>              :     try {</span>
-<span id="L405"><span class="lineNum">     405</span> <span class="tlaGNC">           1 :       fi</span></span>
-<span id="L406"><span class="lineNum">     406</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
-<span id="L407"><span class="lineNum">     407</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
-<span id="L408"><span class="lineNum">     408</span> <span class="tlaGNC">           1 :           .get()</span></span>
-<span id="L409"><span class="lineNum">     409</span> <span class="tlaGNC">           2 :           .then((value) {</span></span>
-<span id="L410"><span class="lineNum">     410</span> <span class="tlaGNC">           2 :         for (var doc in value.docs) {</span></span>
-<span id="L411"><span class="lineNum">     411</span>              :           // Update the password field in each matching document</span>
-<span id="L412"><span class="lineNum">     412</span> <span class="tlaGNC">           3 :           doc.reference.update({'password': password});</span></span>
-<span id="L413"><span class="lineNum">     413</span>              :         }</span>
-<span id="L414"><span class="lineNum">     414</span>              :       });</span>
-<span id="L415"><span class="lineNum">     415</span>              :       //({'password': password});</span>
-<span id="L416"><span class="lineNum">     416</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
-<span id="L417"><span class="lineNum">     417</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
-<span id="L418"><span class="lineNum">     418</span>              :     }</span>
-<span id="L419"><span class="lineNum">     419</span>              :   }</span>
-<span id="L420"><span class="lineNum">     420</span>              : </span>
-<span id="L421"><span class="lineNum">     421</span> <span class="tlaUNC">           0 :   static Future&lt;void&gt; updateUserInfo(</span></span>
-<span id="L422"><span class="lineNum">     422</span>              :       String user, String name, String surname) async {</span>
-<span id="L423"><span class="lineNum">     423</span>              :     try {</span>
-<span id="L424"><span class="lineNum">     424</span> <span class="tlaUNC">           0 :       fi</span></span>
-<span id="L425"><span class="lineNum">     425</span> <span class="tlaUNC">           0 :           .collection(&quot;users&quot;)</span></span>
-<span id="L426"><span class="lineNum">     426</span> <span class="tlaUNC">           0 :           .where(&quot;username&quot;, isEqualTo: user)</span></span>
-<span id="L427"><span class="lineNum">     427</span> <span class="tlaUNC">           0 :           .get()</span></span>
-<span id="L428"><span class="lineNum">     428</span> <span class="tlaUNC">           0 :           .then((value) {</span></span>
-<span id="L429"><span class="lineNum">     429</span> <span class="tlaUNC">           0 :         for (var doc in value.docs) {</span></span>
-<span id="L430"><span class="lineNum">     430</span>              :           // Update the password field in each matching document</span>
-<span id="L431"><span class="lineNum">     431</span>              : </span>
-<span id="L432"><span class="lineNum">     432</span>              :           /*if (username.isNotEmpty) {</span>
-<span id="L433"><span class="lineNum">     433</span>              :             doc.reference.update({'username': username});</span>
-<span id="L434"><span class="lineNum">     434</span>              :             Preferences.setUsername(username);</span>
-<span id="L435"><span class="lineNum">     435</span>              :           }*/</span>
-<span id="L436"><span class="lineNum">     436</span>              : </span>
-<span id="L437"><span class="lineNum">     437</span> <span class="tlaUNC">           0 :           if (name.isNotEmpty) {</span></span>
-<span id="L438"><span class="lineNum">     438</span> <span class="tlaUNC">           0 :             doc.reference.update({'name': name});</span></span>
-<span id="L439"><span class="lineNum">     439</span>              :           }</span>
-<span id="L440"><span class="lineNum">     440</span> <span class="tlaUNC">           0 :           if (surname.isNotEmpty) {</span></span>
-<span id="L441"><span class="lineNum">     441</span> <span class="tlaUNC">           0 :             doc.reference.update({'surname': surname});</span></span>
-<span id="L442"><span class="lineNum">     442</span>              :           }</span>
-<span id="L443"><span class="lineNum">     443</span>              :         }</span>
-<span id="L444"><span class="lineNum">     444</span>              :       });</span>
-<span id="L445"><span class="lineNum">     445</span>              :       //({'password': password});</span>
-<span id="L446"><span class="lineNum">     446</span> <span class="tlaUNC">           0 :     } on FirebaseException catch (e) {</span></span>
-<span id="L447"><span class="lineNum">     447</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
-<span id="L448"><span class="lineNum">     448</span>              :     }</span>
-<span id="L449"><span class="lineNum">     449</span>              :   }</span>
-<span id="L450"><span class="lineNum">     450</span>              : </span>
-<span id="L451"><span class="lineNum">     451</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;bool&gt; isUsernameUnique(String username) async {</span></span>
-<span id="L452"><span class="lineNum">     452</span> <span class="tlaGNC">           1 :     final QuerySnapshot snapshot = await fi</span></span>
-<span id="L453"><span class="lineNum">     453</span> <span class="tlaGNC">           1 :         .collection('users')</span></span>
-<span id="L454"><span class="lineNum">     454</span> <span class="tlaGNC">           1 :         .where('username', isEqualTo: username)</span></span>
-<span id="L455"><span class="lineNum">     455</span> <span class="tlaGNC">           1 :         .get();</span></span>
-<span id="L456"><span class="lineNum">     456</span> <span class="tlaGNC">           2 :     return snapshot.docs.isEmpty;</span></span>
-<span id="L457"><span class="lineNum">     457</span>              :   }</span>
-<span id="L458"><span class="lineNum">     458</span>              : </span>
-<span id="L459"><span class="lineNum">     459</span> <span class="tlaUNC tlaBgUNC">           0 :   static Future&lt;List&lt;String&gt;&gt; getUpcomingClasses(String mentor) async {</span></span>
-<span id="L460"><span class="lineNum">     460</span> <span class="tlaUNC">           0 :     List&lt;String&gt; result = [];</span></span>
-<span id="L461"><span class="lineNum">     461</span>              :     String ts =</span>
-<span id="L462"><span class="lineNum">     462</span> <span class="tlaUNC">           0 :         DateTime.timestamp().toString().split('.')[0].replaceAll(' ', '_');</span></span>
-<span id="L463"><span class="lineNum">     463</span>              : </span>
-<span id="L464"><span class="lineNum">     464</span>              :     try {</span>
-<span id="L465"><span class="lineNum">     465</span> <span class="tlaUNC">           0 :       result = await fi</span></span>
-<span id="L466"><span class="lineNum">     466</span> <span class="tlaUNC">           0 :           .collection(&quot;mentors&quot;)</span></span>
-<span id="L467"><span class="lineNum">     467</span> <span class="tlaUNC">           0 :           .where(&quot;name&quot;, isEqualTo: mentor.split(' ')[0])</span></span>
-<span id="L468"><span class="lineNum">     468</span> <span class="tlaUNC">           0 :           .where(&quot;surname&quot;, isEqualTo: mentor.split(' ')[1])</span></span>
-<span id="L469"><span class="lineNum">     469</span> <span class="tlaUNC">           0 :           .get()</span></span>
-<span id="L470"><span class="lineNum">     470</span> <span class="tlaUNC">           0 :           .then((value) {</span></span>
-<span id="L471"><span class="lineNum">     471</span> <span class="tlaUNC">           0 :         for (var item in value.docs[0]['classes']) {</span></span>
-<span id="L472"><span class="lineNum">     472</span> <span class="tlaUNC">           0 :           List&lt;String&gt; dates = item.split(';;')[2].split('/');</span></span>
-<span id="L473"><span class="lineNum">     473</span> <span class="tlaUNC">           0 :           String time = item.split(';;')[3];</span></span>
-<span id="L474"><span class="lineNum">     474</span>              : </span>
-<span id="L475"><span class="lineNum">     475</span> <span class="tlaUNC">           0 :           dates = dates.reversed.toList();</span></span>
-<span id="L476"><span class="lineNum">     476</span> <span class="tlaUNC">           0 :           String date = dates.join('-');</span></span>
-<span id="L477"><span class="lineNum">     477</span>              : </span>
-<span id="L478"><span class="lineNum">     478</span> <span class="tlaUNC">           0 :           String comparedTS = '${date}_$time';</span></span>
-<span id="L479"><span class="lineNum">     479</span> <span class="tlaUNC">           0 :           if (comparedTS.compareTo(ts) &gt;= 0) {</span></span>
-<span id="L480"><span class="lineNum">     480</span> <span class="tlaUNC">           0 :             result.add(item);</span></span>
-<span id="L481"><span class="lineNum">     481</span>              :           }</span>
-<span id="L482"><span class="lineNum">     482</span>              :         }</span>
-<span id="L483"><span class="lineNum">     483</span>              :         return result;</span>
-<span id="L484"><span class="lineNum">     484</span>              :       });</span>
-<span id="L485"><span class="lineNum">     485</span> <span class="tlaUNC">           0 :     } on FirebaseException catch (e) {</span></span>
-<span id="L486"><span class="lineNum">     486</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
-<span id="L487"><span class="lineNum">     487</span>              :     }</span>
-<span id="L488"><span class="lineNum">     488</span>              : </span>
-<span id="L489"><span class="lineNum">     489</span>              :     return result;</span>
-<span id="L490"><span class="lineNum">     490</span>              :   }</span>
-<span id="L491"><span class="lineNum">     491</span>              : </span>
-<span id="L492"><span class="lineNum">     492</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;List&lt;String&gt;&gt; getUserNameSurname(String username) async {</span></span>
-<span id="L493"><span class="lineNum">     493</span> <span class="tlaGNC">           1 :     List&lt;String&gt; result = [];</span></span>
-<span id="L494"><span class="lineNum">     494</span>              :     try {</span>
-<span id="L495"><span class="lineNum">     495</span> <span class="tlaGNC">           1 :       result = await fi</span></span>
-<span id="L496"><span class="lineNum">     496</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
-<span id="L497"><span class="lineNum">     497</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
-<span id="L498"><span class="lineNum">     498</span> <span class="tlaGNC">           1 :           .get()</span></span>
-<span id="L499"><span class="lineNum">     499</span> <span class="tlaGNC">           2 :           .then((value) {</span></span>
-<span id="L500"><span class="lineNum">     500</span> <span class="tlaGNC">           2 :         for (var doc in value.docs) {</span></span>
-<span id="L501"><span class="lineNum">     501</span> <span class="tlaGNC">           2 :           result.add(doc['name']);</span></span>
-<span id="L502"><span class="lineNum">     502</span> <span class="tlaGNC">           2 :           result.add(doc[('surname')]);</span></span>
-<span id="L503"><span class="lineNum">     503</span>              :         }</span>
-<span id="L504"><span class="lineNum">     504</span>              :         return result;</span>
-<span id="L505"><span class="lineNum">     505</span>              :       });</span>
-<span id="L506"><span class="lineNum">     506</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
-<span id="L507"><span class="lineNum">     507</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
-<span id="L508"><span class="lineNum">     508</span>              :     }</span>
-<span id="L509"><span class="lineNum">     509</span>              : </span>
-<span id="L510"><span class="lineNum">     510</span>              :     return result;</span>
-<span id="L511"><span class="lineNum">     511</span>              :   }</span>
-<span id="L512"><span class="lineNum">     512</span>              : }</span>
+<span id="L309"><span class="lineNum">     309</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;void&gt; updateFavouriteHobbies(</span></span>
+<span id="L310"><span class="lineNum">     310</span>              :       String username, String hobby, String operation) async {</span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">           1 :     List&lt;String&gt; hobbies = [];</span></span>
+<span id="L312"><span class="lineNum">     312</span>              :     String id = '';</span>
+<span id="L313"><span class="lineNum">     313</span>              : </span>
+<span id="L314"><span class="lineNum">     314</span> <span class="tlaGNC">           1 :     hobbies = Preferences.getHobbies()!;</span></span>
+<span id="L315"><span class="lineNum">     315</span> <span class="tlaGNC">           3 :     if (hobbies.contains(hobby) &amp;&amp; operation.compareTo('remove') == 0) {</span></span>
+<span id="L316"><span class="lineNum">     316</span> <span class="tlaGNC">           1 :       hobbies.remove(hobby);</span></span>
+<span id="L317"><span class="lineNum">     317</span> <span class="tlaUNC tlaBgUNC">           0 :     } else if (!hobbies.contains(hobby) &amp;&amp; operation.compareTo('add') == 0) {</span></span>
+<span id="L318"><span class="lineNum">     318</span> <span class="tlaUNC">           0 :       hobbies.add(hobby);</span></span>
+<span id="L319"><span class="lineNum">     319</span>              :     }</span>
+<span id="L320"><span class="lineNum">     320</span>              : </span>
+<span id="L321"><span class="lineNum">     321</span>              :     try {</span>
+<span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC tlaBgGNC">           1 :       await fi</span></span>
+<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
+<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
+<span id="L325"><span class="lineNum">     325</span> <span class="tlaGNC">           1 :           .get()</span></span>
+<span id="L326"><span class="lineNum">     326</span> <span class="tlaGNC">           5 :           .then((value) =&gt; id = value.docs[0].id);</span></span>
+<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">           1 :       await fi</span></span>
+<span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
+<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">           1 :           .doc(id)</span></span>
+<span id="L330"><span class="lineNum">     330</span> <span class="tlaGNC">           3 :           .update({'hobbies': hobbies.join(',')});</span></span>
+<span id="L331"><span class="lineNum">     331</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
+<span id="L332"><span class="lineNum">     332</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
+<span id="L333"><span class="lineNum">     333</span>              :     }</span>
+<span id="L334"><span class="lineNum">     334</span>              :   }</span>
+<span id="L335"><span class="lineNum">     335</span>              : </span>
+<span id="L336"><span class="lineNum">     336</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;String&gt; getHobby(String mentor) async {</span></span>
+<span id="L337"><span class="lineNum">     337</span>              :     String hobby = '';</span>
+<span id="L338"><span class="lineNum">     338</span>              :     try {</span>
+<span id="L339"><span class="lineNum">     339</span> <span class="tlaGNC">           1 :       await fi</span></span>
+<span id="L340"><span class="lineNum">     340</span> <span class="tlaGNC">           1 :           .collection(&quot;mentors&quot;)</span></span>
+<span id="L341"><span class="lineNum">     341</span> <span class="tlaGNC">           3 :           .where(&quot;name&quot;, isEqualTo: mentor.split(' ')[0])</span></span>
+<span id="L342"><span class="lineNum">     342</span> <span class="tlaGNC">           3 :           .where(&quot;surname&quot;, isEqualTo: mentor.split(' ')[1])</span></span>
+<span id="L343"><span class="lineNum">     343</span> <span class="tlaGNC">           1 :           .get()</span></span>
+<span id="L344"><span class="lineNum">     344</span> <span class="tlaGNC">           5 :           .then((value) =&gt; hobby = value.docs[0]['hobby']);</span></span>
+<span id="L345"><span class="lineNum">     345</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
+<span id="L346"><span class="lineNum">     346</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
+<span id="L347"><span class="lineNum">     347</span>              :     }</span>
+<span id="L348"><span class="lineNum">     348</span>              : </span>
+<span id="L349"><span class="lineNum">     349</span>              :     return hobby;</span>
+<span id="L350"><span class="lineNum">     350</span>              :   }</span>
+<span id="L351"><span class="lineNum">     351</span>              : </span>
+<span id="L352"><span class="lineNum">     352</span>              :   ///operation = 'add' or 'remove' based on the update to be done on the database</span>
+<span id="L353"><span class="lineNum">     353</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;void&gt; updateFavouriteMentors(</span></span>
+<span id="L354"><span class="lineNum">     354</span>              :       String username, String mentor, String operation) async {</span>
+<span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">           1 :     List&lt;String&gt; mentors = [];</span></span>
+<span id="L356"><span class="lineNum">     356</span>              :     String id = '';</span>
+<span id="L357"><span class="lineNum">     357</span>              : </span>
+<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">           1 :     mentors = Preferences.getMentors()!;</span></span>
+<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">           1 :     if (mentors.contains(mentor) &amp;&amp; operation.compareTo('remove') == 0) {</span></span>
+<span id="L360"><span class="lineNum">     360</span> <span class="tlaUNC tlaBgUNC">           0 :       mentors.remove(mentor);</span></span>
+<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC tlaBgGNC">           3 :     } else if (!mentors.contains(mentor) &amp;&amp; operation.compareTo('add') == 0) {</span></span>
+<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">           1 :       mentors.add(mentor);</span></span>
+<span id="L363"><span class="lineNum">     363</span>              :     }</span>
+<span id="L364"><span class="lineNum">     364</span>              : </span>
+<span id="L365"><span class="lineNum">     365</span>              :     try {</span>
+<span id="L366"><span class="lineNum">     366</span> <span class="tlaGNC">           1 :       await fi</span></span>
+<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
+<span id="L368"><span class="lineNum">     368</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
+<span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC">           1 :           .get()</span></span>
+<span id="L370"><span class="lineNum">     370</span> <span class="tlaGNC">           5 :           .then((value) =&gt; id = value.docs[0].id);</span></span>
+<span id="L371"><span class="lineNum">     371</span> <span class="tlaGNC">           1 :       await fi</span></span>
+<span id="L372"><span class="lineNum">     372</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
+<span id="L373"><span class="lineNum">     373</span> <span class="tlaGNC">           1 :           .doc(id)</span></span>
+<span id="L374"><span class="lineNum">     374</span> <span class="tlaGNC">           3 :           .update({'mentors': mentors.join(',')});</span></span>
+<span id="L375"><span class="lineNum">     375</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
+<span id="L376"><span class="lineNum">     376</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
+<span id="L377"><span class="lineNum">     377</span>              :     }</span>
+<span id="L378"><span class="lineNum">     378</span>              :   }</span>
+<span id="L379"><span class="lineNum">     379</span>              : </span>
+<span id="L380"><span class="lineNum">     380</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;List&lt;String&gt;&gt; getAddress(String username) async {</span></span>
+<span id="L381"><span class="lineNum">     381</span>              :     List&lt;String&gt; coordinates;</span>
+<span id="L382"><span class="lineNum">     382</span> <span class="tlaGNC">           1 :     coordinates = await fi</span></span>
+<span id="L383"><span class="lineNum">     383</span> <span class="tlaGNC">           1 :         .collection('users')</span></span>
+<span id="L384"><span class="lineNum">     384</span> <span class="tlaGNC">           1 :         .where(&quot;username&quot;, isEqualTo: username)</span></span>
+<span id="L385"><span class="lineNum">     385</span> <span class="tlaGNC">           1 :         .get()</span></span>
+<span id="L386"><span class="lineNum">     386</span> <span class="tlaGNC">           2 :         .then((value) {</span></span>
+<span id="L387"><span class="lineNum">     387</span> <span class="tlaGNC">           5 :       return value.docs[0]['location'].toString().split(',');</span></span>
+<span id="L388"><span class="lineNum">     388</span>              :     });</span>
+<span id="L389"><span class="lineNum">     389</span>              :     return coordinates;</span>
+<span id="L390"><span class="lineNum">     390</span>              :   }</span>
+<span id="L391"><span class="lineNum">     391</span>              : </span>
+<span id="L392"><span class="lineNum">     392</span> <span class="tlaUNC tlaBgUNC">           0 :   static Future&lt;String&gt; getEmail(String username) async {</span></span>
+<span id="L393"><span class="lineNum">     393</span> <span class="tlaUNC">           0 :     String email = await fi</span></span>
+<span id="L394"><span class="lineNum">     394</span> <span class="tlaUNC">           0 :         .collection('users')</span></span>
+<span id="L395"><span class="lineNum">     395</span> <span class="tlaUNC">           0 :         .where(&quot;username&quot;, isEqualTo: username)</span></span>
+<span id="L396"><span class="lineNum">     396</span> <span class="tlaUNC">           0 :         .get()</span></span>
+<span id="L397"><span class="lineNum">     397</span> <span class="tlaUNC">           0 :         .then((value) {</span></span>
+<span id="L398"><span class="lineNum">     398</span> <span class="tlaUNC">           0 :       return value.docs[0]['email'].toString();</span></span>
+<span id="L399"><span class="lineNum">     399</span>              :     });</span>
+<span id="L400"><span class="lineNum">     400</span>              : </span>
+<span id="L401"><span class="lineNum">     401</span>              :     return email;</span>
+<span id="L402"><span class="lineNum">     402</span>              :   }</span>
+<span id="L403"><span class="lineNum">     403</span>              : </span>
+<span id="L404"><span class="lineNum">     404</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;void&gt; updatePassword(String password, String username) async {</span></span>
+<span id="L405"><span class="lineNum">     405</span>              :     try {</span>
+<span id="L406"><span class="lineNum">     406</span> <span class="tlaGNC">           1 :       fi</span></span>
+<span id="L407"><span class="lineNum">     407</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
+<span id="L408"><span class="lineNum">     408</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
+<span id="L409"><span class="lineNum">     409</span> <span class="tlaGNC">           1 :           .get()</span></span>
+<span id="L410"><span class="lineNum">     410</span> <span class="tlaGNC">           2 :           .then((value) {</span></span>
+<span id="L411"><span class="lineNum">     411</span> <span class="tlaGNC">           2 :         for (var doc in value.docs) {</span></span>
+<span id="L412"><span class="lineNum">     412</span>              :           // Update the password field in each matching document</span>
+<span id="L413"><span class="lineNum">     413</span> <span class="tlaGNC">           3 :           doc.reference.update({'password': password});</span></span>
+<span id="L414"><span class="lineNum">     414</span>              :         }</span>
+<span id="L415"><span class="lineNum">     415</span>              :       });</span>
+<span id="L416"><span class="lineNum">     416</span>              :       //({'password': password});</span>
+<span id="L417"><span class="lineNum">     417</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
+<span id="L418"><span class="lineNum">     418</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
+<span id="L419"><span class="lineNum">     419</span>              :     }</span>
+<span id="L420"><span class="lineNum">     420</span>              :   }</span>
+<span id="L421"><span class="lineNum">     421</span>              : </span>
+<span id="L422"><span class="lineNum">     422</span> <span class="tlaUNC">           0 :   static Future&lt;void&gt; updateUserInfo(</span></span>
+<span id="L423"><span class="lineNum">     423</span>              :       String user, String name, String surname) async {</span>
+<span id="L424"><span class="lineNum">     424</span>              :     try {</span>
+<span id="L425"><span class="lineNum">     425</span> <span class="tlaUNC">           0 :       fi</span></span>
+<span id="L426"><span class="lineNum">     426</span> <span class="tlaUNC">           0 :           .collection(&quot;users&quot;)</span></span>
+<span id="L427"><span class="lineNum">     427</span> <span class="tlaUNC">           0 :           .where(&quot;username&quot;, isEqualTo: user)</span></span>
+<span id="L428"><span class="lineNum">     428</span> <span class="tlaUNC">           0 :           .get()</span></span>
+<span id="L429"><span class="lineNum">     429</span> <span class="tlaUNC">           0 :           .then((value) {</span></span>
+<span id="L430"><span class="lineNum">     430</span> <span class="tlaUNC">           0 :         for (var doc in value.docs) {</span></span>
+<span id="L431"><span class="lineNum">     431</span>              :           // Update the password field in each matching document</span>
+<span id="L432"><span class="lineNum">     432</span>              : </span>
+<span id="L433"><span class="lineNum">     433</span>              :           /*if (username.isNotEmpty) {</span>
+<span id="L434"><span class="lineNum">     434</span>              :             doc.reference.update({'username': username});</span>
+<span id="L435"><span class="lineNum">     435</span>              :             Preferences.setUsername(username);</span>
+<span id="L436"><span class="lineNum">     436</span>              :           }*/</span>
+<span id="L437"><span class="lineNum">     437</span>              : </span>
+<span id="L438"><span class="lineNum">     438</span> <span class="tlaUNC">           0 :           if (name.isNotEmpty) {</span></span>
+<span id="L439"><span class="lineNum">     439</span> <span class="tlaUNC">           0 :             doc.reference.update({'name': name});</span></span>
+<span id="L440"><span class="lineNum">     440</span>              :           }</span>
+<span id="L441"><span class="lineNum">     441</span> <span class="tlaUNC">           0 :           if (surname.isNotEmpty) {</span></span>
+<span id="L442"><span class="lineNum">     442</span> <span class="tlaUNC">           0 :             doc.reference.update({'surname': surname});</span></span>
+<span id="L443"><span class="lineNum">     443</span>              :           }</span>
+<span id="L444"><span class="lineNum">     444</span>              :         }</span>
+<span id="L445"><span class="lineNum">     445</span>              :       });</span>
+<span id="L446"><span class="lineNum">     446</span>              :       //({'password': password});</span>
+<span id="L447"><span class="lineNum">     447</span> <span class="tlaUNC">           0 :     } on FirebaseException catch (e) {</span></span>
+<span id="L448"><span class="lineNum">     448</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
+<span id="L449"><span class="lineNum">     449</span>              :     }</span>
+<span id="L450"><span class="lineNum">     450</span>              :   }</span>
+<span id="L451"><span class="lineNum">     451</span>              : </span>
+<span id="L452"><span class="lineNum">     452</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;bool&gt; isUsernameUnique(String username) async {</span></span>
+<span id="L453"><span class="lineNum">     453</span> <span class="tlaGNC">           1 :     final QuerySnapshot snapshot = await fi</span></span>
+<span id="L454"><span class="lineNum">     454</span> <span class="tlaGNC">           1 :         .collection('users')</span></span>
+<span id="L455"><span class="lineNum">     455</span> <span class="tlaGNC">           1 :         .where('username', isEqualTo: username)</span></span>
+<span id="L456"><span class="lineNum">     456</span> <span class="tlaGNC">           1 :         .get();</span></span>
+<span id="L457"><span class="lineNum">     457</span> <span class="tlaGNC">           2 :     return snapshot.docs.isEmpty;</span></span>
+<span id="L458"><span class="lineNum">     458</span>              :   }</span>
+<span id="L459"><span class="lineNum">     459</span>              : </span>
+<span id="L460"><span class="lineNum">     460</span> <span class="tlaGNC">           1 :   static Future&lt;List&lt;String&gt;&gt; getUpcomingClasses(String mentor) async {</span></span>
+<span id="L461"><span class="lineNum">     461</span> <span class="tlaGNC">           1 :     List&lt;String&gt; result = [];</span></span>
+<span id="L462"><span class="lineNum">     462</span>              :     String ts =</span>
+<span id="L463"><span class="lineNum">     463</span> <span class="tlaGNC">           5 :         DateTime.timestamp().toString().split('.')[0].replaceAll(' ', '_');</span></span>
+<span id="L464"><span class="lineNum">     464</span>              : </span>
+<span id="L465"><span class="lineNum">     465</span>              :     try {</span>
+<span id="L466"><span class="lineNum">     466</span> <span class="tlaGNC">           1 :       result = await fi</span></span>
+<span id="L467"><span class="lineNum">     467</span> <span class="tlaGNC">           1 :           .collection(&quot;mentors&quot;)</span></span>
+<span id="L468"><span class="lineNum">     468</span> <span class="tlaGNC">           3 :           .where(&quot;name&quot;, isEqualTo: mentor.split(' ')[0])</span></span>
+<span id="L469"><span class="lineNum">     469</span> <span class="tlaGNC">           3 :           .where(&quot;surname&quot;, isEqualTo: mentor.split(' ')[1])</span></span>
+<span id="L470"><span class="lineNum">     470</span> <span class="tlaGNC">           1 :           .get()</span></span>
+<span id="L471"><span class="lineNum">     471</span> <span class="tlaGNC">           2 :           .then((value) {</span></span>
+<span id="L472"><span class="lineNum">     472</span> <span class="tlaGNC">           4 :         if (!value.docs[0].data().containsKey('classes')) {</span></span>
+<span id="L473"><span class="lineNum">     473</span> <span class="tlaUNC tlaBgUNC">           0 :           return [];</span></span>
+<span id="L474"><span class="lineNum">     474</span>              :         }</span>
+<span id="L475"><span class="lineNum">     475</span> <span class="tlaGNC tlaBgGNC">           4 :         for (var item in value.docs[0]['classes']) {</span></span>
+<span id="L476"><span class="lineNum">     476</span> <span class="tlaGNC">           3 :           List&lt;String&gt; dates = item.split(';;')[2].split('/');</span></span>
+<span id="L477"><span class="lineNum">     477</span> <span class="tlaGNC">           2 :           String time = item.split(';;')[3];</span></span>
+<span id="L478"><span class="lineNum">     478</span>              : </span>
+<span id="L479"><span class="lineNum">     479</span> <span class="tlaGNC">           2 :           dates = dates.reversed.toList();</span></span>
+<span id="L480"><span class="lineNum">     480</span> <span class="tlaGNC">           1 :           String date = dates.join('-');</span></span>
+<span id="L481"><span class="lineNum">     481</span>              : </span>
+<span id="L482"><span class="lineNum">     482</span> <span class="tlaGNC">           1 :           String comparedTS = '${date}_$time';</span></span>
+<span id="L483"><span class="lineNum">     483</span> <span class="tlaGNC">           2 :           if (comparedTS.compareTo(ts) &gt;= 0) {</span></span>
+<span id="L484"><span class="lineNum">     484</span> <span class="tlaGNC">           1 :             result.add(item);</span></span>
+<span id="L485"><span class="lineNum">     485</span>              :           }</span>
+<span id="L486"><span class="lineNum">     486</span>              :         }</span>
+<span id="L487"><span class="lineNum">     487</span>              :         return result;</span>
+<span id="L488"><span class="lineNum">     488</span>              :       });</span>
+<span id="L489"><span class="lineNum">     489</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
+<span id="L490"><span class="lineNum">     490</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
+<span id="L491"><span class="lineNum">     491</span>              :     }</span>
+<span id="L492"><span class="lineNum">     492</span>              : </span>
+<span id="L493"><span class="lineNum">     493</span>              :     return result;</span>
+<span id="L494"><span class="lineNum">     494</span>              :   }</span>
+<span id="L495"><span class="lineNum">     495</span>              : </span>
+<span id="L496"><span class="lineNum">     496</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;List&lt;String&gt;&gt; getUserNameSurname(String username) async {</span></span>
+<span id="L497"><span class="lineNum">     497</span> <span class="tlaGNC">           1 :     List&lt;String&gt; result = [];</span></span>
+<span id="L498"><span class="lineNum">     498</span>              :     try {</span>
+<span id="L499"><span class="lineNum">     499</span> <span class="tlaGNC">           1 :       result = await fi</span></span>
+<span id="L500"><span class="lineNum">     500</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
+<span id="L501"><span class="lineNum">     501</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
+<span id="L502"><span class="lineNum">     502</span> <span class="tlaGNC">           1 :           .get()</span></span>
+<span id="L503"><span class="lineNum">     503</span> <span class="tlaGNC">           2 :           .then((value) {</span></span>
+<span id="L504"><span class="lineNum">     504</span> <span class="tlaGNC">           2 :         for (var doc in value.docs) {</span></span>
+<span id="L505"><span class="lineNum">     505</span> <span class="tlaGNC">           2 :           result.add(doc['name']);</span></span>
+<span id="L506"><span class="lineNum">     506</span> <span class="tlaGNC">           2 :           result.add(doc[('surname')]);</span></span>
+<span id="L507"><span class="lineNum">     507</span>              :         }</span>
+<span id="L508"><span class="lineNum">     508</span>              :         return result;</span>
+<span id="L509"><span class="lineNum">     509</span>              :       });</span>
+<span id="L510"><span class="lineNum">     510</span> <span class="tlaUNC tlaBgUNC">           0 :     } on FirebaseException catch (e) {</span></span>
+<span id="L511"><span class="lineNum">     511</span> <span class="tlaUNC">           0 :       print(e.message!);</span></span>
+<span id="L512"><span class="lineNum">     512</span>              :     }</span>
+<span id="L513"><span class="lineNum">     513</span>              : </span>
+<span id="L514"><span class="lineNum">     514</span>              :     return result;</span>
+<span id="L515"><span class="lineNum">     515</span>              :   }</span>
+<span id="L516"><span class="lineNum">     516</span>              : }</span>
         </pre>
               </td>
             </tr>

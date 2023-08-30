@@ -306,7 +306,8 @@ class FirestoreCrud {
   }
 
   ///operation = 'add' or 'remove' based on the update to be done on the database
-  static Future<void> updateFavouriteHobbies(String username, String hobby, String operation) async {
+  static Future<void> updateFavouriteHobbies(
+      String username, String hobby, String operation) async {
     List<String> hobbies = [];
     String id = '';
 
@@ -468,6 +469,9 @@ class FirestoreCrud {
           .where("surname", isEqualTo: mentor.split(' ')[1])
           .get()
           .then((value) {
+        if (!value.docs[0].data().containsKey('classes')) {
+          return [];
+        }
         for (var item in value.docs[0]['classes']) {
           List<String> dates = item.split(';;')[2].split('/');
           String time = item.split(';;')[3];

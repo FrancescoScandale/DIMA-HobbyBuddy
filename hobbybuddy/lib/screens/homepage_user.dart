@@ -74,9 +74,10 @@ class _UserPageState extends State<UserPage> {
     _mentors = await FirestoreCrud.getUserData(_username, 'mentors');
 
     for (int i = 0; i < _mentors.length; i++) {
-      // String url = await StorageCrud.getStorage().ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
-      // _mentorsPics[_mentors[i]] = Image.network(url);
-      Uint8List? image = await StorageCrud.getStorage().ref().child('Mentors/${_mentors[i]}/propic.jpg').getData();
+      Uint8List? image = await StorageCrud.getStorage()
+          .ref()
+          .child('Mentors/${_mentors[i]}/propic.jpg')
+          .getData();
       _mentorsPics[_mentors[i]] = Image.memory(image!);
     }
 
@@ -87,8 +88,8 @@ class _UserPageState extends State<UserPage> {
 
   void computeLocation() async {
     List<String> coordinates = await FirestoreCrud.getAddress(_username);
-    List<Placemark> addresses =
-        await placemarkFromCoordinates(double.parse(coordinates[0]), double.parse(coordinates[1]));
+    List<Placemark> addresses = await placemarkFromCoordinates(
+        double.parse(coordinates[0]), double.parse(coordinates[1]));
     _location = '${addresses[0].street!}, ${addresses[0].locality!}';
 
     setState(() {
@@ -97,15 +98,22 @@ class _UserPageState extends State<UserPage> {
   }
 
   void getMilestones() async {
-    ListResult result = await StorageCrud.getStorage().ref().child('Users/$_username/milestones/').listAll();
+    ListResult result = await StorageCrud.getStorage()
+        .ref()
+        .child('Users/$_username/milestones/')
+        .listAll();
 
     int len = (result.prefixes[0].fullPath.split('/')).length;
     for (Reference prefs in result.prefixes) {
       String tmp = prefs.fullPath.split('/')[len - 1];
-      Uint8List? cap =
-          await StorageCrud.getStorage().ref().child('Users/$_username/milestones/$tmp/caption.txt').getData();
-      Uint8List? image =
-          await StorageCrud.getStorage().ref().child('Users/$_username/milestones/$tmp/pic.jpg').getData();
+      Uint8List? cap = await StorageCrud.getStorage()
+          .ref()
+          .child('Users/$_username/milestones/$tmp/caption.txt')
+          .getData();
+      Uint8List? image = await StorageCrud.getStorage()
+          .ref()
+          .child('Users/$_username/milestones/$tmp/pic.jpg')
+          .getData();
       _milestones[tmp] = Tuple2(utf8.decode(cap!), Image.memory(image!));
     }
 
@@ -115,12 +123,27 @@ class _UserPageState extends State<UserPage> {
   }
 
   void getUserPics() async {
-    Uint8List? propicData = await StorageCrud.getStorage().ref().child('Users/$_username/propic.jpg').getData();
-    Uint8List? backgroundData = await StorageCrud.getStorage().ref().child('Users/$_username/background.jpg').getData();
+    ListResult result = await StorageCrud.getStorage()
+        .ref()
+        .child('Users/$_username/')
+        .listAll();
+    if (result.items.isNotEmpty) {
+      Uint8List? propicData = await StorageCrud.getStorage()
+          .ref()
+          .child('Users/$_username/propic.jpg')
+          .getData();
+      Uint8List? backgroundData = await StorageCrud.getStorage()
+          .ref()
+          .child('Users/$_username/background.jpg')
+          .getData();
 
-    propic = Image.memory(propicData!);
-    background = Image.memory(backgroundData!);
-
+      propic = Image.memory(propicData!);
+      background = Image.memory(backgroundData!);
+    } else {
+      propic = Image.asset('assets/pics/propic.jpg');
+      background = Image.asset('assets/pics/lowqualitybackground.jpg');
+    }
+    
     setState(() {
       downloadUserPics = true;
     });
@@ -161,9 +184,13 @@ class _UserPageState extends State<UserPage> {
                             : Container()),
                     Container(
                         padding: EdgeInsetsDirectional.fromSTEB(
-                            2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
+                            2 * AppLayout.kModalHorizontalPadding,
+                            2 * _backgroundPadding / 3,
+                            0,
+                            0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadius),
+                          borderRadius: BorderRadius.circular(
+                              AppLayout.kProfilePicRadius),
                           child: downloadUserPics
                               ? Image(
                                   image: propic.image,
@@ -181,7 +208,10 @@ class _UserPageState extends State<UserPage> {
                   children: [
                     Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
-                            AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
+                            AppLayout.kModalHorizontalPadding,
+                            AppLayout.kHeightSmall,
+                            0,
+                            0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -236,7 +266,8 @@ class _UserPageState extends State<UserPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            AppLayout.kHorizontalPadding, 0, 0, 0),
                         child: Text(
                           'Hobbies',
                           style: TextStyle(
@@ -253,13 +284,17 @@ class _UserPageState extends State<UserPage> {
                             itemBuilder: (context, index) {
                               return Container(
                                   padding:
-                                      const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                                      const EdgeInsetsDirectional.symmetric(
+                                          horizontal:
+                                              AppLayout.kHorizontalPadding),
                                   width: AppLayout.kIconDimension,
-                                  child: Column(
+                                  child: SingleChildScrollView(
+                                      child: Column(
                                     children: [
                                       MyIconButton(
                                           icon: ClipRRect(
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                               child: Container(
                                                 color: ui.Color(0xffffcc80),
                                                 child: downloadHobbies
@@ -268,8 +303,12 @@ class _UserPageState extends State<UserPage> {
                                                         fit: BoxFit.contain,
                                                       )
                                                     : Container(
-                                                        height: AppLayout.kIconDimension * 0.8,
-                                                        width: AppLayout.kIconDimension * 0.8,
+                                                        height: AppLayout
+                                                                .kIconDimension *
+                                                            0.8,
+                                                        width: AppLayout
+                                                                .kIconDimension *
+                                                            0.8,
                                                       ),
                                               )),
                                           onTap: () {
@@ -291,11 +330,13 @@ class _UserPageState extends State<UserPage> {
                                       downloadHobbies
                                           ? Text(
                                               _hobbies[index],
-                                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold),
                                             )
                                           : Container()
                                     ],
-                                  ));
+                                  )));
                             },
                           ))
                     ],
@@ -303,13 +344,13 @@ class _UserPageState extends State<UserPage> {
                 ),
                 ContainerShadow(
                   //MENTORS
-                  //color: ui.Color(0xffffcc80), //TODO?
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            AppLayout.kHorizontalPadding, 0, 0, 0),
                         child: Text(
                           'Mentors',
                           style: TextStyle(
@@ -326,26 +367,42 @@ class _UserPageState extends State<UserPage> {
                             itemBuilder: (context, index) {
                               return Container(
                                   padding:
-                                      const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
+                                      const EdgeInsetsDirectional.symmetric(
+                                          horizontal:
+                                              AppLayout.kHorizontalPadding),
                                   width: AppLayout.kIconDimension * 1.1,
                                   child: SingleChildScrollView(
                                       child: Column(
                                     children: [
                                       MyIconButton(
                                           icon: ClipRRect(
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                               child: Container(
                                                   color: ui.Color(0xffffcc80),
                                                   child: downloadMentors
                                                       ? Image(
-                                                          image: _mentorsPics[_mentors[index]]!.image,
+                                                          key: Key(
+                                                              _mentors[index]),
+                                                          image: _mentorsPics[
+                                                                  _mentors[
+                                                                      index]]!
+                                                              .image,
                                                           fit: BoxFit.cover,
-                                                          height: AppLayout.kIconDimension * 0.8,
-                                                          width: AppLayout.kIconDimension * 0.8,
+                                                          height: AppLayout
+                                                                  .kIconDimension *
+                                                              0.8,
+                                                          width: AppLayout
+                                                                  .kIconDimension *
+                                                              0.8,
                                                         )
                                                       : Container(
-                                                          height: AppLayout.kIconDimension * 0.8,
-                                                          width: AppLayout.kIconDimension * 0.8,
+                                                          height: AppLayout
+                                                                  .kIconDimension *
+                                                              0.8,
+                                                          width: AppLayout
+                                                                  .kIconDimension *
+                                                              0.8,
                                                         ))),
                                           onTap: () {
                                             Widget newScreen = MentorPage(
@@ -366,7 +423,9 @@ class _UserPageState extends State<UserPage> {
                                       downloadMentors
                                           ? Text(
                                               _mentors[index],
-                                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                              style: const TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold),
                                             )
                                           : Container()
                                     ],
@@ -387,7 +446,8 @@ class _UserPageState extends State<UserPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, 0, 0),
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              AppLayout.kHorizontalPadding, 0, 0, 0),
                           child: Text(
                             'Milestones',
                             style: TextStyle(
@@ -397,7 +457,8 @@ class _UserPageState extends State<UserPage> {
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, AppLayout.kHorizontalPadding, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 0, AppLayout.kHorizontalPadding, 0),
                             child: SizedBox(
                               width: 125,
                               height: 35,
@@ -405,7 +466,8 @@ class _UserPageState extends State<UserPage> {
                                 text: '+ Milestone',
                                 edge: 5,
                                 onPressed: () async {
-                                  Widget newScreen = AddMilestone(user: _username);
+                                  Widget newScreen =
+                                      AddMilestone(user: _username);
                                   Navigator.push(
                                     context,
                                     ScreenTransition(
@@ -445,26 +507,42 @@ class _UserPageState extends State<UserPage> {
                                   Container(
                                     alignment: Alignment.topLeft,
                                     child: Text(
-                                      downloadMilestones ? _milestones.keys.toList()[index] : '',
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      downloadMilestones
+                                          ? _milestones.keys.toList()[index]
+                                          : '',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   Container(
                                     alignment: Alignment.topLeft,
                                     child: Text(
-                                      downloadMilestones ? _milestones.values.toList()[index].item1 : '',
-                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                      downloadMilestones
+                                          ? _milestones.values
+                                              .toList()[index]
+                                              .item1
+                                          : '',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   downloadMilestones
                                       ? Image(
-                                          image: _milestones.values.toList()[index].item2.image,
-                                          width: MediaQuery.sizeOf(context).width * 0.8,
+                                          image: _milestones.values
+                                              .toList()[index]
+                                              .item2
+                                              .image,
+                                          width:
+                                              MediaQuery.sizeOf(context).width *
+                                                  0.8,
                                           fit: BoxFit.fitWidth,
                                           alignment: Alignment.center,
                                         )
                                       : Container(
-                                          height: AppLayout.kIconDimension * 0.8,
+                                          height:
+                                              AppLayout.kIconDimension * 0.8,
                                           width: AppLayout.kIconDimension * 0.8,
                                         )
                                 ],

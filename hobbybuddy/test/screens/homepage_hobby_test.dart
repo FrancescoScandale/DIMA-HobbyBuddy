@@ -53,61 +53,78 @@ void main() async {
     });
   });
 
-  testWidgets('Hobby\'s homepage renders correctly', (tester) async {
-    const String hobby = 'Skateboard';
-    await tester.pumpWidget(
-      MaterialApp(
-        home: HomePageHobby(
-          hobby: hobby,
+  group('Hobby homepage screen test', () {
+    testWidgets('Hobby\'s homepage renders correctly', (tester) async {
+      const String hobby = 'Skateboard';
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: HomePageHobby(
+            hobby: hobby,
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(
-      find.text('Home Page Hobby'),
-      findsOneWidget,
-    );
-    expect(
-        find.byWidgetPredicate(
-          (widget) =>
-              widget is Image &&
-              widget.image is AssetImage &&
-              widget.image.toString().contains('Skateboard.png'),
+      //appBar
+      expect(
+        find.text('Home Page Hobby'),
+        findsOneWidget,
+      );
+
+      //icon and text
+      expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Image &&
+                widget.image is AssetImage &&
+                widget.image.toString().contains('Skateboard.png'),
+          ),
+          findsOneWidget);
+      expect(
+        find.byWidgetPredicate((widget) =>
+            widget is Text && widget.toString().contains('Skateboard')),
+        findsOneWidget,
+      );
+
+      //mentors
+      expect(
+        find.byWidgetPredicate((widget) =>
+            widget is Text && widget.toString().contains('Mentors')),
+        findsOneWidget,
+      );
+      expect(find.byType(ContainerShadow), findsOneWidget);
+      expect(find.byType(ListTile), findsNWidgets(3));
+
+      //'favorite' icons
+      expect(find.byIcon(Icons.favorite), findsNWidgets(3));
+      expect(find.byIcon(Icons.favorite_outline), findsNWidgets(1));
+    });
+
+    testWidgets('Hobby\'s homepage behavior', (tester) async {
+      const String hobby = 'Skateboard';
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: HomePageHobby(
+            hobby: hobby,
+          ),
         ),
-        findsOneWidget);
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.favorite_outline));
+      await tester.pumpAndSettle();
+      expect(
+        find.byIcon(Icons.favorite),
+        findsNWidgets(4),
+      );
+      assert(Preferences.getMentors()!.length == 4);
 
-    expect(
-      find.byWidgetPredicate((widget) =>
-          widget is Text && widget.toString().contains('Skateboard')),
-      findsOneWidget,
-    );
-
-    expect(
-      find.byWidgetPredicate(
-          (widget) => widget is Text && widget.toString().contains('Mentors')),
-      findsOneWidget,
-    );
-    expect(find.byType(ContainerShadow), findsOneWidget);
-    expect(find.byType(ListTile), findsNWidgets(3));
-
-    expect(find.byIcon(Icons.favorite), findsNWidgets(3));
-    expect(find.byIcon(Icons.favorite_outline), findsNWidgets(1));
-
-    await tester.tap(find.byIcon(Icons.favorite_outline));
-    await tester.pumpAndSettle();
-    expect(
-      find.byIcon(Icons.favorite),
-      findsNWidgets(4),
-    );
-    assert(Preferences.getMentors()!.length==4);
-
-    await tester.tap(find.byKey(const Key('toggleHobby')));
-    await tester.pumpAndSettle();
-    expect(
-      find.byIcon(Icons.favorite),
-      findsNWidgets(3),
-    );
-    assert(!Preferences.getHobbies()!.contains('Skateboard'));
+      await tester.tap(find.byKey(const Key('toggleHobby')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byIcon(Icons.favorite),
+        findsNWidgets(3),
+      );
+      assert(!Preferences.getHobbies()!.contains('Skateboard'));
+    });
   });
 }
