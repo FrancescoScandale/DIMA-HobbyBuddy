@@ -2,9 +2,13 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/settings.dart';
+import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:hobbybuddy/services/preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
+
+import '../mock/mock_app_theme.dart';
 
 final firestore = FakeFirebaseFirestore();
 
@@ -27,10 +31,17 @@ void main() async {
     testWidgets('SettingsScreen renders correctly', (tester) async {
       await Preferences.init();
       await tester.pumpWidget(
-        MaterialApp(
-          home: Settings(
-            username: 'marta',
-            profilePicture: Image.asset('assets/logo.png'),
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ThemeManager>(
+              create: (context) => MockThemeManger(),
+            ),
+          ],
+          child: MaterialApp(
+            home: Settings(
+              username: 'marta',
+              profilePicture: Image.asset('assets/logo.png'),
+            ),
           ),
         ),
       );
@@ -58,18 +69,78 @@ void main() async {
         find.byWidgetPredicate((widget) => widget is SwitchListTile),
         findsOneWidget,
       );
-
-      // Check if ListTile widgets are present
+      expect(find.text("Dark mode"), findsOneWidget);
       expect(
         find.byWidgetPredicate((widget) => widget is ListTile),
         findsAtLeastNWidgets(2),
       );
+      expect(find.text("Edit profile"), findsOneWidget);
+      expect(find.byIcon(Icons.edit), findsOneWidget);
+      expect(find.text("Change password"), findsOneWidget);
+      expect(find.byIcon(Icons.lock_open), findsOneWidget);
 
+      expect(find.byIcon(Icons.navigate_next), findsNWidgets(2));
       // Check if sign out button is present
       expect(find.text('Sign Out'), findsOneWidget);
 
       // Tap the sign out button and wait for animation to complete
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Out'));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('SettingsScreen renders correctly', (tester) async {
+      await Preferences.init();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ThemeManager>(
+              create: (context) => MockThemeManger(),
+            ),
+          ],
+          child: MaterialApp(
+            home: Settings(
+              username: 'marta',
+              profilePicture: Image.asset('assets/logo.png'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byWidgetPredicate((widget) => widget is SwitchListTile),
+        findsOneWidget,
+      );
+      await tester.tap(find.byType(SwitchListTile));
+      await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.dark_mode_rounded), findsOneWidget);
+    });
+
+    testWidgets('SettingsScreen renders correctly', (tester) async {
+      await Preferences.init();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ThemeManager>(
+              create: (context) => MockThemeManger(),
+            ),
+          ],
+          child: MaterialApp(
+            home: Settings(
+              username: 'marta',
+              profilePicture: Image.asset('assets/logo.png'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      //light/dark mode
+      expect(
+        find.byWidgetPredicate((widget) => widget is SwitchListTile),
+        findsOneWidget,
+      );
+      await tester.tap(find.byType(SwitchListTile));
       await tester.pumpAndSettle();
     });
   });

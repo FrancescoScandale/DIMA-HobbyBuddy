@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/login.dart';
+import 'package:hobbybuddy/services/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
@@ -16,11 +17,24 @@ void main() {
 
     // Set up fake Firestore instance
     SharedPreferences.setMockInitialValues({});
-    await firestore
-        .collection("users")
-        .add({'username': 'marta', 'password': '12345678'});
+    await firestore.collection("users").add({
+      'username': 'marta',
+      'password': '12345678',
+      'email': 'martar@gmail.com',
+      'friends': '',
+      'hobbies': '',
+      'location': '',
+      'mentors': '',
+      'receivedReq': '',
+      'sentReq': '',
+      'name': 'marta',
+      'surname': 'radaelli',
+    });
   });
   testWidgets('LogInScreen renders correctly with button', (tester) async {
+    await Preferences.init();
+    tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
     await tester.pumpWidget(
       MaterialApp(
         home: LogInScreen(),
@@ -44,17 +58,15 @@ void main() {
     expect(passwordField, findsOneWidget);
     // Tap the login button
     // ignore: unused_element
-
-    final button = find.byKey(const Key("go_login"));
-    expect(button, findsOneWidget);
-
-    await tester.tap(button);
+    await tester.tap(find.byKey(const Key("go_login")));
     await tester.pump();
-    //expect(find.text('Please enter your username'), findsOneWidget);
-    //xpect(find.text('Please enter your password'), findsOneWidget);
+    expect(find.text('Please enter your username'), findsOneWidget);
+    expect(find.text('Please enter your password'), findsOneWidget);
   });
 
   testWidgets('LogInScreen renders correctly and logs user', (tester) async {
+    tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
     await tester.pumpWidget(
       MaterialApp(
         home: LogInScreen(),
@@ -63,33 +75,37 @@ void main() {
 
     final userField = find.byKey(const Key("u_field"));
     expect(userField, findsOneWidget);
+    expect(find.byIcon(Icons.face), findsOneWidget);
 
     final passwordField = find.byKey(const Key("p_field"));
     expect(passwordField, findsOneWidget);
+    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+
+    expect(find.byIcon(Icons.visibility_off), findsOneWidget);
+    await tester.tap(find.byType(IconButton));
+    await tester.pumpAndSettle();
 
     final button = find.byKey(const Key("go_login"));
     expect(button, findsOneWidget);
 
-    // Fill in the username and password fields
-    await tester.enterText(userField, 'marta');
-    await tester.enterText(passwordField, '12345678');
     expect(find.text("Don't have an account?"), findsOneWidget);
     expect(find.byKey(const Key("go_sign_up")), findsOneWidget);
     expect(find.text("Sign up here"), findsOneWidget);
-    // Tap the login button
-    expect(find.text("Submit"), findsOneWidget);
-    // ignore: unused_element
-    Future safeTapByKey(WidgetTester tester, String key) async {
-      await tester.ensureVisible(find.byKey(const Key("go_login")));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key("go_login")));
-    }
 
+    // Fill in the username and password fields
+    await tester.enterText(userField, 'marta');
+    await tester.enterText(passwordField, '12345678');
+
+    // ignore: unused_element
+
+    await tester.tap(find.text("Submit"));
     await tester.pumpAndSettle();
   });
 
   testWidgets('LogInScreen renders correctly and checks wrong user',
       (tester) async {
+    tester.binding.window.physicalSizeTestValue = Size(1080, 1920);
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
     await tester.pumpWidget(
       MaterialApp(
         home: LogInScreen(),
@@ -108,12 +124,7 @@ void main() {
 
     // Tap the login button
     // ignore: unused_element
-    Future safeTapByKey(WidgetTester tester, String key) async {
-      await tester.ensureVisible(find.byKey(const Key("go_login")));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key("go_login")));
-    }
 
-    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key("go_login")));
   });
 }

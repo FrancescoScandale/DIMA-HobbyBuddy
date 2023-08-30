@@ -306,7 +306,8 @@ class FirestoreCrud {
   }
 
   ///operation = 'add' or 'remove' based on the update to be done on the database
-  static Future<void> updateFavouriteHobbies(String username, String hobby, String operation) async {
+  static Future<void> updateFavouriteHobbies(
+      String username, String hobby, String operation) async {
     List<String> hobbies = [];
     String id = '';
 
@@ -433,7 +434,6 @@ class FirestoreCrud {
             doc.reference.update({'username': username});
             Preferences.setUsername(username);
           }*/
-
           if (name.isNotEmpty) {
             doc.reference.update({'name': name});
           }

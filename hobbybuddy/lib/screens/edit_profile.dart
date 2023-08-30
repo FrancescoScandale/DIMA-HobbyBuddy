@@ -254,31 +254,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    /* TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      controller: _usernameController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.face),
-                        border: OutlineInputBorder(),
-                        hintText: "Insert new username here",
-                        labelText: 'Your new username',
-                        labelStyle: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                      onChanged: (username) async {},
-                      /*validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Username cannot be empty';
-                        }
-                        return null;
-                      },*/
-                    ),
-                    if (_isUsernameNotUnique)
-                      const Text(
-                        'This username is already taken. Please choose a different one.',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    const SizedBox(height: 20),*/
                     TextFormField(
+                      key: const Key('newName'),
                       controller: _nameController,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.shortcut_rounded),
@@ -287,15 +264,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         labelText: 'Your new name',
                         labelStyle: TextStyle(fontStyle: FontStyle.italic),
                       ),
-                      /*validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Name cannot be empty';
-                        }
-                        return null;
-                      },*/
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
+                      key: const Key('newSurname'),
                       controller: _surnameController,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.shortcut_rounded),
@@ -305,12 +277,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         labelText: 'Your new surname',
                         labelStyle: TextStyle(fontStyle: FontStyle.italic),
                       ),
-                      /*validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Surname cannot be empty';
-                        }
-                        return null;
-                      },*/
                     ),
                     const SizedBox(height: 50),
                     MyButton(
@@ -318,25 +284,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         text: loading ? "Loading..." : "Save",
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            //String enteredUsername = _usernameController.text;
-                            //bool isUnique = await FirebaseCrud.isUsernameUnique(enteredUsername);
-                            // Username is unique, proceed
-                            // if (isUnique) {
                             setState(() {
                               loading = true;
                             });
                             await updateUserToFirestore();
-                            /*setState(() {
-                                _isUsernameNotUnique = false;
-                              });
-                              // ignore: use_build_context_synchronously
-                              _showSuccessDialog(context);
-                            } else {
-                              // Username is not unique, show a warning
-                              setState(() {
-                                _isUsernameNotUnique = true;
-                              });
-                            }*/
                           }
                         }),
                     Container(height: AppLayout.kPaddingFromCreate),

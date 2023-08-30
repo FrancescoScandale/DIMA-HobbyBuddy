@@ -66,6 +66,39 @@ void main() {
           findsOneWidget);
       expect(find.byIcon(Icons.favorite), findsOneWidget);
       expect(find.text('Skateboard'), findsOneWidget);
+      await tester.tap(find.text('Skateboard'));
     });
+  });
+
+  testWidgets('Hobbies can be searched', (WidgetTester tester) async {
+    await Preferences.init();
+
+    // Create a MaterialApp with a HomePScreen
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: HomePScreen(),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify that the app bar title is displayed
+
+    expect(find.text('Hobby Buddy'), findsOneWidget);
+    // Verify that the search input field is displayed
+
+    final search = find.byType(TextField);
+    expect(search, findsOneWidget);
+    await tester.enterText(search, 's');
+    await tester.tap(find.byIcon(Icons.search_sharp));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.sort_by_alpha_outlined));
+    await tester.pumpAndSettle();
+    expect(find.text('Skateboard'), findsOneWidget);
+    expect(find.text('Volleyball'), findsNothing);
+    await tester.tap(find.byIcon(Icons.clear));
+    await tester.pumpAndSettle();
+    expect(find.text('Skateboard'), findsOneWidget);
+    expect(find.text('Volleyball'), findsOneWidget);
   });
 }

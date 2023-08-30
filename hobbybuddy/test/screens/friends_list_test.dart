@@ -65,6 +65,68 @@ void main() {
     });
   });
 
+  testWidgets('MyFriendsScreen allows friends and users to be searched',
+      (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: MyFriendsScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("My friends"));
+    await tester.pumpAndSettle();
+    expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              widget.image.toString().contains('pics/propic.jpg'),
+        ),
+        findsNWidgets(2));
+    final search = find.byType(TextField);
+    expect(search, findsOneWidget);
+    await tester.enterText(search, '4');
+
+    await tester.tap(find.byIcon(Icons.search_sharp));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.sort_by_alpha_outlined));
+    await tester.pumpAndSettle();
+    expect(find.text('friend4'), findsOneWidget);
+    expect(find.text('friend5'), findsNothing);
+    await tester.tap(find.byIcon(Icons.clear));
+    await tester.pumpAndSettle();
+    expect(find.text('friend4'), findsOneWidget);
+    expect(find.text('friend5'), findsOneWidget);
+
+    await tester.tap(find.text("Explore"));
+    await tester.pumpAndSettle();
+    expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              widget.image.toString().contains('pics/propic.jpg'),
+        ),
+        findsNWidgets(4));
+    final search2 = find.byType(TextField);
+    expect(search2, findsOneWidget);
+    await tester.enterText(search2, '3');
+
+    await tester.tap(find.byIcon(Icons.search_sharp));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.sort_by_alpha_outlined));
+    await tester.pumpAndSettle();
+    expect(find.text('friend3'), findsOneWidget);
+    expect(find.text('friend6'), findsNothing);
+    await tester.tap(find.byIcon(Icons.clear));
+    await tester.pumpAndSettle();
+    expect(find.text('friend3'), findsOneWidget);
+    expect(find.text('friend6'), findsOneWidget);
+  });
+
   testWidgets(
       'MyFriendsScreen renders correctly and user can interact with friendship request dialog',
       (WidgetTester tester) async {
@@ -82,6 +144,7 @@ void main() {
 
     expect(find.byType(TabBarView), findsOneWidget);
     expect(find.byType(MyFriendsList), findsOneWidget);
+
     expect(find.text('friend5'), findsOneWidget);
     expect(find.text('friend4'), findsOneWidget);
     //change tabBar view
