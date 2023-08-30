@@ -250,7 +250,6 @@ class FirestoreCrud {
 
   ///operation = 'add' or 'remove' based on the update to be done on the database
   static Future<void> updateFavouriteHobbies(String username, String hobby, String operation) async {
-    print("entrato nel cruuudddd");
     List<String> hobbies = [];
     String id = '';
 

@@ -74,8 +74,10 @@ class _UserPageState extends State<UserPage> {
     _mentors = await FirestoreCrud.getUserData(_username, 'mentors');
 
     for (int i = 0; i < _mentors.length; i++) {
-      String url = await StorageCrud.getStorage().ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
-      _mentorsPics[_mentors[i]] = Image.network(url);
+      // String url = await StorageCrud.getStorage().ref().child('Mentors/${_mentors[i]}/propic.jpg').getDownloadURL();
+      // _mentorsPics[_mentors[i]] = Image.network(url);
+      Uint8List? image = await StorageCrud.getStorage().ref().child('Mentors/${_mentors[i]}/propic.jpg').getData();
+      _mentorsPics[_mentors[i]] = Image.memory(image!);
     }
 
     setState(() {
@@ -153,7 +155,7 @@ class _UserPageState extends State<UserPage> {
                         ? Image(
                             image: background.image,
                             alignment: Alignment.center,
-                            fit: BoxFit.fitHeight,
+                            fit: BoxFit.cover,
                           )
                         : Container()),
                 Container(

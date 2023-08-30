@@ -16,6 +16,8 @@ import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+
+
 final firestore = FakeFirebaseFirestore();
 
 final mockLocation = Location(
@@ -104,7 +106,7 @@ void main() async {
       // Find Image widgets
       expect(
         find.byType(Image),
-        findsNWidgets(2),
+        findsNWidgets(8),
       );
     });
   });
@@ -112,11 +114,6 @@ void main() async {
 
 // ignore: prefer_mixin
 class MockGeocodingPlatform extends Mock with MockPlatformInterfaceMixin implements GeocodingPlatform {
-  // with
-  //     // ignore: prefer_mixin
-  //     MockPlatformInterfaceMixin
-  // implements
-  //     GeocodingPlatform {
   @override
   Future<List<Location>> locationFromAddress(
     String address, {
