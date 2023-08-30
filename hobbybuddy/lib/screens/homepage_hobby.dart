@@ -55,6 +55,13 @@ class _HomePageHobbyState extends State<HomePageHobby> {
     _hobby = hobby;
   }
 
+  @override
+  void initState() {
+    setFavouriteStatus();
+    retrieveMentors();
+    super.initState();
+  }
+
   ///toggles "checkFavouriteHobby" in order to change the icon displayed, updates db and cache
   void toggleFavouriteHobby() async {
     String username = Preferences.getUsername()!;
@@ -98,12 +105,11 @@ class _HomePageHobbyState extends State<HomePageHobby> {
   //sets "checkFavouriteHobby" based on the favourite hobbies
   void setFavouriteStatus() {
     checkFavouriteHobby = Preferences.getHobbies()!.contains(_hobby);
+    setState(() {});
   }
 
   void retrieveMentors() async {
     if (_mentors.isEmpty) {
-      //TODO: passando da un hobby all'altro, questo potrebbe avere bisogno di essere
-      //inizializzato di nuovo... se la schermata è nuova invece dovrebbe essere a posto
       _mentors = await FirestoreCrud.getMentors(_hobby);
       setState(() {});
     }
@@ -111,9 +117,6 @@ class _HomePageHobbyState extends State<HomePageHobby> {
 
   @override
   Widget build(BuildContext context) {
-    setFavouriteStatus();
-    retrieveMentors();
-
     return Scaffold(
       appBar: const MyAppBar(
         title: "Home Page Hobby",
@@ -161,6 +164,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                 padding: const EdgeInsetsDirectional.fromSTEB(
                     0, 0, 2 * AppLayout.kModalHorizontalPadding, 0),
                 child: MyIconButton(
+                  key: const Key('toggleHobby'),
                   onTap: toggleFavouriteHobby,
                   icon:
                       checkFavouriteHobby ? hobbyFavourite : hobbyNotFavourite,

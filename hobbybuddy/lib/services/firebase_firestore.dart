@@ -468,6 +468,9 @@ class FirestoreCrud {
           .where("surname", isEqualTo: mentor.split(' ')[1])
           .get()
           .then((value) {
+        if (!value.docs[0].data().containsKey('classes')) {
+          return [];
+        }
         for (var item in value.docs[0]['classes']) {
           List<String> dates = item.split(';;')[2].split('/');
           String time = item.split(';;')[3];

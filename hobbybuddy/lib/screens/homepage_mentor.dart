@@ -77,11 +77,25 @@ class _MentorPageState extends State<MentorPage> {
   }
 
   void getMentorPics() async {
-    Uint8List? propicData = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/propic.jpg').getData();
-    Uint8List? backgroundData = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/background.jpg').getData();
-
-    propic = Image.memory(propicData!);
-    background = Image.memory(backgroundData!);
+    ListResult result = await StorageCrud.getStorage()
+        .ref()
+        .child('Mentors/$_mentor/')
+        .listAll();
+    if (result.items.isNotEmpty) {
+      Uint8List? propicData = await StorageCrud.getStorage()
+          .ref()
+          .child('Mentors/$_mentor/propic.jpg')
+          .getData();
+      Uint8List? backgroundData = await StorageCrud.getStorage()
+          .ref()
+          .child('Mentors/$_mentor/background.jpg')
+          .getData();
+      propic = Image.memory(propicData!);
+      background = Image.memory(backgroundData!);
+    } else {
+      propic = Image.asset('assets/pics/propic.jpg');
+      background = Image.asset('assets/pics/background.jpg');
+    }
 
     setState(() {
       downloadMentorPics = true;
@@ -92,24 +106,37 @@ class _MentorPageState extends State<MentorPage> {
     _upcomingClasses = await FirestoreCrud.getUpcomingClasses(_mentor);
 
     setState(() {
-      downloadClasses = true;
+      if (_upcomingClasses.isNotEmpty) {
+        downloadClasses = true;
+      }
     });
   }
 
   void getCourses() async {
-    ListResult result = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/').listAll();
-
-    int len = (result.prefixes[0].fullPath.split('/')).length;
-    for (Reference prefs in result.prefixes) {
-      String tmp = prefs.fullPath.split('/')[len - 1];
-      Uint8List? title =
-          await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$tmp/title.txt').getData();
-      Uint8List? image = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$tmp/pic.jpg').getData();
-      _courses[tmp] = Tuple2(utf8.decode(title!), Image.memory(image!));
+    ListResult result = await StorageCrud.getStorage()
+        .ref()
+        .child('Mentors/$_mentor/courses/')
+        .listAll();
+    if (result.prefixes.isNotEmpty) {
+      int len = (result.prefixes[0].fullPath.split('/')).length;
+      for (Reference prefs in result.prefixes) {
+        String tmp = prefs.fullPath.split('/')[len - 1];
+        Uint8List? title = await StorageCrud.getStorage()
+            .ref()
+            .child('Mentors/$_mentor/courses/$tmp/title.txt')
+            .getData();
+        Uint8List? image = await StorageCrud.getStorage()
+            .ref()
+            .child('Mentors/$_mentor/courses/$tmp/pic.jpg')
+            .getData();
+        _courses[tmp] = Tuple2(utf8.decode(title!), Image.memory(image!));
+      }
     }
 
     setState(() {
-      downloadCourses = true;
+      if (_courses.isNotEmpty) {
+        downloadCourses = true;
+      }
     });
   }
 
@@ -176,14 +203,18 @@ class _MentorPageState extends State<MentorPage> {
                       ? Image(
                           image: background.image,
                           alignment: Alignment.center,
-                          fit: BoxFit.fitHeight,
+                          fit: BoxFit.cover,
                         )
                       : Container()),
               Container(
                   padding: EdgeInsetsDirectional.fromSTEB(
-                      2 * AppLayout.kModalHorizontalPadding, 2 * _backgroundPadding / 3, 0, 0),
+                      2 * AppLayout.kModalHorizontalPadding,
+                      2 * _backgroundPadding / 3,
+                      0,
+                      0),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
+                    borderRadius:
+                        BorderRadius.circular(AppLayout.kProfilePicRadiusLarge),
                     child: downloadMentorPics
                         ? Image(
                             image: propic.image,
@@ -201,7 +232,10 @@ class _MentorPageState extends State<MentorPage> {
             children: [
               Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(
-                      AppLayout.kModalHorizontalPadding, AppLayout.kHeightSmall, 0, 0),
+                      AppLayout.kModalHorizontalPadding,
+                      AppLayout.kHeightSmall,
+                      0,
+                      0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -222,7 +256,8 @@ class _MentorPageState extends State<MentorPage> {
                     ],
                   )),
               MyIconButton(
-                margin: const EdgeInsets.only(right: AppLayout.kModalHorizontalPadding),
+                margin: const EdgeInsets.only(
+                    right: AppLayout.kModalHorizontalPadding),
                 onTap: toggleLikeMentor,
                 icon: favourite ? mentorFavourite : mentorNotFavourite,
               ),
@@ -233,7 +268,8 @@ class _MentorPageState extends State<MentorPage> {
           ),
           Container(
             alignment: AlignmentDirectional.topStart,
-            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+                AppLayout.kModalHorizontalPadding, 0, 0, 0),
             child: const Text(
               "Upcoming Classes",
               style: TextStyle(
@@ -244,8 +280,9 @@ class _MentorPageState extends State<MentorPage> {
           ),
           //UPCOMING CLASSES
           ContainerShadow(
-            margin: EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, AppLayout.kHorizontalPadding, 0),
-            child: downloadInfo
+            margin: const EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding,
+                0, AppLayout.kHorizontalPadding, 0),
+            child: downloadClasses
                 ? ListView.builder(
                     itemCount: _upcomingClasses.length,
                     shrinkWrap: true,
@@ -256,7 +293,8 @@ class _MentorPageState extends State<MentorPage> {
                           'assets/hobbies/$_hobby.png',
                           height: AppLayout.kHobbyDimension,
                           fit: BoxFit.cover,
-                          color: convertColor(int.parse(_upcomingClasses[index].split(';;')[0])),
+                          color: convertColor(int.parse(
+                              _upcomingClasses[index].split(';;')[0])),
                         ),
                         title: Text(_upcomingClasses[index].split(';;')[1]),
                         trailing: Column(
@@ -272,7 +310,7 @@ class _MentorPageState extends State<MentorPage> {
                     },
                   )
                 : const SizedBox(
-                    height: 150,
+                    height: AppLayout.kIconDimension,
                   ),
           ),
           Container(
@@ -280,7 +318,8 @@ class _MentorPageState extends State<MentorPage> {
           ),
           Container(
             alignment: AlignmentDirectional.topStart,
-            padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+                AppLayout.kModalHorizontalPadding, 0, 0, 0),
             child: const Text(
               "Courses",
               style: TextStyle(
@@ -305,7 +344,8 @@ class _MentorPageState extends State<MentorPage> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _courses.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 0,
                         crossAxisSpacing: 0,
@@ -316,7 +356,10 @@ class _MentorPageState extends State<MentorPage> {
                           onTap: () {
                             Widget newScreen = CoursesPage(
                                 mentor: _mentor,
-                                title: _courses.values.elementAt(index).item1.split(';;')[1],
+                                title: _courses.values
+                                    .elementAt(index)
+                                    .item1
+                                    .split(';;')[1],
                                 courseID: _courses.keys.elementAt(index));
                             Navigator.push(
                               context,
@@ -326,19 +369,23 @@ class _MentorPageState extends State<MentorPage> {
                             );
                           },
                           icon: ContainerShadow(
-                            margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, AppLayout.kHeightSmall),
+                            margin: const EdgeInsetsDirectional.fromSTEB(
+                                0, 0, 0, AppLayout.kHeightSmall),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   alignment: Alignment.center,
-                                  height: 120, // Adjust the image height as needed
+                                  height:
+                                      120, // Adjust the image height as needed
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: const ui.Color(0xffffcc80),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Theme.of(context).shadowColor.withOpacity(0.1),
+                                        color: Theme.of(context)
+                                            .shadowColor
+                                            .withOpacity(0.1),
                                         spreadRadius: 1,
                                         blurRadius: 1,
                                         offset: const Offset(0, 1.5),
@@ -346,14 +393,25 @@ class _MentorPageState extends State<MentorPage> {
                                     ],
                                   ),
                                   child: Image(
-                                    image: _courses.values.elementAt(index).item2.image,
+                                    image: _courses.values
+                                        .elementAt(index)
+                                        .item2
+                                        .image,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                const SizedBox(height: 8), // Spacing between image and title
+                                const SizedBox(
+                                    height:
+                                        8), // Spacing between image and title
                                 Container(
-                                  padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-                                  child: Text(_courses.values.elementAt(index).item1.split(';;')[1],
+                                  padding:
+                                      const EdgeInsetsDirectional.symmetric(
+                                          horizontal: 8),
+                                  child: Text(
+                                      _courses.values
+                                          .elementAt(index)
+                                          .item1
+                                          .split(';;')[1],
                                       style: const TextStyle(fontSize: 17)),
                                 ),
                                 Expanded(
@@ -364,8 +422,11 @@ class _MentorPageState extends State<MentorPage> {
                                     child: Container(
                                       width: 10,
                                       height: 10,
-                                      color: convertColor(
-                                          int.parse(_courses.values.elementAt(index).item1.split(';;')[0])),
+                                      color: convertColor(int.parse(_courses
+                                          .values
+                                          .elementAt(index)
+                                          .item1
+                                          .split(';;')[0])),
                                     ),
                                   ),
                                 )),
