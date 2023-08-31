@@ -18,9 +18,6 @@ import 'package:hobbybuddy/services/firebase_firestore.dart';
 final firestore = FakeFirebaseFirestore();
 String mentor = 'Ben Affleck';
 
-//there were renderflex errors in the ListViews (Container and Column went outside borders)
-//they were solved by wrapping the column in a SingleChildScrollView()
-//reference of the solution: homepage_user.dart - row 328
 void main() async {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -71,19 +68,6 @@ void main() async {
         .child('Mentors/$mentor/courses/2023-08-14_14:15:10/title.txt');
     const String title = '3;;Title of Course';
     await courseRefCaption.putData(Uint8List.fromList(utf8.encode(title)));
-
-    //course page
-    // final Reference courseRefText = StorageCrud.getStorage()
-    //     .ref()
-    //     .child('Mentors/$mentor/courses/2023-08-14_14:15:10/title.txt');
-    // const String text = 'Text and explanation of the course.';
-    // await courseRefText.putData(Uint8List.fromList(utf8.encode(text)));
-    // final Reference courseRefPic1 = StorageCrud.getStorage()
-    //     .ref()
-    //     .child('Mentors/$mentor/courses/2023-08-14_14:15:10/picture1.jpg');
-    // final ByteData coursePic1 =
-    //     await rootBundle.load("assets/pics/background.jpg");
-    // await courseRefPic1.putData(coursePic1.buffer.asUint8List());
   });
 
   group('Mentor homepage screen test', () {
@@ -126,8 +110,6 @@ void main() async {
       //favourite and course
       expect(find.byType(MyIconButton), findsNWidgets(2));
     });
-
-    //expect(find.byIcon(Icons.favorite), findsOneWidget);
 
     testWidgets('Mentor\'s homepage behavior', (tester) async {
       tester.view.devicePixelRatio = 1.0;

@@ -81,6 +81,7 @@ flutter:
     - assets/
     - assets/hobbies/
     - assets/pics/
+    - assets/vids/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
