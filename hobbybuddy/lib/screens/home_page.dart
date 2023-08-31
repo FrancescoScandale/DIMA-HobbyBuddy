@@ -33,6 +33,15 @@ class _HomePScreenState extends State<HomePScreen> {
     _searchController.addListener(_performSearch);
   }
 
+  double _calculateAspectRatio() {
+    final orientation = MediaQuery.of(context).orientation;
+    if (orientation == Orientation.portrait) {
+      return 1; // Aspect ratio for portrait mode
+    } else {
+      return 2.2;
+    }
+  }
+
   Future<void> _performSearch() async {
     setState(() {
       if (_searchController.text.isEmpty) {
@@ -190,11 +199,12 @@ class _HomePScreenState extends State<HomePScreen> {
             ),
           ),
           SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // Two hobbies per row
               mainAxisSpacing: 16.0,
-              crossAxisSpacing: 16.0,
-              childAspectRatio: 1, // Adjust the aspect ratio as needed
+              crossAxisSpacing: 8.0,
+              childAspectRatio:
+                  _calculateAspectRatio(), // Adjust the aspect ratio as needed
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {

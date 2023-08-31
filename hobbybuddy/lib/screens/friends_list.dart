@@ -22,6 +22,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   final ScrollController _scrollController = ScrollController();
   Future<List<String>> receivedRequestsFuture =
       FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
+  List<String> requests = [];
   bool _isShrink = false;
   bool _showRedCircle = false;
 
@@ -37,6 +38,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
     });
     receivedRequestsFuture.then((receivedRequests) {
       _updateRedCircleVisibility(receivedRequests.length);
+      requests = receivedRequests;
     });
 
     super.initState();
@@ -52,6 +54,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   void _updateRedCircleVisibility(int newRequestCount) {
     setState(() {
       _showRedCircle = newRequestCount > 0;
+      print(_showRedCircle);
     });
   }
 
@@ -60,7 +63,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
     return receivedRequests;
   }
 
-  Future<int> count() async {
+  /* Future<int> count() async {
     int requestCount;
     List<String> receivedRequests = await req();
     if (receivedRequests == []) {
@@ -69,7 +72,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
       requestCount = receivedRequests.length;
     }
     return requestCount;
-  }
+  }*/
 
   static _showRequestsDialog(
     BuildContext context,
@@ -183,142 +186,131 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-        future: receivedRequestsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // The future is still loading
-            return Container();
-          } else if (snapshot.hasError) {
-            // An error occurred while fetching the data
-            return Text('Error: ${snapshot.error}');
-          } else {
-            // Data is available and not empty
-            List<String> receivedRequests = snapshot.data!;
-            int requestCount = receivedRequests.length;
-
-            return Scaffold(
-              appBar: MyAppBar(
-                title: "Friends Explorer",
-                shape: (_isShrink)
-                    ? const Border()
-                    : Border(
-                        bottom: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).dividerColor,
+    receivedRequestsFuture =
+        FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
+    receivedRequestsFuture.then((receivedRequests) {
+      setState(() {
+        _updateRedCircleVisibility(receivedRequests.length);
+        requests = receivedRequests;
+      });
+    });
+    int requestCount = requests.length;
+    return Scaffold(
+        appBar: MyAppBar(
+          title: "Friends Explorer",
+          shape: (_isShrink)
+              ? const Border()
+              : Border(
+                  bottom: BorderSide(
+                    width: 1,
+                    color: Theme.of(context).dividerColor,
+                  ),
+                ),
+          upRightActions: [
+            Stack(
+              children: [
+                if (requestCount >= 0)
+                  Container(
+                    margin: const EdgeInsetsDirectional.fromSTEB(
+                        0, 5, 40, 5), //const EdgeInsets.only(right: 40),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () async {
+                        await _showRequestsDialog(
+                          context,
+                          requests,
+                          requestCount,
+                          this, // Pass the instance of _MyFriendsScreenState
+                        );
+                      },
+                      child: Ink(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xffffcc80),
                         ),
-                      ),
-                upRightActions: [
-                  Stack(
-                    children: [
-                      if (requestCount >= 0)
-                        Container(
-                          margin: const EdgeInsetsDirectional.fromSTEB(
-                              0, 5, 40, 5), //const EdgeInsets.only(right: 40),
-                          child: InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: () async {
-                              await _showRequestsDialog(
-                                context,
-                                receivedRequests,
-                                requestCount,
-                                this, // Pass the instance of _MyFriendsScreenState
-                              );
-                            },
-                            child: Ink(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xffffcc80),
-                              ),
-                              child: Container(
-                                width: 32,
-                                height: 32,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColorLight,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Center(
-                                  child: Icon(
-                                    size: 20,
-                                    Icons.person_add_alt_1,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (_showRedCircle)
-                        Container(
-                          margin: const EdgeInsets.only(
-                              bottom: 31, left: 22), // Adjust these values
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColorLight,
                             shape: BoxShape.circle,
                           ),
-                        ),
-                    ],
-                  )
-                ],
-              ),
-              body: SafeArea(
-                child: ResponsiveWrapper(
-                  child: NestedScrollView(
-                    controller: _scrollController,
-                    headerSliverBuilder: (context, innerBoxIsScrolled) {
-                      return [
-                        SliverOverlapAbsorber(
-                          handle:
-                              NestedScrollView.sliverOverlapAbsorberHandleFor(
-                                  context),
-                          sliver: SliverPadding(
-                            padding: const EdgeInsets.only(top: 0),
-                            sliver: SliverAppBar(
-                              scrolledUnderElevation: 0,
-                              elevation: 1,
-                              pinned: true,
-                              expandedHeight: 0, // Adjust this value as needed
-                              automaticallyImplyLeading: false,
-                              centerTitle: true,
-                              backgroundColor: _isShrink
-                                  ? Theme.of(context)
-                                      .appBarTheme
-                                      .backgroundColor
-                                  : Theme.of(context).scaffoldBackgroundColor,
-                              bottom: PreferredSize(
-                                preferredSize: const Size.fromHeight(0),
-                                child: TabBar(
-                                  tabs: ["My friends", "Explore"]
-                                      .map((e) => Tab(text: e))
-                                      .toList(),
-                                  controller: _tabController,
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                ),
-                              ),
+                          child: const Center(
+                            child: Icon(
+                              size: 20,
+                              Icons.person_add_alt_1,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      ];
-                    },
-                    body: Column(
-                      children: [
-                        Expanded(
-                          child: TabBarView(
+                      ),
+                    ),
+                  ),
+                if (_showRedCircle)
+                  Container(
+                    margin: const EdgeInsets.only(
+                        bottom: 31, left: 22), // Adjust these values
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+              ],
+            )
+          ],
+        ),
+        body: SafeArea(
+          child: ResponsiveWrapper(
+            child: NestedScrollView(
+              controller: _scrollController,
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  SliverOverlapAbsorber(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context),
+                    sliver: SliverPadding(
+                      padding: const EdgeInsets.only(top: 0),
+                      sliver: SliverAppBar(
+                        scrolledUnderElevation: 0,
+                        elevation: 1,
+                        pinned: true,
+                        expandedHeight: 0, // Adjust this value as needed
+                        automaticallyImplyLeading: false,
+                        centerTitle: true,
+                        backgroundColor: _isShrink
+                            ? Theme.of(context).appBarTheme.backgroundColor
+                            : Theme.of(context).scaffoldBackgroundColor,
+                        bottom: PreferredSize(
+                          preferredSize: const Size.fromHeight(0),
+                          child: TabBar(
+                            tabs: ["My friends", "Explore"]
+                                .map((e) => Tab(text: e))
+                                .toList(),
                             controller: _tabController,
-                            children: const [
-                              MyFriendsList(),
-                              SearchFriendsList(),
-                            ],
+                            indicatorSize: TabBarIndicatorSize.tab,
                           ),
                         ),
+                      ),
+                    ),
+                  ),
+                ];
+              },
+              body: Column(
+                children: [
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: const [
+                        MyFriendsList(),
+                        SearchFriendsList(),
                       ],
                     ),
                   ),
-                ),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          ),
+        ));
   }
 }
