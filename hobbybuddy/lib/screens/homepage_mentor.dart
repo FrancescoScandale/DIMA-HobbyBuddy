@@ -1,7 +1,7 @@
 /*
   Legend for the upcoming classes in the firebase firestore db
     Fields for the same upcoming class are separated by ;;
-    Tiers of difficulty are 1,2,3 (1 being the hardest -> gold)
+    Tiers of difficulty are 1,2,3 (1 being the hardest -> red)
 */
 
 import 'dart:convert';
@@ -81,6 +81,7 @@ class _MentorPageState extends State<MentorPage> {
         .ref()
         .child('Mentors/$_mentor/')
         .listAll();
+
     if (result.items.isNotEmpty) {
       Uint8List? propicData = await StorageCrud.getStorage()
           .ref()
@@ -118,9 +119,8 @@ class _MentorPageState extends State<MentorPage> {
         .child('Mentors/$_mentor/courses/')
         .listAll();
     if (result.prefixes.isNotEmpty) {
-      int len = (result.prefixes[0].fullPath.split('/')).length;
       for (Reference prefs in result.prefixes) {
-        String tmp = prefs.fullPath.split('/')[len - 1];
+        String tmp = prefs.fullPath.split('/').last;
         Uint8List? title = await StorageCrud.getStorage()
             .ref()
             .child('Mentors/$_mentor/courses/$tmp/title.txt')
@@ -280,8 +280,11 @@ class _MentorPageState extends State<MentorPage> {
           ),
           //UPCOMING CLASSES
           ContainerShadow(
-            margin: const EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding,
-                0, AppLayout.kHorizontalPadding, 0),
+            margin: const EdgeInsetsDirectional.fromSTEB(
+                AppLayout.kHorizontalPadding,
+                0,
+                AppLayout.kHorizontalPadding,
+                0),
             child: downloadClasses
                 ? ListView.builder(
                     itemCount: _upcomingClasses.length,

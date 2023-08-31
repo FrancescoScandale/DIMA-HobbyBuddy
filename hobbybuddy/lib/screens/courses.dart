@@ -11,14 +11,20 @@ import 'package:hobbybuddy/widgets/container_shadow.dart';
 import 'package:video_player/video_player.dart';
 
 class CoursesPage extends StatefulWidget {
-  const CoursesPage({Key? key, required this.mentor, required this.title, required this.courseID}) : super(key: key);
+  const CoursesPage(
+      {Key? key,
+      required this.mentor,
+      required this.title,
+      required this.courseID})
+      : super(key: key);
 
   final String mentor;
   final String title;
   final String courseID; //in our case it's the date
 
   @override
-  State<CoursesPage> createState() => _CoursesPageState(mentor, title, courseID);
+  State<CoursesPage> createState() =>
+      _CoursesPageState(mentor, title, courseID);
 }
 
 class _CoursesPageState extends State<CoursesPage> {
@@ -32,7 +38,6 @@ class _CoursesPageState extends State<CoursesPage> {
   bool textFinished = false;
   bool picsFinished = false;
   bool vidsFinished = false;
-  bool completed = false;
 
   _CoursesPageState(String mentor, String title, String courseID) {
     _mentor = mentor;
@@ -40,11 +45,12 @@ class _CoursesPageState extends State<CoursesPage> {
     _courseID = courseID;
   }
 
-  void checkCompletions() {
-    if (textFinished && picsFinished && vidsFinished) {
-      completed = true;
-      setState(() {});
-    }
+  @override
+  void initState() {
+    retrieveText();
+    retrievePics();
+    retrieveVids();
+    super.initState();
   }
 
   Widget setupText() {
@@ -53,7 +59,9 @@ class _CoursesPageState extends State<CoursesPage> {
 
     List<String> currentList = [];
     for (String line in lines) {
-      if (line.startsWith('-') || line.startsWith('*') || line.startsWith('•')) {
+      if (line.startsWith('-') ||
+          line.startsWith('*') ||
+          line.startsWith('•')) {
         currentList.add(line.substring(1).trim());
       } else {
         if (currentList.isNotEmpty) {
@@ -62,7 +70,8 @@ class _CoursesPageState extends State<CoursesPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: currentList
                   .map((item) => ListTile(
-                      contentPadding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                      contentPadding:
+                          EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
                       dense: true,
                       visualDensity: VisualDensity(vertical: -4),
                       title: Text(
@@ -104,56 +113,80 @@ class _CoursesPageState extends State<CoursesPage> {
   }
 
   void retrieveText() async {
-    Uint8List? result =
-        await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID/text.txt').getData();
-    text = utf8.decode(result!);
-    returned = setupText();
+    ListResult check = await StorageCrud.getStorage()
+        .ref()
+        .child('Mentors/$_mentor/courses/$_courseID/text.txt')
+        .listAll();
 
-    textFinished = true;
-    checkCompletions();
+    if (check.items.isNotEmpty) {
+      for (Reference item in check.items) {
+        String name = item.fullPath.split('/').last;
+        if (name.contains('text')) {
+          Uint8List? result = await StorageCrud.getStorage()
+              .ref()
+              .child('Mentors/$_mentor/courses/$_courseID/text.txt')
+              .getData();
+          text = utf8.decode(result!);
+          returned = setupText();
+
+          setState(() {
+            textFinished = true;
+          });
+        }
+      }
+    }
   }
 
   void retrievePics() async {
-    ListResult result = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID').listAll();
+    ListResult result = await StorageCrud.getStorage()
+        .ref()
+        .child('Mentors/$_mentor/courses/$_courseID')
+        .listAll();
 
-    for (Reference item in result.items) {
-      String name = item.fullPath.split('/').last;
-      if (name.contains('picture')) {
-        //TODO: all downloads can be done with this method... which doesn't rely on a specific name/extension!
-        Uint8List? tmp =
-            await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID/$name').getData();
-        _images.add(Image.memory(tmp!));
+    if (result.items.isNotEmpty) {
+      for (Reference item in result.items) {
+        String name = item.fullPath.split('/').last;
+        if (name.contains('picture')) {
+          //TODO: all downloads can be done with this method... which doesn't rely on a specific name/extension!
+          Uint8List? tmp = await StorageCrud.getStorage()
+              .ref()
+              .child('Mentors/$_mentor/courses/$_courseID/$name')
+              .getData();
+          _images.add(Image.memory(tmp!));
+        }
       }
     }
 
-    picsFinished = true;
-    checkCompletions();
+    setState(() {
+      picsFinished = true;
+    });
   }
 
   void retrieveVids() async {
-    ListResult result = await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID').listAll();
+    ListResult result = await StorageCrud.getStorage()
+        .ref()
+        .child('Mentors/$_mentor/courses/$_courseID')
+        .listAll();
 
     for (Reference item in result.items) {
       String name = item.fullPath.split('/').last;
       if (name.contains('video')) {
-        String? url =
-            await StorageCrud.getStorage().ref().child('Mentors/$_mentor/courses/$_courseID/$name').getDownloadURL();
+        String? url = await StorageCrud.getStorage()
+            .ref()
+            .child('Mentors/$_mentor/courses/$_courseID/$name')
+            .getDownloadURL();
 
         _vidsControllers[url] = VideoPlayerWidget(url: url);
       }
     }
 
-    vidsFinished = true;
-    checkCompletions();
+    setState(() {
+      vidsFinished = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!completed) {
-      retrieveText();
-      retrievePics();
-      retrieveVids();
-    }
     return Scaffold(
         appBar: const MyAppBar(
           title: 'Course Page',
@@ -162,23 +195,31 @@ class _CoursesPageState extends State<CoursesPage> {
           children: [
             //TITLE
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding,
-                  AppLayout.kHeightSmall, AppLayout.kModalHorizontalPadding, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                  AppLayout.kModalHorizontalPadding,
+                  AppLayout.kHeightSmall,
+                  AppLayout.kModalHorizontalPadding,
+                  0),
               child: Text(
                 _title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             //TEXT
             textFinished
                 ? ContainerShadow(
                     margin: const EdgeInsetsDirectional.symmetric(
-                        horizontal: AppLayout.kModalHorizontalPadding, vertical: 0),
+                        horizontal: AppLayout.kModalHorizontalPadding,
+                        vertical: 0),
                     child: Container(
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: 5, vertical: AppLayout.kHeightSmall/2),
-                      child: returned))
+                        padding: const EdgeInsetsDirectional.symmetric(
+                            horizontal: 5,
+                            vertical: AppLayout.kHeightSmall / 2),
+                        child: returned))
                 : ContainerShadow(
-                    child: Container(height: MediaQuery.sizeOf(context).height * 2 / 3),
+                    child: Container(height: 150),
+                    //height: MediaQuery.sizeOf(context).height * 2 / 3),
                   ),
             Container(
               height: AppLayout.kHeight,
@@ -186,7 +227,8 @@ class _CoursesPageState extends State<CoursesPage> {
             //IMAGES
             Container(
               alignment: AlignmentDirectional.topStart,
-              padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                  AppLayout.kModalHorizontalPadding, 0, 0, 0),
               child: const Text(
                 "Images",
                 style: TextStyle(
@@ -206,7 +248,8 @@ class _CoursesPageState extends State<CoursesPage> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _images.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 0,
                       crossAxisSpacing: 0,
@@ -224,7 +267,9 @@ class _CoursesPageState extends State<CoursesPage> {
                                   ? AppLayout.kModalHorizontalPadding
                                   : AppLayout.kModalHorizontalPadding / 2,
                               AppLayout.kHeightSmall),
-                          child: Image(image: _images[index].image, fit: BoxFit.contain));
+                          child: Image(
+                              image: _images[index].image,
+                              fit: BoxFit.contain));
                     })
                 : Container(),
             Container(
@@ -233,7 +278,8 @@ class _CoursesPageState extends State<CoursesPage> {
             //VIDEOS
             Container(
               alignment: AlignmentDirectional.topStart,
-              padding: const EdgeInsetsDirectional.fromSTEB(AppLayout.kModalHorizontalPadding, 0, 0, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                  AppLayout.kModalHorizontalPadding, 0, 0, 0),
               child: const Text(
                 "Videos",
                 style: TextStyle(
@@ -258,9 +304,11 @@ class _CoursesPageState extends State<CoursesPage> {
                         children: [
                           ContainerShadow(
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: AppLayout.kModalHorizontalPadding, vertical: AppLayout.kHeightSmall),
+                                  horizontal: AppLayout.kModalHorizontalPadding,
+                                  vertical: AppLayout.kHeightSmall),
                               color: const ui.Color(0xffffcc80),
-                              child: VideoPlayerWidget(url: _vidsControllers.keys.elementAt(index))),
+                              child: VideoPlayerWidget(
+                                  url: _vidsControllers.keys.elementAt(index))),
                         ],
                       );
                     },
@@ -314,7 +362,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             future: _initVideoPlayerFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                return AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller));
+                return AspectRatio(
+                    aspectRatio: _controller.value.aspectRatio,
+                    child: VideoPlayer(_controller));
               } else {
                 return const Center(
                   child: CircularProgressIndicator(),
