@@ -202,9 +202,8 @@ class _HomePScreenState extends State<HomePScreen> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // Two hobbies per row
               mainAxisSpacing: 16.0,
-              crossAxisSpacing: 8.0,
-              childAspectRatio:
-                  _calculateAspectRatio(), // Adjust the aspect ratio as needed
+              crossAxisSpacing: 16.0,
+              childAspectRatio: _calculateAspectRatio(),
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {

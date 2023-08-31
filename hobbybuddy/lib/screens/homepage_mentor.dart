@@ -76,6 +76,15 @@ class _MentorPageState extends State<MentorPage> {
     });
   }
 
+  double _calculateAspectRatio() {
+    final orientation = MediaQuery.of(context).orientation;
+    if (orientation == Orientation.portrait) {
+      return 1; // Aspect ratio for portrait mode
+    } else {
+      return 2.2;
+    }
+  }
+
   void getMentorPics() async {
     ListResult result = await StorageCrud.getStorage()
         .ref()
@@ -347,12 +356,11 @@ class _MentorPageState extends State<MentorPage> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _courses.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 0,
                         crossAxisSpacing: 0,
-                        childAspectRatio: 1.0,
+                        childAspectRatio: _calculateAspectRatio(),
                       ),
                       itemBuilder: (context, index) {
                         return MyIconButton(
