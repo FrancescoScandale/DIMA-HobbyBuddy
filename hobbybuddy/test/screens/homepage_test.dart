@@ -30,7 +30,8 @@ void main() {
 
     testWidgets('Hobby container can be tapped', (WidgetTester tester) async {
       await Preferences.init();
-
+      //tester.view.devicePixelRatio = 1.0;
+      //tester.view.physicalSize = const Size(1080, 1920);
       // Create a MaterialApp with a HomePScreen
       await tester.pumpWidget(
         const MaterialApp(
@@ -72,7 +73,8 @@ void main() {
 
   testWidgets('Hobbies can be searched', (WidgetTester tester) async {
     await Preferences.init();
-
+    //tester.view.devicePixelRatio = 1.0;
+    //tester.view.physicalSize = const Size(1080, 1920);
     // Create a MaterialApp with a HomePScreen
     await tester.pumpWidget(
       const MaterialApp(
@@ -91,6 +93,8 @@ void main() {
     expect(search, findsOneWidget);
     await tester.enterText(search, 's');
     await tester.tap(find.byIcon(Icons.search_sharp));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.sort_by_alpha_outlined));
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.sort_by_alpha_outlined));
     await tester.pumpAndSettle();

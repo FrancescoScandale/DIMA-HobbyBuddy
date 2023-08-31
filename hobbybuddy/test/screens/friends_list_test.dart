@@ -252,24 +252,46 @@ void main() {
     expect(find.text('friend2'), findsOneWidget);
 
     expect(find.byIcon(Icons.add_circle), findsNWidgets(4));
+
+    //opens dialog, but doesn't send request
     await tester.tap(find.byIcon(Icons.add_circle).first);
     await tester.pumpAndSettle();
 
     final dialog = find.byWidgetPredicate((widget) => widget is AlertDialog);
     expect(dialog, findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    //opens dialog and sends request
+    await tester.tap(find.byIcon(Icons.add_circle).first);
+    await tester.pumpAndSettle();
+
+    final dialog2 = find.byWidgetPredicate((widget) => widget is AlertDialog);
+    expect(dialog2, findsOneWidget);
     await tester.tap(find.text('Send'));
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add_circle), findsNWidgets(3));
     expect(find.byIcon(Icons.pending), findsOneWidget);
 
+    //opens dialog and closes withdraw request
     await tester.tap(find.byIcon(Icons.pending).first);
     await tester.pumpAndSettle();
 
-    final dialog2 = find.byWidgetPredicate((widget) => widget is AlertDialog);
-    expect(dialog2, findsOneWidget);
+    final dialog3 = find.byWidgetPredicate((widget) => widget is AlertDialog);
+    expect(dialog3, findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    //opens dialog and confirm withdraw request
+    await tester.tap(find.byIcon(Icons.pending).first);
+    await tester.pumpAndSettle();
+
+    final dialog4 = find.byWidgetPredicate((widget) => widget is AlertDialog);
+    expect(dialog4, findsOneWidget);
     await tester.tap(find.text('Confirm'));
     await tester.pumpAndSettle();
+
     expect(find.byIcon(Icons.add_circle), findsNWidgets(4));
     expect(find.byIcon(Icons.pending), findsNothing);
   });

@@ -54,7 +54,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   void _updateRedCircleVisibility(int newRequestCount) {
     setState(() {
       _showRedCircle = newRequestCount > 0;
-      print(_showRedCircle);
     });
   }
 

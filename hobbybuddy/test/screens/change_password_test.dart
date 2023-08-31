@@ -30,11 +30,20 @@ void main() {
       findsNWidgets(3),
     );
     final currentP = find.byKey(const Key("currentP"));
+
+    await tester.tap(find.byKey(const Key("lock1")));
+    await tester.pumpAndSettle();
     expect(currentP, findsOneWidget);
+
     final newP = find.byKey(const Key("newP"));
     expect(newP, findsOneWidget);
+    await tester.tap(find.byKey(const Key("lock2")));
+    await tester.pumpAndSettle();
+
     final newP2 = find.byKey(const Key("newP2"));
     expect(newP2, findsOneWidget);
+    await tester.tap(find.byKey(const Key("lock3")));
+    await tester.pumpAndSettle();
 
     await tester.enterText(currentP, '12345678');
     await tester.enterText(newP, '87654321');

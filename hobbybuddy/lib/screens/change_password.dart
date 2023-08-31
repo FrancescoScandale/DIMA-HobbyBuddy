@@ -63,6 +63,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                     labelText: 'Your password',
                     labelStyle: const TextStyle(fontStyle: FontStyle.italic),
                     suffixIcon: IconButton(
+                      key: const Key('lock1'),
                       onPressed: () {
                         setState(() {
                           _passwordInvisibleOld = !_passwordInvisibleOld;
@@ -95,6 +96,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                     labelText: 'Your new password',
                     labelStyle: const TextStyle(fontStyle: FontStyle.italic),
                     suffixIcon: IconButton(
+                      key: const Key('lock2'),
                       onPressed: () {
                         setState(() {
                           _passwordInvisibleNew = !_passwordInvisibleNew;
@@ -126,6 +128,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                     labelText: 'Confirm new password',
                     labelStyle: const TextStyle(fontStyle: FontStyle.italic),
                     suffixIcon: IconButton(
+                      key: const Key('lock3'),
                       onPressed: () {
                         setState(() {
                           _passwordInvisibleNew = !_passwordInvisibleNew;
