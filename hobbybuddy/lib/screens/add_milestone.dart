@@ -19,7 +19,7 @@ class AddMilestone extends StatefulWidget {
 
 class _AddMilestoneState extends State<AddMilestone> {
   late String _username;
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = const Key('formkey');
   TextEditingController caption = TextEditingController();
   final ImagePicker picker = ImagePicker();
   late File _imageFile;
@@ -37,7 +37,8 @@ class _AddMilestoneState extends State<AddMilestone> {
   }
 
   Future pickImage() async {
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
@@ -49,10 +50,17 @@ class _AddMilestoneState extends State<AddMilestone> {
   }
 
   void uploadMilestone() async {
-    String ts = DateTime.timestamp().toString().split('.')[0].replaceAll(' ', '_');
+    String ts =
+        DateTime.timestamp().toString().split('.')[0].replaceAll(' ', '_');
 
-    StorageCrud.getStorage().ref().child('Users/$_username/milestones/$ts/caption.txt').putString(caption.text);
-    await StorageCrud.getStorage().ref().child('Users/$_username/milestones/$ts/pic.jpg').putFile(_imageFile);
+    StorageCrud.getStorage()
+        .ref()
+        .child('Users/$_username/milestones/$ts/caption.txt')
+        .putString(caption.text);
+    await StorageCrud.getStorage()
+        .ref()
+        .child('Users/$_username/milestones/$ts/pic.jpg')
+        .putFile(_imageFile);
 
     Navigator.pop(context);
   }
@@ -65,9 +73,11 @@ class _AddMilestoneState extends State<AddMilestone> {
           automaticallyImplyLeading: _notUploaded ? true : false,
         ),
         body: ListView(
-          //padding: const EdgeInsetsDirectional.symmetric(horizontal: AppLayout.kHorizontalPadding),
-          padding:
-              const EdgeInsetsDirectional.fromSTEB(AppLayout.kHorizontalPadding, 0, AppLayout.kHorizontalPadding, 100),
+          padding: const EdgeInsetsDirectional.fromSTEB(
+              AppLayout.kHorizontalPadding,
+              0,
+              AppLayout.kHorizontalPadding,
+              100),
           children: [
             Container(
               height: AppLayout.kVerticalPadding,
@@ -75,21 +85,16 @@ class _AddMilestoneState extends State<AddMilestone> {
             Form(
               key: _formKey,
               child: TextFormField(
-                controller: caption,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.text_fields),
-                  border: OutlineInputBorder(),
-                  labelText: 'Caption',
-                  labelStyle: TextStyle(fontStyle: FontStyle.italic),
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'You missed to enter the caption...';
-                  }
-                  return null;
-                },
-              ),
+                  controller: caption,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.text_fields),
+                    border: OutlineInputBorder(),
+                    labelText: 'Caption',
+                    labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                  validator: (value) {
+                    return null;
+                  }),
             ),
             const SizedBox(height: 20),
             _imagePicked
@@ -103,7 +108,8 @@ class _AddMilestoneState extends State<AddMilestone> {
                 child: ElevatedButton(
                     onPressed: () => pickImage(),
                     style: const ButtonStyle(
-                      padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.all(5)),
+                      padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
+                          EdgeInsets.all(5)),
                     ),
                     child: const Icon(Icons.add_a_photo))),
             const SizedBox(height: 30),
@@ -111,14 +117,15 @@ class _AddMilestoneState extends State<AddMilestone> {
                 ? MyButton(
                     text: 'Upload Milestone',
                     onPressed: () {
-                      //if (_formKey.currentState!.validate()) {
-                      if (caption.text.isEmpty) {
+                      if (caption.text.isEmpty || caption.text.trim().isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Need to insert a caption...")),
+                          const SnackBar(
+                              content: Text("Need to insert a caption...")),
                         );
                       } else if (!_imagePicked) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Need to upload an image...")),
+                          const SnackBar(
+                              content: Text("Need to upload an image...")),
                         );
                       } else {
                         setState(() {
@@ -126,7 +133,6 @@ class _AddMilestoneState extends State<AddMilestone> {
                         });
                         uploadMilestone();
                       }
-                      //}
                     },
                   )
                 : MyButton(

@@ -50,6 +50,8 @@ dependencies:
   video_player: ^2.7.0
   mockito: ^5.4.2
   plugin_platform_interface: ^2.1.5
+  image_picker_platform_interface: ^2.9.1
+  path_provider: ^2.1.1
   
 
 dev_dependencies:

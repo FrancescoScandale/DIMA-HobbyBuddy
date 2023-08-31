@@ -1,180 +1,271 @@
-import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:hobbybuddy/screens/homepage_user.dart';
+import 'package:hobbybuddy/screens/add_milestone.dart';
 import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
-import 'package:hobbybuddy/services/firebase_firestore.dart';
-import 'package:mockito/mockito.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:mockito/mockito.dart';
 
 final firestore = FakeFirebaseFirestore();
-const String user = 'francesco';
+final picker = ImagePicker();
+const String username = 'francesco';
+const String caption = 'Milestone caption!';
 
-//there were renderflex errors in mentors (Container and Column went outside borders)
-//they were solved by wrapping the column in a SingleChildScrollView()
-//reference of the solution: homepage_user.dart - row 328
+class MockImagePicker extends Mock
+    with MockPlatformInterfaceMixin
+    implements ImagePickerPlatform {
+  @override
+  Future<XFile?> getImage({
+    required ImageSource source,
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    CameraDevice preferredCameraDevice = CameraDevice.rear,
+  }) async {
+    final ByteData data =
+        await rootBundle.load("assets/pics/lowqualitybackground.jpg");
+    final Uint8List bytes = data.buffer.asUint8List();
+    final Directory tempDir = await getTemporaryDirectory();
+    final File pickedFile = await File(
+      '${tempDir.path}/pic.jpg',
+    ).writeAsBytes(bytes);
+
+    return XFile(pickedFile.path);
+  }
+
+  @override
+  Future<PickedFile?> pickImage({
+    required ImageSource source,
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    CameraDevice preferredCameraDevice = CameraDevice.rear,
+    bool requestFullMetadata = true,
+  }) async {
+    final ByteData data =
+        await rootBundle.load("assets/pics/lowqualitybackground.jpg");
+    final Uint8List bytes = data.buffer.asUint8List();
+    final Directory tempDir = await getTemporaryDirectory();
+    final File pickedFile = await File(
+      '${tempDir.path}/pic.jpg',
+    ).writeAsBytes(bytes);
+
+    return PickedFile(pickedFile.path);
+  }
+
+  @override
+  Future<XFile?> getImageFromSource({
+    required ImageSource source,
+    ImagePickerOptions options = const ImagePickerOptions(),
+  }) async {
+    return XFile("assets/pics/lowqualitybackground.jpg");
+  }
+}
+
 void main() async {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    FirestoreCrud.init(firebaseInstance: firestore);
     StorageCrud.init(storageInstance: MockFirebaseStorage());
+    ImagePickerPlatform.instance = MockImagePicker();
+    // FirestoreCrud.init(firebaseInstance: firestore);
 
-    //setup preferences
-    SharedPreferences.setMockInitialValues({
-      'username': 'francesco',
-      'hobbies': ['Skateboard'],
-      'mentors': ['Ben Affleck'],
-      'email': '',
-    });
-    await Preferences.init();
+    // //setup preferences
+    // SharedPreferences.setMockInitialValues({
+    //   'username': 'francesco',
+    //   'hobbies': ['Skateboard'],
+    //   'mentors': ['Ben Affleck'],
+    //   'email': '',
+    // });
+    // await Preferences.init();
 
     //setup fake firestore
-    await firestore.collection("users").add({
-      'username': 'francesco',
-      'hobbies': 'Frisbee,Badminton,Chess,Skateboard',
-      'mentors': 'John Travolta,Ben Affleck',
-      'name': 'Francesco',
-      'surname': 'Scandale',
-      'location': '45.4905447,9.2303139'
-    });
-    await firestore.collection('mentors').add({
-      'name': 'Ben',
-      'surname': 'Affleck',
-      'hobby': 'Skateboard',
-      'classes': ['1;;We\'ll try to achieve a kickflip!;;15/09/2023;;9:21']
-    });
+    // await firestore.collection("users").add({
+    //   'username': 'francesco',
+    //   'hobbies': 'Frisbee,Badminton,Chess,Skateboard',
+    //   'mentors': 'John Travolta,Ben Affleck',
+    //   'name': 'Francesco',
+    //   'surname': 'Scandale',
+    //   'location': '45.4905447,9.2303139'
+    // });
 
-    //propic
-    final Reference storageRefpropic =
-        StorageCrud.getStorage().ref().child('Users/francesco/propic.jpg');
-    final ByteData propic = await rootBundle.load("assets/pics/propic.jpg");
-    await storageRefpropic.putData(propic.buffer.asUint8List());
-    //background
-    final Reference storageRefbackground =
-        StorageCrud.getStorage().ref().child('Users/francesco/background.jpg');
-    final ByteData background =
-        await rootBundle.load("assets/pics/background.jpg");
-    await storageRefbackground.putData(background.buffer.asUint8List());
+    // //propic
+    // final Reference storageRefpropic =
+    //     StorageCrud.getStorage().ref().child('Users/francesco/propic.jpg');
+    // final ByteData propic = await rootBundle.load("assets/pics/propic.jpg");
+    // await storageRefpropic.putData(propic.buffer.asUint8List());
+    // //background
+    // final Reference storageRefbackground =
+    //     StorageCrud.getStorage().ref().child('Users/francesco/background.jpg');
+    // final ByteData background =
+    //     await rootBundle.load("assets/pics/background.jpg");
+    // await storageRefbackground.putData(background.buffer.asUint8List());
 
     //mentors
-    final Reference JTRefpropic = StorageCrud.getStorage()
-        .ref()
-        .child('Mentors/John Travolta/propic.jpg');
-    final ByteData JTpropic = await rootBundle.load("assets/pics/propic.jpg");
-    await JTRefpropic.putData(JTpropic.buffer.asUint8List());
+    // final Reference JTRefpropic = StorageCrud.getStorage()
+    //     .ref()
+    //     .child('Mentors/John Travolta/propic.jpg');
+    // final ByteData JTpropic = await rootBundle.load("assets/pics/propic.jpg");
+    // await JTRefpropic.putData(JTpropic.buffer.asUint8List());
 
-    final Reference BARefpropic =
-        StorageCrud.getStorage().ref().child('Mentors/Ben Affleck/propic.jpg');
-    final ByteData BApropic = await rootBundle.load("assets/pics/propic.jpg");
-    await BARefpropic.putData(BApropic.buffer.asUint8List());
-    final Reference BARefbackground = StorageCrud.getStorage()
-        .ref()
-        .child('Mentors/Ben Affleck/background.jpg');
-    final ByteData BAbackground =
-        await rootBundle.load("assets/pics/lowqualitybackground.jpg");
-    await BARefbackground.putData(BAbackground.buffer.asUint8List());
+    // final Reference BARefpropic =
+    //     StorageCrud.getStorage().ref().child('Mentors/Ben Affleck/propic.jpg');
+    // final ByteData BApropic = await rootBundle.load("assets/pics/propic.jpg");
+    // await BARefpropic.putData(BApropic.buffer.asUint8List());
+    // final Reference BARefbackground = StorageCrud.getStorage()
+    //     .ref()
+    //     .child('Mentors/Ben Affleck/background.jpg');
+    // final ByteData BAbackground =
+    //     await rootBundle.load("assets/pics/lowqualitybackground.jpg");
+    // await BARefbackground.putData(BAbackground.buffer.asUint8List());
 
-    //milestone
-    const String title = '2023-08-14_14:15:10';
-    final Reference milestoneRefpic = StorageCrud.getStorage()
-        .ref()
-        .child('Users/francesco/milestones/$title/pic.jpg');
-    final ByteData milestonePic =
-        await rootBundle.load("assets/pics/lowqualitybackground.jpg");
-    await milestoneRefpic.putData(milestonePic.buffer.asUint8List());
-    final Reference milestoneRefcaption = StorageCrud.getStorage()
-        .ref()
-        .child('Users/francesco/milestones/$title/caption.txt');
-    const String caption = 'This is a caption';
-    await milestoneRefcaption.putData(Uint8List.fromList(utf8.encode(caption)));
+    // //milestone
+    // const String title = '2023-08-14_14:15:10';
+    // final Reference milestoneRefpic = StorageCrud.getStorage()
+    //     .ref()
+    //     .child('Users/francesco/milestones/$title/pic.jpg');
+    // final ByteData milestonePic =
+    //     await rootBundle.load("assets/pics/lowqualitybackground.jpg");
+    // await milestoneRefpic.putData(milestonePic.buffer.asUint8List());
+    // final Reference milestoneRefcaption = StorageCrud.getStorage()
+    //     .ref()
+    //     .child('Users/francesco/milestones/$title/caption.txt');
+    // const String caption = 'This is a caption';
+    // await milestoneRefcaption.putData(Uint8List.fromList(utf8.encode(caption)));
   });
 
-  group('User homepage screen test', () {
-    testWidgets('User\'s homepage renders correctly', (tester) async {
+  group('Add milestone screen test', () {
+    testWidgets('Add milestone\'s page renders correctly', (tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(1080, 1920);
       await tester.pumpWidget(
         const MaterialApp(
-          home: UserPage(
-            user: 'francesco',
+          home: AddMilestone(
+            user: username,
           ),
         ),
       );
       await tester.pumpAndSettle();
 
       //appBar
-      expect(find.text('Profile Page'), findsOneWidget);
+      expect(find.text('Add New Milestone'), findsOneWidget);
 
       //images (hobbies and others)
-      expect(
-          find.byWidgetPredicate(
-              (widget) => widget is Image && widget.image is AssetImage,
-              skipOffstage: false),
-          findsNWidgets(4));
-      expect(
-          find.byWidgetPredicate(
-              (widget) => widget is Image && widget.image is MemoryImage,
-              skipOffstage: false),
-          findsNWidgets(5));
+      expect(find.byType(TextFormField), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsNWidgets(2));
 
-      expect(find.byIcon(Icons.settings_sharp), findsOneWidget);
-      expect(find.byType(MyButton), findsOneWidget);
+      expect(
+          find.byWidgetPredicate((widget) =>
+              widget is MyButton && widget.text == 'Upload Milestone'),
+          findsOneWidget);
+      expect(
+          find.byWidgetPredicate(
+              (widget) => widget is ElevatedButton && widget.child is Icon),
+          findsOneWidget);
     });
 
-    testWidgets('User\'s homepage behavior', (tester) async {
+    testWidgets('Add milestone\'s page behavior: insert nothing',
+        (tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(1080, 1920);
       await tester.pumpWidget(
         const MaterialApp(
-          home: UserPage(
-            user: 'francesco',
+          home: AddMilestone(
+            user: username,
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      //create navigator to go to previous screen
-      final NavigatorState navigator = tester.state(find.byType(Navigator));
+      //insert nothing
+      await tester.tap(
+        find.text('Upload Milestone'),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Need to insert a caption...'), findsOneWidget);
+    });
 
-      //go to settings
-      await tester.tap(find.byIcon(Icons.settings_sharp));
-      await tester.pumpAndSettle();
-      expect(find.text('Settings'), findsOneWidget);
-      navigator.pop();
-      await tester.pumpAndSettle();
-
-      // go to hobby
-      await tester.tap(find.image(
-          Image.asset('assets/hobbies/Skateboard.png').image,
-          skipOffstage: true));
-      await tester.pumpAndSettle();
-      expect(find.text('Home Page Hobby'), findsOneWidget);
-      navigator.pop();
-      await tester.pumpAndSettle();
-
-      //go to mentor
-      await tester.tap(find.byKey(const Key('Ben Affleck')));
-      await tester.pumpAndSettle();
-      expect(find.text('Mentor Page'), findsOneWidget);
-      navigator.pop();
+    testWidgets('Add milestone\'s page behavior: insert caption',
+        (tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1080, 1920);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: AddMilestone(
+            user: username,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      // //go to add milestones
-      await tester.tap(find.text('+ Milestone', skipOffstage: false));
+      //insert only text
+      await tester.enterText(find.byType(TextFormField), caption);
+      await tester.pump();
+      expect(find.text(caption), findsOneWidget);
+      await tester.tap(
+        find.text('Upload Milestone'),
+      );
       await tester.pumpAndSettle();
-      expect(find.text('Add New Milestone'), findsOneWidget);
-      navigator.pop();
+      expect(find.text('Need to upload an image...'), findsOneWidget);
+    });
+
+    testWidgets('Add milestone\'s page behavior: insert image', (tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1080, 1920);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: AddMilestone(
+            user: username,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
+
+      //insert image
+      await tester.tap(find.descendant(
+          of: find.byType(Container), matching: find.byType(ElevatedButton)));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.text('Upload Milestone'),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Need to insert a caption...'), findsOneWidget);
+    });
+
+    testWidgets('Add milestone\'s page behavior: insert caption and image',
+        (tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1080, 1920);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: AddMilestone(
+            user: username,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      //insert text and image
+      await tester.enterText(find.byType(TextFormField), caption);
+      await tester.pump();
+      await tester.tap(find.descendant(
+          of: find.byType(Container), matching: find.byType(ElevatedButton)));
+      await tester.pumpAndSettle();
+
+      //tap upload
+      await tester.tap(
+        find.text('Upload Milestone'),
+      );
+      await tester.pump();
+      expect(find.text('Uploading...'), findsOneWidget);
     });
   });
 }
