@@ -7,7 +7,8 @@ import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 class SearchFriendsList extends StatefulWidget {
-  const SearchFriendsList({super.key});
+  final VoidCallback? onRefreshMainPage; // Callback function
+  const SearchFriendsList({Key? key, this.onRefreshMainPage}) : super(key: key);
 
   @override
   State<SearchFriendsList> createState() => _SearchFriendsListState();
@@ -74,6 +75,9 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
     return Scaffold(
       key: scaffoldKey,
       body: SingleChildScrollView(
+        primary: true,
+        clipBehavior: Clip.none,
+        //physics: const NeverScrollableScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -117,10 +121,15 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                 ],
               ),
             ),
-            Scrollbar(
+            RefreshIndicator(
+              onRefresh: () async {
+                widget.onRefreshMainPage!();
+              },
+              //interactive: false,
               child: ListView.builder(
+                //physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                controller: PrimaryScrollController.of(context),
+                //controller: PrimaryScrollController.of(context),
                 itemCount: _filteredFriends.length,
                 // Number of rectangles you want to display
                 itemBuilder: (context, index) {
@@ -270,7 +279,8 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
         _pendingRequests.add(friendName); // Add friend to pending requests
       });
 
-      await FirestoreCrud.addSentRequest(Preferences.getUsername()!, friendName);
+      await FirestoreCrud.addSentRequest(
+          Preferences.getUsername()!, friendName);
       await FirestoreCrud.addReceivedRequest(
           friendName, Preferences.getUsername()!);
     }

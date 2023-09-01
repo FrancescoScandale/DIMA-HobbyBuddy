@@ -22,11 +22,10 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   final ScrollController _scrollController = ScrollController();
   Future<List<String>> receivedRequestsFuture =
       FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
-  List<String> requests = [];
   bool _isShrink = false;
   bool _showRedCircle = false;
+  List<String> receivedRequests = [];
   int requestCount = 0;
-  bool loaded = false;
 
   @override
   void initState() {
@@ -38,14 +37,13 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
             _scrollController.offset > 0; // Adjust this value as needed
       });
     });
-
-    getRequests().then((value) => setState(() {
-          _updateRedCircleVisibility(value.length);
-          requestCount = value.length;
-          requests = value;
-
-          loaded = true;
-        }));
+    receivedRequestsFuture.then((value) {
+      updateRedCircleVisibility(value.length);
+      setState(() {
+        receivedRequests = value;
+        requestCount = value.length;
+      });
+    });
 
     super.initState();
   }
@@ -57,137 +55,38 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
     super.dispose();
   }
 
-  void _updateRedCircleVisibility(int newRequestCount) {
+  void updateRedCircleVisibility(int newRequestCount) {
     setState(() {
       _showRedCircle = newRequestCount > 0;
     });
   }
 
-  Future<List<String>> getRequests() async {
-    Future<List<String>> receivedRequests =
+  // Function to trigger the refresh
+  void refreshMainPage() {
+    //print('ENTERED');
+    //print('receivedRequests: $receivedRequests');
+    //print('requestCount: $requestCount');
+    //print("_showRedCircle: $_showRedCircle");
+    Future<List<String>> receivedRequestsFuture =
         FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
-    return receivedRequests;
+
+    receivedRequestsFuture.then((value2) {
+      update(value2);
+    });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: MyAppBar(
-          title: "Friends Explorer",
-          shape: (_isShrink)
-              ? const Border()
-              : Border(
-                  bottom: BorderSide(
-                    width: 1,
-                    color: Theme.of(context).dividerColor,
-                  ),
-                ),
-          upRightActions: [
-            Stack(
-              children: [
-                if (requestCount >= 0)
-                  Container(
-                    margin: const EdgeInsetsDirectional.fromSTEB(
-                        0, 5, 40, 5), //const EdgeInsets.only(right: 40),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () async {
-                        await _showRequestsDialog(
-                          context,
-                          requests,
-                          requestCount,
-                          this, // Pass the instance of _MyFriendsScreenState
-                        );
-                      },
-                      child: Ink(
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xffffcc80),
-                        ),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColorLight,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              size: 20,
-                              Icons.person_add_alt_1,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                if (_showRedCircle)
-                  Container(
-                    margin: const EdgeInsets.only(
-                        bottom: 31, left: 22), // Adjust these values
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-              ],
-            )
-          ],
-        ),
-        body: SafeArea(
-          child: ResponsiveWrapper(
-            child: NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
-                return [
-                  SliverOverlapAbsorber(
-                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                        context),
-                    sliver: SliverPadding(
-                      padding: const EdgeInsets.only(top: 0),
-                      sliver: SliverAppBar(
-                        scrolledUnderElevation: 0,
-                        elevation: 1,
-                        pinned: true,
-                        expandedHeight: 0, // Adjust this value as needed
-                        automaticallyImplyLeading: false,
-                        centerTitle: true,
-                        backgroundColor: _isShrink
-                            ? Theme.of(context).appBarTheme.backgroundColor
-                            : Theme.of(context).scaffoldBackgroundColor,
-                        bottom: PreferredSize(
-                          preferredSize: const Size.fromHeight(0),
-                          child: TabBar(
-                            tabs: ["My friends", "Explore"]
-                                .map((e) => Tab(text: e))
-                                .toList(),
-                            controller: _tabController,
-                            indicatorSize: TabBarIndicatorSize.tab,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ];
-              },
-              body: Column(
-                children: [
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: const [
-                        MyFriendsList(),
-                        SearchFriendsList(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ));
+  void update(List<String> req) async {
+    updateRedCircleVisibility(req.length);
+    setState(
+      () {
+        receivedRequests = req;
+        requestCount = req.length;
+      },
+    );
+    //print('DONE');
+    //print('receivedRequests: $receivedRequests');
+    //print('requestCount: $requestCount');
+    //print("_showRedCircle: $_showRedCircle");
   }
 
   static _showRequestsDialog(
@@ -245,7 +144,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                                       setState(() {
                                         receivedRequests.remove(request);
                                       });
-                                      state._updateRedCircleVisibility(
+                                      state.updateRedCircleVisibility(
                                           receivedRequests.length);
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -267,7 +166,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                                       setState(() {
                                         receivedRequests.remove(request);
                                       });
-                                      state._updateRedCircleVisibility(
+                                      state.updateRedCircleVisibility(
                                           receivedRequests.length);
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -297,6 +196,134 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
           },
         );
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MyAppBar(
+        title: "Friends Explorer",
+        shape: (_isShrink)
+            ? const Border()
+            : Border(
+                bottom: BorderSide(
+                  width: 1,
+                  color: Theme.of(context).dividerColor,
+                ),
+              ),
+        upRightActions: [
+          Stack(
+            children: [
+              if (requestCount >= 0)
+                Container(
+                  margin: const EdgeInsetsDirectional.fromSTEB(
+                      0, 5, 40, 5), //const EdgeInsets.only(right: 40),
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: () async {
+                      await _showRequestsDialog(
+                        context,
+                        receivedRequests,
+                        requestCount,
+                        this, // Pass the instance of _MyFriendsScreenState
+                      );
+                    },
+                    child: Ink(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xffffcc80),
+                      ),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColorLight,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            size: 20,
+                            Icons.person_add_alt_1,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              if (_showRedCircle)
+                Container(
+                  margin: const EdgeInsets.only(
+                      bottom: 31, left: 22), // Adjust these values
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+            ],
+          )
+        ],
+      ),
+      body: SafeArea(
+        child: ResponsiveWrapper(
+          child: NestedScrollView(
+            //physics: const NeverScrollableScrollPhysics(),
+            //controller: _scrollController,
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverOverlapAbsorber(
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: SliverPadding(
+                    padding: const EdgeInsets.only(top: 0),
+                    sliver: SliverAppBar(
+                      scrolledUnderElevation: 0,
+                      elevation: 1,
+                      pinned: true,
+                      expandedHeight: 0, // Adjust this value as needed
+                      automaticallyImplyLeading: false,
+                      centerTitle: true,
+                      backgroundColor: _isShrink
+                          ? Theme.of(context).appBarTheme.backgroundColor
+                          : Theme.of(context).scaffoldBackgroundColor,
+                      bottom: PreferredSize(
+                        preferredSize: const Size.fromHeight(0),
+                        child: TabBar(
+                          tabs: ["My friends", "Explore"]
+                              .map((e) => Tab(text: e))
+                              .toList(),
+                          controller: _tabController,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ];
+            },
+            body: Column(
+              children: [
+                Expanded(
+                  child: TabBarView(
+                    //physics: const NeverScrollableScrollPhysics(),
+                    controller: _tabController,
+                    children: [
+                      MyFriendsList(
+                        onRefreshMainPage: refreshMainPage,
+                      ),
+                      SearchFriendsList(
+                        onRefreshMainPage: refreshMainPage,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

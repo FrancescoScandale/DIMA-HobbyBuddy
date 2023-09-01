@@ -7,7 +7,8 @@ import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 class MyFriendsList extends StatefulWidget {
-  const MyFriendsList({super.key});
+  final VoidCallback? onRefreshMainPage; // Callback function
+  const MyFriendsList({Key? key, this.onRefreshMainPage}) : super(key: key);
 
   @override
   State<MyFriendsList> createState() => _MyFriendsListState();
@@ -64,6 +65,9 @@ class _MyFriendsListState extends State<MyFriendsList> {
     return Scaffold(
       key: scaffoldKey,
       body: SingleChildScrollView(
+        primary: true,
+        clipBehavior: Clip.none,
+        //physics: const NeverScrollableScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -107,10 +111,15 @@ class _MyFriendsListState extends State<MyFriendsList> {
                 ],
               ),
             ),
-            Scrollbar(
+            RefreshIndicator(
+              //interactive: false,
+              onRefresh: () async {
+                widget.onRefreshMainPage!();
+              },
               child: ListView.builder(
+                //physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                controller: PrimaryScrollController.of(context),
+                //controller: PrimaryScrollController.of(context),
                 itemCount: _filteredFriends.length,
                 // Number of rectangles you want to display
                 itemBuilder: (context, index) {
