@@ -74,8 +74,8 @@ void main() {
         home: MyFriendsScreen(),
       ),
     );
-    await tester.pumpAndSettle();
-
+    //await tester.pumpAndSettle();
+    await tester.pump();
     await tester.tap(find.text("My friends"));
     await tester.pumpAndSettle();
     expect(
@@ -94,6 +94,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.sort_by_alpha_outlined));
     await tester.pumpAndSettle();
+
     expect(find.text('friend4'), findsOneWidget);
     expect(find.text('friend5'), findsNothing);
     await tester.tap(find.byIcon(Icons.clear));

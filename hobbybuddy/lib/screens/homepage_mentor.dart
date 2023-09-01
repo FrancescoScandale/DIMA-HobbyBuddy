@@ -81,7 +81,7 @@ class _MentorPageState extends State<MentorPage> {
     double height = MediaQuery.of(context).size.height;
     final orientation = MediaQuery.of(context).orientation;
     if (orientation == Orientation.portrait) {
-      return 2.6 * width / height;
+      return 2.1 * width / height;
       //return 1; // Aspect ratio for portrait mode
     } else {
       return width / (0.85 * height);

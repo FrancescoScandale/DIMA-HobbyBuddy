@@ -205,7 +205,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   String enteredUsername = _usernameController.text;
                   bool isUnique =
                       await FirestoreCrud.isUsernameUnique(enteredUsername);
-                  if (isUnique) {
+                  if (isUnique == true) {
                     String email = _emailController.text;
                     String password = _passwordController.text;
                     String username = _usernameController.text;
@@ -220,7 +220,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     // Show the success dialog
                     // ignore: use_build_context_synchronously
                     _showSignUpSuccessDialog(context);
-                  } else {
+                  } else if (isUnique == false) {
                     // Username is not unique, show a warning
                     setState(() {
                       _isUsernameNotUnique = true;
@@ -262,6 +262,7 @@ class _SignUpFormState extends State<SignUpForm> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        key: const Key("success_dialog"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

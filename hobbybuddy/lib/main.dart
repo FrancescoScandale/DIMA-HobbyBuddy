@@ -84,13 +84,13 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                   );
                 case 2:
                   return CupertinoTabView(
-                    navigatorKey: thirdTabNavKey,
-                    builder: (context) => const MyFriendsScreen(),
-                  );
+                      navigatorKey: thirdTabNavKey,
+                      builder: (context) => const MyFriendsScreen());
                 case 3:
                   return CupertinoTabView(
                     navigatorKey: fourthTabNavKey,
-                    builder: (context) => UserPage(user: Preferences.getUsername()!),
+                    builder: (context) =>
+                        UserPage(user: Preferences.getUsername()!),
                   );
                 default:
                   return const CupertinoTabView();
@@ -127,6 +127,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBarApp> {
                       break;
                     case 2:
                       thirdTabNavKey.currentState?.popUntil((r) => r.isFirst);
+
                       break;
                     case 3:
                       fourthTabNavKey.currentState?.popUntil((r) => r.isFirst);

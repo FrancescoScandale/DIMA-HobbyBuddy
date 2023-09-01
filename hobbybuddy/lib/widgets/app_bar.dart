@@ -9,13 +9,12 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ShapeBorder? shape;
   final bool automaticallyImplyLeading;
 
-  const MyAppBar({
-    super.key,
-    required this.title,
-    this.upRightActions,
-    this.shape,
-    this.automaticallyImplyLeading = true
-  });
+  const MyAppBar(
+      {super.key,
+      required this.title,
+      this.upRightActions,
+      this.shape,
+      this.automaticallyImplyLeading = true});
 
   @override
   Widget build(BuildContext context) {

@@ -390,6 +390,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0+1"
+  flutter_driver:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -412,6 +417,11 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  fuchsia_remote_debug_protocol:
     dependency: transitive
     description: flutter
     source: sdk
@@ -648,6 +658,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1"
+  integration_test:
+    dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   js:
     dependency: transitive
     description:
@@ -820,10 +835,10 @@ packages:
     dependency: transitive
     description:
       name: platform
-      sha256: "57c07bf82207aee366dfaa3867b3164e4f03a238a461a11b0e8a3a510d51203d"
+      sha256: "4a451831508d7d6ca779f7ac6e212b4023dd5a7d08a27a63da33756410e32b76"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.1"
+    version: "3.1.0"
   plugin_platform_interface:
     dependency: "direct main"
     description:
@@ -832,6 +847,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.5"
+  process:
+    dependency: transitive
+    description:
+      name: process
+      sha256: "53fd8db9cec1d37b0574e12f07520d582019cb6c44abf5479a01505099a34a09"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.4"
   provider:
     dependency: "direct main"
     description:
@@ -989,6 +1012,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  sync_http:
+    dependency: transitive
+    description:
+      name: sync_http
+      sha256: "7f0cd72eca000d2e026bcd6f990b81d0ca06022ef4e32fb257b30d3d1014a961"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   term_glyph:
     dependency: transitive
     description:
@@ -1069,6 +1100,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.16"
+  visibility_detector:
+    dependency: "direct main"
+    description:
+      name: visibility_detector
+      sha256: dd5cc11e13494f432d15939c3aa8ae76844c42b723398643ce9addb88a5ed420
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0+2"
+  vm_service:
+    dependency: transitive
+    description:
+      name: vm_service
+      sha256: f6deed8ed625c52864792459709183da231ebf66ff0cf09e69b573227c377efe
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.3.0"
   watcher:
     dependency: transitive
     description:
@@ -1077,6 +1124,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  webdriver:
+    dependency: transitive
+    description:
+      name: webdriver
+      sha256: "3c923e918918feeb90c4c9fdf1fe39220fa4c0e8e2c0fffaded174498ef86c49"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
   win32:
     dependency: transitive
     description:

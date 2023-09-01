@@ -25,6 +25,8 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   List<String> requests = [];
   bool _isShrink = false;
   bool _showRedCircle = false;
+  int requestCount = 0;
+  bool loaded = false;
 
   @override
   void initState() {
@@ -36,10 +38,14 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
             _scrollController.offset > 0; // Adjust this value as needed
       });
     });
-    receivedRequestsFuture.then((receivedRequests) {
-      _updateRedCircleVisibility(receivedRequests.length);
-      requests = receivedRequests;
-    });
+
+    getRequests().then((value) => setState(() {
+          _updateRedCircleVisibility(value.length);
+          requestCount = value.length;
+          requests = value;
+
+          loaded = true;
+        }));
 
     super.initState();
   }
@@ -57,143 +63,14 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
     });
   }
 
-  Future<List<String>> req() async {
-    List<String> receivedRequests = await receivedRequestsFuture;
+  Future<List<String>> getRequests() async {
+    Future<List<String>> receivedRequests =
+        FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
     return receivedRequests;
-  }
-
-  /* Future<int> count() async {
-    int requestCount;
-    List<String> receivedRequests = await req();
-    if (receivedRequests == []) {
-      requestCount = 0;
-    } else {
-      requestCount = receivedRequests.length;
-    }
-    return requestCount;
-  }*/
-
-  static _showRequestsDialog(
-    BuildContext context,
-    List<String>? receivedRequests,
-    int requestCount,
-    _MyFriendsScreenState state,
-  ) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text('Friendship Requests'),
-              content: Container(
-                width: MediaQuery.of(context).size.width,
-                // Adjust width as needed
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: receivedRequests?.map((request) {
-                          return Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                    AppLayout.kProfilePicRadiusSmall),
-                                child: Image.asset(
-                                  'assets/pics/propic.jpg',
-                                  width: AppLayout.kProfilePicRadiusSmall,
-                                  height: AppLayout.kProfilePicRadiusSmall,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                  child: Text(
-                                request,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )),
-                              ButtonBar(
-                                buttonMinWidth: 20,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      await FirestoreCrud.removeSentRequest(
-                                          request, Preferences.getUsername()!);
-                                      await FirestoreCrud.removeReceivedRequest(
-                                          Preferences.getUsername()!, request);
-                                      await FirestoreCrud.addFriend(
-                                          Preferences.getUsername()!, request);
-                                      await FirestoreCrud.addFriend(
-                                          request, Preferences.getUsername()!);
-                                      setState(() {
-                                        receivedRequests.remove(request);
-                                      });
-                                      state._updateRedCircleVisibility(
-                                          receivedRequests.length);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                    ),
-                                    child: const Text(
-                                      'Accept',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      await FirestoreCrud.removeSentRequest(
-                                          request, Preferences.getUsername()!);
-                                      await FirestoreCrud.removeReceivedRequest(
-                                          Preferences.getUsername()!, request);
-                                      setState(() {
-                                        receivedRequests.remove(request);
-                                      });
-                                      state._updateRedCircleVisibility(
-                                          receivedRequests.length);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                    ),
-                                    child: const Text('Decline'),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        }).toList() ??
-                        [],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(dialogContext);
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    receivedRequestsFuture =
-        FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
-    receivedRequestsFuture.then((receivedRequests) {
-      setState(() {
-        _updateRedCircleVisibility(receivedRequests.length);
-        requests = receivedRequests;
-      });
-    });
-    int requestCount = requests.length;
     return Scaffold(
         appBar: MyAppBar(
           title: "Friends Explorer",
@@ -311,5 +188,115 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
             ),
           ),
         ));
+  }
+
+  static _showRequestsDialog(
+    BuildContext context,
+    List<String>? receivedRequests,
+    int requestCount,
+    _MyFriendsScreenState state,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Friendship Requests'),
+              content: Container(
+                width: MediaQuery.of(context).size.width,
+                // Adjust width as needed
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: receivedRequests?.map((request) {
+                          return Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                    AppLayout.kProfilePicRadiusSmall),
+                                child: Image.asset(
+                                  'assets/pics/propic.jpg',
+                                  width: AppLayout.kProfilePicRadiusSmall,
+                                  height: AppLayout.kProfilePicRadiusSmall,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                  child: Text(
+                                request,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )),
+                              ButtonBar(
+                                buttonMinWidth: 20,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      await FirestoreCrud.removeSentRequest(
+                                          request, Preferences.getUsername()!);
+                                      await FirestoreCrud.removeReceivedRequest(
+                                          Preferences.getUsername()!, request);
+                                      await FirestoreCrud.addFriend(
+                                          Preferences.getUsername()!, request);
+                                      await FirestoreCrud.addFriend(
+                                          request, Preferences.getUsername()!);
+                                      setState(() {
+                                        receivedRequests.remove(request);
+                                      });
+                                      state._updateRedCircleVisibility(
+                                          receivedRequests.length);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                    ),
+                                    child: const Text(
+                                      'Accept',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      await FirestoreCrud.removeSentRequest(
+                                          request, Preferences.getUsername()!);
+                                      await FirestoreCrud.removeReceivedRequest(
+                                          Preferences.getUsername()!, request);
+                                      setState(() {
+                                        receivedRequests.remove(request);
+                                      });
+                                      state._updateRedCircleVisibility(
+                                          receivedRequests.length);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                    ),
+                                    child: const Text('Decline'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }
