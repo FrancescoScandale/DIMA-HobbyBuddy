@@ -5,10 +5,20 @@ import 'package:hobbybuddy/services/preferences.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:hobbybuddy/main.dart' as app;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'utils.dart';
 import 'package:flutter/material.dart';
 
 final firestore = FakeFirebaseFirestore();
+
+Future tapOnWidgetByKey({
+  required String key,
+  required WidgetTester tester,
+}) async {
+  final widget = await find.byKey(Key(key));
+  expect(widget, findsOneWidget);
+  await tester.tap(widget);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
