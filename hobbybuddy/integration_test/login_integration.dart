@@ -81,15 +81,6 @@ void main() {
       expect(signout, findsOneWidget);
       await tester.tap(signout);
       await tester.pumpAndSettle(Duration(seconds: 2));
-      //await tester.pumpAndSettle();
-      //final hobby = find.text("Skateboard");
-      //expect(hobby, findsOneWidget);
-      //await tester.tap(hobby);
-      //await tester.pumpAndSettle();
-      //final mentor = find.text("Ben Affleck");
-      //expect(mentor, findsOneWidget);
-      //await tester.tap(mentor);
-      //await tester.pumpAndSettle(Duration(seconds: 2));
     });
   });
 }

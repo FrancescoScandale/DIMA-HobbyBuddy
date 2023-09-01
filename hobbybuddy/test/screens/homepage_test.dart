@@ -28,7 +28,8 @@ void main() {
   group('home page screen test', () {
     // Mock SharedPreferences initialization
 
-    testWidgets('Hobby container can be tapped', (WidgetTester tester) async {
+    testWidgets('Page renders correctly Hobby container can be tapped',
+        (WidgetTester tester) async {
       await Preferences.init();
       //tester.view.devicePixelRatio = 1.0;
       //tester.view.physicalSize = const Size(1080, 1920);

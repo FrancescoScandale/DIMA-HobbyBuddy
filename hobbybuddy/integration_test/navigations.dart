@@ -21,7 +21,8 @@ void main() {
   });
 
   group('general navigation test', () {
-    testWidgets('user can navigate to the friend screen', (tester) async {
+    testWidgets('user can navigate to the friend_list page and refresh screen',
+        (tester) async {
       final SemanticsHandle handle = tester.ensureSemantics();
       await app.main();
       await tester.pumpAndSettle();
@@ -149,10 +150,15 @@ void main() {
       expect(course, findsOneWidget);
       await tester.tap(course);
       await tester.pumpAndSettle(Duration(seconds: 8));
-    });
 
+      //go back to home page via cupertinoBottomNavigationBar
+      final homePage = find.byIcon(Icons.home);
+      expect(homePage, findsOneWidget);
+      await tester.tap(homePage);
+      await tester.pumpAndSettle(Duration(seconds: 8));
+    });
     testWidgets(
-        'user can navigate to the user page, then settings to modify accointo info and prefernces',
+        'user can navigate to the user page, then settings to modify accounto info and preferences',
         (tester) async {
       await app.main();
       await tester.pumpAndSettle();
@@ -248,6 +254,10 @@ void main() {
       await tester.pumpAndSettle(Duration(seconds: 3));
       await tester.tap(ok);
       await tester.pumpAndSettle(Duration(seconds: 5));
+
+      expect(userPage, findsOneWidget);
+      await tester.tap(userPage);
+      await tester.pumpAndSettle(Duration(seconds: 10));
     });
   });
 }

@@ -116,7 +116,7 @@ void main() async {
       expect(find.byIcon(Icons.dark_mode_rounded), findsOneWidget);
     });
 
-    testWidgets('SettingsScreen renders correctly', (tester) async {
+    testWidgets('Dark/light mode switch can be tapped', (tester) async {
       await Preferences.init();
       await tester.pumpWidget(
         MultiProvider(

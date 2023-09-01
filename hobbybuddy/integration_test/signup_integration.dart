@@ -35,7 +35,7 @@ void main() {
   });
 
   group('sign up test', () {
-    testWidgets('sign up new user and sign out', (tester) async {
+    testWidgets('sign up new user and login', (tester) async {
       await app.main();
       await tester.pumpAndSettle();
       //await logoutTest(tester: tester);

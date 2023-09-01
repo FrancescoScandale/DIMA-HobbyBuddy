@@ -130,7 +130,7 @@ void main() {
     expect(find.text('Passwords do not match'), findsOneWidget);
   });
 
-  testWidgets('SignUpScreen handles non-unique username', (tester) async {
+  testWidgets('SignUpScreen rejects already existing username', (tester) async {
     await tester.pumpWidget(MaterialApp(home: SignUpScreen()));
 
     await tester.pumpAndSettle();

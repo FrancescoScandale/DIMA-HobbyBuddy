@@ -64,7 +64,7 @@ void main() {
     expect(find.text('Please enter your password'), findsOneWidget);
   });
 
-  testWidgets('LogInScreen renders correctly and logs user', (tester) async {
+  testWidgets('LogInScreen logs existing user', (tester) async {
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = const Size(1080, 1920);
     await tester.pumpWidget(
@@ -102,8 +102,7 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('LogInScreen renders correctly and checks wrong user',
-      (tester) async {
+  testWidgets('LogInScreen rejects non existing user', (tester) async {
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = const Size(1080, 1920);
     await tester.pumpWidget(
