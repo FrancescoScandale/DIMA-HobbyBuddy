@@ -58,4 +58,13 @@ class Preferences {
   static String? getEmail() {
     return _prefs.getString('email');
   }
+
+  static Future<bool> setLocation(String username) async {
+    List<String> location = await FirestoreCrud.getLocation(username);
+    return await _prefs.setStringList('location', location);
+  }
+
+  static List<String>? getLocation() {
+    return _prefs.getStringList('location');
+  }
 }

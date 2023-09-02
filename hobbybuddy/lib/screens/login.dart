@@ -159,6 +159,7 @@ class _LoginFormState extends State<LoginForm> {
                           await Preferences.setHobbies(username.text);
                           await Preferences.setMentors(username.text);
                           await Preferences.setEmail(username.text);
+                          await Preferences.setLocation(username.text);
                         }
                       });
                       if (check) {

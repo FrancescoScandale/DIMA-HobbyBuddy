@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
+import 'package:image/image.dart' as img;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -384,7 +384,7 @@ class FirestoreCrud {
     }
   }
 
-  static Future<List<String>> getAddress(String username) async {
+  static Future<List<String>> getLocation(String username) async {
     List<String> coordinates;
     coordinates = await fi
         .collection('users')
@@ -523,13 +523,14 @@ class FirestoreCrud {
   /// getBytesFromAsset(), createMarker() and retrieveMarker() are used in maps.dart
   /// 3 functions are used instead of 1 just to keep it tidier
   static Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
+    ByteData pic = await rootBundle.load(path).then((value) {
+      img.Image image = img.decodePng(value.buffer.asUint8List())!;
+      final resized = img.copyResize(image, width: 75);
+      final resizedByteData = img.encodePng(resized);
+      return ByteData.sublistView(resizedByteData);
+    });
+
+    return pic.buffer.asUint8List();
   }
 
   /// getBytesFromAsset(), createMarker() and retrieveMarker() are used in maps.dart
@@ -568,13 +569,9 @@ class FirestoreCrud {
     List<Marker> markers = [];
 
     List<String> hobbies = Preferences.getHobbies()!;
-    await FirebaseFirestore.instance
-        .collection("markers")
-        .where('title', whereIn: hobbies)
-        .get()
-        .then(
-      (querySnapshot) async {
-        for (var doc in querySnapshot.docs) {
+    await fi.collection("markers").where('title', whereIn: hobbies).get().then(
+      (value) async {
+        for (var doc in value.docs) {
           Marker marker = await createMarker(
               context,
               doc.id,

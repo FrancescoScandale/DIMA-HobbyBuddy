@@ -253,7 +253,7 @@ class _MentorPageState extends State<MentorPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        downloadInfo ? _mentor : '',
+                        _mentor,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
