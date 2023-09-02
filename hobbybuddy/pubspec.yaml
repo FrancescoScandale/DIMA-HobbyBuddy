@@ -51,6 +51,8 @@ dependencies:
   mockito: ^5.4.2
   plugin_platform_interface: ^2.1.5
   visibility_detector: ^0.4.0+2
+  image_picker_platform_interface: ^2.9.1
+  path_provider: ^2.1.1
   
 
 dev_dependencies:
@@ -82,6 +84,7 @@ flutter:
     - assets/
     - assets/hobbies/
     - assets/pics/
+    - assets/vids/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

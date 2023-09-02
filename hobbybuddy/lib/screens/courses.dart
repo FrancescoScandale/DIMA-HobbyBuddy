@@ -115,7 +115,7 @@ class _CoursesPageState extends State<CoursesPage> {
   void retrieveText() async {
     ListResult check = await StorageCrud.getStorage()
         .ref()
-        .child('Mentors/$_mentor/courses/$_courseID/text.txt')
+        .child('Mentors/$_mentor/courses/$_courseID')
         .listAll();
 
     if (check.items.isNotEmpty) {
@@ -379,7 +379,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               bufferedColor: Colors.grey,
               backgroundColor: Colors.black),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         Row(
