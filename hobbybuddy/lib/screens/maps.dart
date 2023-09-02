@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
-const LatLng startingLocation = LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
+
+const LatLng startingLocation =
+    LatLng(45.464037, 9.190403); //location taken from 45.464037, 9.190403
 const double startingZoom = 17;
 
 class MapsScreen extends StatelessWidget {
@@ -41,19 +43,26 @@ class MapState extends State<MapClass> {
 
   Future<void> _goHomeFunction() async {
     await mapController.animateCamera(CameraUpdate.newCameraPosition(_goHome));
-  }  
+  }
+
+  void getMarkers() async {
+    markers = await FirestoreCrud.retrieveMarkers(context);
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: const CameraPosition(target: startingLocation, zoom: startingZoom),
+        initialCameraPosition:
+            const CameraPosition(target: startingLocation, zoom: startingZoom),
         onMapCreated: (GoogleMapController controller) async {
-          String style = await DefaultAssetBundle.of(context).loadString('assets/map_style.json');
+          String style = await DefaultAssetBundle.of(context)
+              .loadString('assets/map_style.json');
           controller.setMapStyle(style);
           mapController = controller;
-          
-          markers = await FirestoreCrud.retrieveMarkers(context);
+          getMarkers();
         },
         markers: markers.toSet(),
       ),

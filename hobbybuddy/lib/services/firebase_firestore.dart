@@ -534,8 +534,8 @@ class FirestoreCrud {
 
   /// getBytesFromAsset(), createMarker() and retrieveMarker() are used in maps.dart
   /// 3 functions are used instead of 1 just to keep it tidier
-  static Future<Marker> createMarker(BuildContext context, String id, double lat,
-      double lng, String windowTitle, String windowMentor) async {
+  static Future<Marker> createMarker(BuildContext context, String id,
+      double lat, double lng, String windowTitle, String windowMentor) async {
     Marker marker;
 
     final Uint8List markerIcon =
