@@ -143,5 +143,47 @@ void main() async {
       await tester.tap(find.byType(SwitchListTile));
       await tester.pumpAndSettle();
     });
+
+    testWidgets('Tap on edit profile', (tester) async {
+      await Preferences.init();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ThemeManager>(
+              create: (context) => MockThemeManger(),
+            ),
+          ],
+          child: MaterialApp(
+            home: Settings(
+              username: 'marta',
+              profilePicture: Image.asset('assets/logo.png'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text("Edit profile"));
+    });
+
+    testWidgets('Tap on change password', (tester) async {
+      await Preferences.init();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ThemeManager>(
+              create: (context) => MockThemeManger(),
+            ),
+          ],
+          child: MaterialApp(
+            home: Settings(
+              username: 'marta',
+              profilePicture: Image.asset('assets/logo.png'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text("Change password"));
+    });
   });
 }

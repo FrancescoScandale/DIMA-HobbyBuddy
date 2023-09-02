@@ -65,6 +65,68 @@ void main() {
     });
   });
 
+  testWidgets('My Friends refreshes correctly', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: MyFriendsScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('friend5'), findsOneWidget);
+    expect(find.text('friend4'), findsOneWidget);
+    await tester.fling(find.text('friend5'), const Offset(0.0, 300.0), 1000.0);
+    await tester.pump();
+    expect(
+        tester.getSemantics(find.byType(RefreshProgressIndicator)),
+        matchesSemantics(
+          label: 'Refresh',
+        ));
+
+    await tester
+        .pump(const Duration(seconds: 1)); // finish the scroll animation
+    await tester.pump(
+        const Duration(seconds: 1)); // finish the indicator settle animation
+    await tester.pump(
+        const Duration(seconds: 1)); // finish the indicator hide animation
+    expect(find.text('friend5'), findsOneWidget);
+    expect(find.text('friend4'), findsOneWidget);
+    await tester.tap(find.text("friend5"));
+    handle.dispose();
+  });
+
+  testWidgets('Explore refreshes correctly', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: MyFriendsScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Explore"));
+    await tester.pumpAndSettle();
+    await tester.fling(find.text('friend3'), const Offset(0.0, 300.0), 1000.0);
+    await tester.pump();
+    expect(
+        tester.getSemantics(find.byType(RefreshProgressIndicator)),
+        matchesSemantics(
+          label: 'Refresh',
+        ));
+
+    await tester
+        .pump(const Duration(seconds: 1)); // finish the scroll animation
+    await tester.pump(
+        const Duration(seconds: 1)); // finish the indicator settle animation
+    await tester.pump(
+        const Duration(seconds: 1)); // finish the indicator hide animation
+    await tester.tap(find.text("friend3"));
+    handle.dispose();
+  });
+
   testWidgets('MyFriendsScreen allows friends and users to be searched',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
@@ -225,6 +287,13 @@ void main() {
     await tester.tap(find.byIcon(Icons.person_remove).first);
     await tester.pumpAndSettle();
     final dialog = find.byWidgetPredicate((widget) => widget is AlertDialog);
+    expect(dialog, findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.text('friend5'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.person_remove).first);
+    await tester.pumpAndSettle();
     expect(dialog, findsOneWidget);
     await tester.tap(find.text('Remove'));
     await tester.pumpAndSettle();

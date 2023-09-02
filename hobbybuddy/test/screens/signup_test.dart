@@ -170,4 +170,17 @@ void main() {
             'This username is already taken. Please choose a different one.'),
         findsOneWidget);
   });
+
+  testWidgets('Go back to login screen', (tester) async {
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(1080, 1920);
+
+    await tester.pumpWidget(MaterialApp(home: SignUpScreen()));
+
+    await tester.pumpAndSettle();
+
+    final back = find.byWidgetPredicate((widget) => widget is TextButton);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+  });
 }

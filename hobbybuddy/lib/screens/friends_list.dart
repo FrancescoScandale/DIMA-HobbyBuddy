@@ -19,10 +19,9 @@ class MyFriendsScreen extends StatefulWidget {
 class _MyFriendsScreenState extends State<MyFriendsScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
   Future<List<String>> receivedRequestsFuture =
       FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
-  bool _isShrink = false;
+
   bool _showRedCircle = false;
   List<String> receivedRequests = [];
   int requestCount = 0;
@@ -31,12 +30,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   void initState() {
     _tabController = TabController(
         length: 2, vsync: this); // Assuming 2 tabs (My Friends and Explore)
-    _scrollController.addListener(() {
-      setState(() {
-        _isShrink = _scrollController.hasClients &&
-            _scrollController.offset > 0; // Adjust this value as needed
-      });
-    });
+
     receivedRequestsFuture.then((value) {
       updateRedCircleVisibility(value.length);
       setState(() {
@@ -51,7 +45,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
   @override
   void dispose() {
     _tabController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -63,10 +56,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
 
   // Function to trigger the refresh
   void refreshMainPage() {
-    //print('ENTERED');
-    //print('receivedRequests: $receivedRequests');
-    //print('requestCount: $requestCount');
-    //print("_showRedCircle: $_showRedCircle");
     Future<List<String>> receivedRequestsFuture =
         FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
 
@@ -83,10 +72,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
         requestCount = req.length;
       },
     );
-    //print('DONE');
-    //print('receivedRequests: $receivedRequests');
-    //print('requestCount: $requestCount');
-    //print("_showRedCircle: $_showRedCircle");
   }
 
   static _showRequestsDialog(
@@ -204,14 +189,12 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
     return Scaffold(
       appBar: MyAppBar(
         title: "Friends Explorer",
-        shape: (_isShrink)
-            ? const Border()
-            : Border(
-                bottom: BorderSide(
-                  width: 1,
-                  color: Theme.of(context).dividerColor,
-                ),
-              ),
+        shape: Border(
+          bottom: BorderSide(
+            width: 1,
+            color: Theme.of(context).dividerColor,
+          ),
+        ),
         upRightActions: [
           Stack(
             children: [
@@ -285,9 +268,8 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                       expandedHeight: 0, // Adjust this value as needed
                       automaticallyImplyLeading: false,
                       centerTitle: true,
-                      backgroundColor: _isShrink
-                          ? Theme.of(context).appBarTheme.backgroundColor
-                          : Theme.of(context).scaffoldBackgroundColor,
+                      backgroundColor:
+                          Theme.of(context).appBarTheme.backgroundColor,
                       bottom: PreferredSize(
                         preferredSize: const Size.fromHeight(0),
                         child: TabBar(

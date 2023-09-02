@@ -31,6 +31,7 @@ void main() {
       'surname': 'radaelli',
     });
   });
+
   testWidgets('LogInScreen renders correctly with button', (tester) async {
     await Preferences.init();
     tester.view.devicePixelRatio = 1.0;
@@ -62,6 +63,23 @@ void main() {
     await tester.pump();
     expect(find.text('Please enter your username'), findsOneWidget);
     expect(find.text('Please enter your password'), findsOneWidget);
+  });
+
+  testWidgets('LogInScreen navigates to signup screen', (tester) async {
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(1080, 1920);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LogInScreen(),
+      ),
+    );
+
+    expect(find.text("Don't have an account?"), findsOneWidget);
+    expect(find.byKey(const Key("go_sign_up")), findsOneWidget);
+    expect(find.text("Sign up here"), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key("go_sign_up")));
+    await tester.pumpAndSettle();
   });
 
   testWidgets('LogInScreen logs existing user', (tester) async {
