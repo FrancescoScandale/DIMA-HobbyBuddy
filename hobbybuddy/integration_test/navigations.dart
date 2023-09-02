@@ -21,7 +21,67 @@ void main() {
   });
 
   group('general navigation test', () {
-    testWidgets('user can navigate to the friend_list page and refresh screen',
+    testWidgets(
+        'user can navigate to the profile page, open a hobby page, go back, scroll down to see milestones and add one',
+        (tester) async {
+      await app.main();
+      await tester.pumpAndSettle();
+
+      // We are in login, verify that the signup process was successful.
+      final userForm = find.byKey(Key("u_field"));
+      expect(userForm, findsOneWidget);
+      await tester.enterText(userForm, "marta");
+
+      final passwordForm = find.byKey(Key("p_field"));
+      expect(passwordForm, findsOneWidget);
+      await tester.enterText(passwordForm, "12345678");
+
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle(Duration(seconds: 1));
+
+      final loginButton = find.byKey(Key("go_login"));
+      expect(loginButton, findsOneWidget);
+      await tester.tap(loginButton);
+      await tester.pumpAndSettle(Duration(seconds: 8));
+
+      //go to user home page
+      final userPage = find.byIcon(Icons.account_circle);
+      expect(userPage, findsOneWidget);
+      await tester.tap(userPage);
+      await tester.pumpAndSettle(Duration(seconds: 10));
+
+      final chess = find.byWidgetPredicate((widget) =>
+          widget is Image &&
+          widget.image is AssetImage &&
+          widget.image.toString().contains('Chess.png'));
+      expect(chess, findsOneWidget);
+      await tester.tap(chess);
+      await tester.pumpAndSettle(Duration(seconds: 8));
+
+      await tester.tap(userPage);
+      await tester.pumpAndSettle(Duration(seconds: 10));
+
+      var minFinder = find.text("Mentors").first;
+      const offset = Offset(0, -420);
+      await tester.fling(
+        minFinder,
+        offset,
+        1000,
+        warnIfMissed: false,
+      );
+      await tester.pumpAndSettle(Duration(seconds: 3));
+      final addM = find.text('+ Milestone');
+      expect(addM, findsOneWidget);
+      await tester.tap(addM);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
+      final mapsPage = find.byIcon(Icons.map);
+      expect(mapsPage, findsOneWidget);
+      await tester.tap(mapsPage);
+      await tester.pumpAndSettle(Duration(seconds: 10));
+    });
+    testWidgets(
+        'user can navigate to the friend_list page, accept a friendship request, refresh screen, send a request, navigate back to My friends and eliminate a friend',
         (tester) async {
       final SemanticsHandle handle = tester.ensureSemantics();
       await app.main();
@@ -55,6 +115,21 @@ void main() {
       await tester.tap(slide);
       await tester.pumpAndSettle(Duration(seconds: 8));
 
+      final req = find.byIcon(Icons.person_add_alt_1);
+      expect(req, findsOneWidget);
+      await tester.tap(req);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
+      final accept = find.text("Accept");
+      expect(accept, findsOneWidget);
+      await tester.tap(accept);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
+      final close = find.text("Close");
+      expect(close, findsOneWidget);
+      await tester.tap(close);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
       var user = find.text("BiBi");
       const offset2 = Offset(0, 300);
       await tester.fling(
@@ -76,11 +151,42 @@ void main() {
           const Duration(seconds: 1)); // finish the indicator settle animation
       await tester.pump(
           const Duration(seconds: 1)); // finish the indicator hide animation
+
+      final send = find.byIcon(Icons.add_circle).first;
+      expect(send, findsOneWidget);
+      await tester.tap(send);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
+      final send1 = find.text("Send");
+      expect(send1, findsOneWidget);
+      await tester.tap(send1);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
+      final back = find.text("My friends");
+      expect(back, findsOneWidget);
+      await tester.tap(back);
+      await tester.pumpAndSettle(Duration(seconds: 8));
+
+      final remove = find.byIcon(Icons.person_remove).last;
+      expect(remove, findsOneWidget);
+      await tester.tap(remove);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
+      final remove1 = find.text("Remove");
+      expect(remove1, findsOneWidget);
+      await tester.tap(remove1);
+      await tester.pumpAndSettle(Duration(seconds: 3));
+
+      final friend = find.text("matteo");
+      expect(friend, findsOneWidget);
+      await tester.tap(friend);
+      await tester.pumpAndSettle(Duration(seconds: 10));
+
       handle.dispose();
     });
 
     testWidgets(
-        'user can navigate to hobby and then to mentor to visualize an available tutorial',
+        'user can navigate to hobby and then to mentor, and like and unlike both on them in the meantime, to visualize an available tutorial',
         (tester) async {
       await app.main();
       await tester.pumpAndSettle();
