@@ -25,13 +25,17 @@ void main() async {
       'isDark': true,
       'username': 'francesco',
       'hobbies': ['Skateboard', 'Chess'],
-      'location': ['45.466050','9.190740']
+      'location': ['45.466050', '9.190740']
     });
     await Preferences.init();
 
     await firestore
         .collection('users')
-        .add({'username': 'francesco', 'location': '45.466050,9.190740'});
+        .add({
+        'username': 'francesco',
+        'location': '45.466050,9.190740',
+        'hobbies': 'Skateboard,Chess'
+        });
 
     await firestore.collection('mentors').add({
       'name': 'Ben',
@@ -105,7 +109,7 @@ void main() async {
   });
 
   group('Map page screen test', () {
-    testWidgets('Map page renders correctly', (tester) async {
+    testWidgets('Map page renders and behaves correctly', (tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(1080, 1920);
       await tester.pumpWidget(
@@ -119,90 +123,33 @@ void main() async {
         findsOneWidget,
       );
 
-      // button
+      // buttons
       expect(find.byWidgetPredicate((widget) => widget is FloatingActionButton),
-          findsOneWidget);
-      expect(find.text('Go back home'), findsOneWidget);
+          findsNWidgets(2));
+      expect(find.text('Go Back Home'), findsOneWidget);
+      expect(find.text('Reload Hobbies'), findsOneWidget);
 
       //map
       expect(find.byType(GoogleMap), findsOneWidget);
 
       //markers
       await tester.pumpAndSettle();
-      final GoogleMap gm = tester.widget(find.byType(GoogleMap)) as GoogleMap;
+      GoogleMap gm = tester.widget(find.byType(GoogleMap)) as GoogleMap;
+      assert(gm.markers.length == 2);
 
-      //markers
-      // GoogleMapController controller;
-
-      // // Wait for the GoogleMap to be ready
-      // await tester.pumpAndSettle();
-
-      // // Get the GoogleMapController
-      // await tester.runAsync(() async {
-      //   controller = await GoogleMapController.futureOf(
-      //     find.byType(GoogleMap),
-      //   );
-      // });
-
-      // // Use the controller to check for markers
-      // final markers = controller.markers;
-      // expect(markers.isNotEmpty, isTrue);
-      // await patrol(
-      //   tester,
-      //   surface: find.byType(GoogleMap),
-      //   builder: (tester) async {
-      //     // Check for markers here
-      //     final markers =
-      //         find.byIcon(Icons.place); // Modify this based on your marker icon
-      //     expect(markers, findsWidgets);
-      //   },
-      // );
-
-      // expect(
-      //   find.byWidgetPredicate((widget) =>
-      //       widget is Text && widget.toString().contains('Skateboard')),
-      //   findsOneWidget,
-      // );
-
-      // //mentors
-      // expect(
-      //   find.byWidgetPredicate((widget) =>
-      //       widget is Text && widget.toString().contains('Mentors')),
-      //   findsOneWidget,
-      // );
-      // expect(find.byType(ContainerShadow), findsOneWidget);
-      // expect(find.byType(ListTile), findsNWidgets(3));
-
-      // //'favorite' icons
-      // expect(find.byIcon(Icons.favorite), findsNWidgets(3));
-      // expect(find.byIcon(Icons.favorite_outline), findsNWidgets(1));
+      String id = '';
+      await firestore
+          .collection("users")
+          .where("username", isEqualTo: 'francesco')
+          .get()
+          .then((value) => id = value.docs[0].id);
+      await firestore.collection("users").doc(id).update({'hobbies': 'Chess'});
+      await Preferences.setHobbies('francesco');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Reload Hobbies'));
+      await tester.pumpAndSettle();
+      gm = tester.widget(find.byType(GoogleMap)) as GoogleMap;
+      assert(gm.markers.length == 1);
     });
-
-    // testWidgets('Hobby\'s homepage behavior', (tester) async {
-    //   const String hobby = 'Skateboard';
-    //   await tester.pumpWidget(
-    //     const MaterialApp(
-    //       home: HomePageHobby(
-    //         hobby: hobby,
-    //       ),
-    //     ),
-    //   );
-    //   await tester.pumpAndSettle();
-    //   await tester.tap(find.byIcon(Icons.favorite_outline));
-    //   await tester.pumpAndSettle();
-    //   expect(
-    //     find.byIcon(Icons.favorite),
-    //     findsNWidgets(4),
-    //   );
-    //   assert(Preferences.getMentors()!.length == 4);
-
-    //   await tester.tap(find.byKey(const Key('toggleHobby')));
-    //   await tester.pumpAndSettle();
-    //   expect(
-    //     find.byIcon(Icons.favorite),
-    //     findsNWidgets(3),
-    //   );
-    //   assert(!Preferences.getHobbies()!.contains('Skateboard'));
-    // });
   });
 }

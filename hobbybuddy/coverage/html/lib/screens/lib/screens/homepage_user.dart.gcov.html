@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2023-09-02 14:12:10</td>
+            <td class="headerValue">2023-09-03 00:39:04</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -149,7 +149,7 @@
 <span id="L87"><span class="lineNum">      87</span>              :   }</span>
 <span id="L88"><span class="lineNum">      88</span>              : </span>
 <span id="L89"><span class="lineNum">      89</span> <span class="tlaGNC">           1 :   void computeLocation() async {</span></span>
-<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">           2 :     List&lt;String&gt; coordinates = await FirestoreCrud.getAddress(_username);</span></span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">           1 :     List&lt;String&gt; coordinates = Preferences.getLocation()!;</span></span>
 <span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">           1 :     List&lt;Placemark&gt; addresses = await placemarkFromCoordinates(</span></span>
 <span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">           4 :         double.parse(coordinates[0]), double.parse(coordinates[1]));</span></span>
 <span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">           6 :     _location = '${addresses[0].street!}, ${addresses[0].locality!}';</span></span>

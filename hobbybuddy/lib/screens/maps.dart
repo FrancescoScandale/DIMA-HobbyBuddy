@@ -35,7 +35,8 @@ class MapState extends State<MapClass> {
   late LatLng location;
   late CameraPosition _goHome;
   bool loaded = false;
-  late GoogleMapController mapController; //used to update the camera position
+  late GoogleMapController mapController;
+  //used to update the camera position
   //useful because the map lags and the button uses this to go back to the initial position
 
   @override
@@ -61,13 +62,12 @@ class MapState extends State<MapClass> {
     });
   }
 
-  Future<void> _goHomeFunction() async {
+  Future<void> goHomeFunction() async {
     await mapController.animateCamera(CameraUpdate.newCameraPosition(_goHome));
   }
 
   void getMarkers() async {
     markers = await FirestoreCrud.retrieveMarkers(context);
-
     setState(() {});
   }
 
@@ -75,28 +75,40 @@ class MapState extends State<MapClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: loaded
-          ? GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: location, zoom: startingZoom),
-              onMapCreated: (GoogleMapController controller) async {
-                String style = await DefaultAssetBundle.of(context)
-                    .loadString('assets/map_style.json');
-                controller.setMapStyle(style);
-                mapController = controller;
-              },
-              markers: markers.toSet(),
+          ? Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition:
+                      CameraPosition(target: location, zoom: startingZoom),
+                  onMapCreated: (GoogleMapController controller) async {
+                    String style = await DefaultAssetBundle.of(context)
+                        .loadString('assets/map_style.json');
+                    controller.setMapStyle(style);
+                    mapController = controller;
+                  },
+                  markers: markers.toSet(),
+                ),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  padding: const EdgeInsetsDirectional.only(bottom: 100),
+                  margin: const EdgeInsetsDirectional.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FloatingActionButton.extended(
+                          heroTag: 'reloadButton',
+                          onPressed: getMarkers,
+                          label: const Text('Reload Hobbies')),
+                      FloatingActionButton.extended(
+                          heroTag: 'homeButton',
+                          onPressed: goHomeFunction,
+                          label: const Text('Go Back Home')),
+                    ],
+                  ),
+                )
+              ],
             )
           : Container(),
-      floatingActionButton: loaded
-          ? Padding(
-              padding: const EdgeInsets.only(bottom: 50.0),
-              child: FloatingActionButton.extended(
-                onPressed: _goHomeFunction,
-                label: const Text('Go back home'),
-              ),
-            )
-          : Container(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }

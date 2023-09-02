@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -538,7 +537,6 @@ class FirestoreCrud {
   static Future<Marker> createMarker(BuildContext context, String id,
       double lat, double lng, String windowTitle, String windowMentor) async {
     Marker marker;
-
     final Uint8List markerIcon =
         await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
 
