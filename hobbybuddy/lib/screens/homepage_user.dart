@@ -87,7 +87,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   void computeLocation() async {
-    List<String> coordinates = await FirestoreCrud.getAddress(_username);
+    List<String> coordinates = Preferences.getLocation()!;
     List<Placemark> addresses = await placemarkFromCoordinates(
         double.parse(coordinates[0]), double.parse(coordinates[1]));
     _location = '${addresses[0].street!}, ${addresses[0].locality!}';

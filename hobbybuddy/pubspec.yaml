@@ -53,6 +53,7 @@ dependencies:
   visibility_detector: ^0.4.0+2
   image_picker_platform_interface: ^2.9.1
   path_provider: ^2.1.1
+  image: ^4.0.17
   
 
 dev_dependencies:

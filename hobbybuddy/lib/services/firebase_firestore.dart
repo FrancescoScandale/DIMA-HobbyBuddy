@@ -1,8 +1,14 @@
 import 'dart:async';
 
+import 'package:image/image.dart' as img;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hobbybuddy/screens/homepage_mentor.dart';
 
 import 'package:hobbybuddy/services/preferences.dart';
+import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 class FirestoreCrud {
   static late FirebaseFirestore fi; //firebase instance
@@ -377,7 +383,7 @@ class FirestoreCrud {
     }
   }
 
-  static Future<List<String>> getAddress(String username) async {
+  static Future<List<String>> getLocation(String username) async {
     List<String> coordinates;
     coordinates = await fi
         .collection('users')
@@ -511,5 +517,72 @@ class FirestoreCrud {
     }
 
     return result;
+  }
+
+  /// getBytesFromAsset(), createMarker() and retrieveMarker() are used in maps.dart
+  /// 3 functions are used instead of 1 just to keep it tidier
+  static Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData pic = await rootBundle.load(path).then((value) {
+      img.Image image = img.decodePng(value.buffer.asUint8List())!;
+      final resized = img.copyResize(image, width: 75);
+      final resizedByteData = img.encodePng(resized);
+      return ByteData.sublistView(resizedByteData);
+    });
+
+    return pic.buffer.asUint8List();
+  }
+
+  /// getBytesFromAsset(), createMarker() and retrieveMarker() are used in maps.dart
+  /// 3 functions are used instead of 1 just to keep it tidier
+  static Future<Marker> createMarker(BuildContext context, String id,
+      double lat, double lng, String windowTitle, String windowMentor) async {
+    Marker marker;
+    final Uint8List markerIcon =
+        await getBytesFromAsset('assets/hobbies/$windowTitle.png', 50);
+
+    marker = Marker(
+      markerId: MarkerId(id),
+      position: LatLng(lat, lng),
+      infoWindow: InfoWindow(
+          title: windowTitle, //hobby name
+          snippet: windowMentor, //mentor
+          onTap: () {
+            Widget newScreen = MentorPage(mentor: windowMentor);
+            Navigator.push(
+              context,
+              ScreenTransition(
+                builder: (context) => newScreen,
+              ),
+            );
+          }),
+      icon: BitmapDescriptor.fromBytes(markerIcon),
+    );
+
+    return marker;
+  }
+
+  /// getBytesFromAsset(), createMarker() and retrieveMarker() are used in maps.dart
+  /// 3 functions are used instead of 1 just to keep it tidier
+  static Future<List<Marker>> retrieveMarkers(BuildContext context) async {
+    List<Marker> markers = [];
+
+    List<String> hobbies = Preferences.getHobbies()!;
+    await fi.collection("markers").where('title', whereIn: hobbies).get().then(
+      (value) async {
+        for (var doc in value.docs) {
+          Marker marker = await createMarker(
+              context,
+              doc.id,
+              double.parse(doc["lat"]),
+              double.parse(doc["lng"]),
+              doc["title"],
+              doc["mentor"]);
+          markers.add(marker);
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+
+    return markers;
   }
 }

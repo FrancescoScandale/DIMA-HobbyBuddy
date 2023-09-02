@@ -45,7 +45,8 @@ void main() async {
       'username': 'francesco',
       'hobbies': ['Skateboard'],
       'mentors': ['Ben Affleck'],
-      'email': '',
+      'location': ['45.4904447','9.2301139'],
+      'email': 'francesco@email.com'
     });
     await Preferences.init();
 
