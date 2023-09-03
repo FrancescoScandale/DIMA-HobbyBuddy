@@ -1,10 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/preferences.dart';
-import 'package:hobbybuddy/services/firebase_firestore.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -14,6 +14,7 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePasswordScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formkey = GlobalKey<FormState>();
   final _currentPasswordController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -21,11 +22,23 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
   bool _passwordInvisibleOld = true;
   bool _passwordInvisibleNew = true;
 
-  Future<void> changePassword() async {
+  Future<bool> changePassword() async {
+    User user = _auth.currentUser!;
     String newPassword = _passwordController.text;
-    // Retrieve the username from SharedPreferences
-    //String? username = Preferences.getUsername();
-    await FirestoreCrud.updatePassword(newPassword, username!);
+
+    try {
+      //re-authenticate user to check current password inserted correctly
+      final AuthCredential credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: _currentPasswordController.text.trim(),
+      );
+      await user.reauthenticateWithCredential(credential);
+
+      await user.updatePassword(newPassword.trim());
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
@@ -177,17 +190,25 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                     onPressed: () async {
                       if (_formkey.currentState!.validate()) {
                         //check if credentials present in db
-                        await FirestoreCrud.getUserPwd(
-                                username!, _currentPasswordController.text)
-                            .then((values) async {
-                          if (values!.docs.isNotEmpty) {
-                            await changePassword();
-                            // ignore: use_build_context_synchronously
-                            _showSuccessDialog(context);
-                          } else {
-                            _showInvalidDialog(context);
-                          }
-                        });
+                        // await FirestoreCrud.getUserPwd(
+                        //         username!, _currentPasswordController.text)
+                        //     .then((values) async {
+                        //   if (values!.docs.isNotEmpty) {
+                        //     await changePassword();
+                        //     // ignore: use_build_context_synchronously
+                        //     _showSuccessDialog(context);
+                        //   } else {
+                        //     _showInvalidDialog(context);
+                        //   }
+                        // });
+                        bool changed = await changePassword();
+                        if (changed) {
+                          // ignore: use_build_context_synchronously
+                          _showSuccessDialog(context);
+                        } else {
+                          // ignore: use_build_context_synchronously
+                          _showInvalidDialog(context);
+                        }
                       }
                     },
                     text: "Save",

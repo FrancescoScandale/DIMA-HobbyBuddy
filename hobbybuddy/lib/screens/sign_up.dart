@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
@@ -38,6 +39,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final _passwordController = TextEditingController();
   bool _passwordInvisible = true;
   bool _isUsernameNotUnique = false;
+  bool _isEmailNotUnique = false;
   final String localeIdentifier = 'it_IT';
 
   @override
@@ -162,6 +164,11 @@ class _SignUpFormState extends State<SignUpForm> {
                 },
               ),
             ),
+            if (_isEmailNotUnique)
+              const Text(
+                'This email is already taken. Please choose a different one.',
+                style: TextStyle(color: Colors.red),
+              ),
             const SizedBox(height: AppLayout.kHeightSmall),
             FractionallySizedBox(
               widthFactor: MediaQuery.of(context).size.width < 600
@@ -269,9 +276,14 @@ class _SignUpFormState extends State<SignUpForm> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     String enteredUsername = _usernameController.text;
-                    bool isUnique =
-                        await FirestoreCrud.isUsernameUnique(enteredUsername);
-                    if (isUnique == true) {
+                    String enteredEmail = _emailController.text;
+
+                    bool isUsernameUnique = await FirestoreCrud.isFieldUnique(
+                        'username', enteredUsername);
+                    bool isEmailUnique = await FirestoreCrud.isFieldUnique(
+                        'email', enteredEmail);
+
+                    if (isUsernameUnique && isEmailUnique) {
                       String email = _emailController.text;
                       String password = _passwordController.text;
                       String username = _usernameController.text;
@@ -284,18 +296,24 @@ class _SignUpFormState extends State<SignUpForm> {
                         return '${value[0].latitude},${value[0].longitude}';
                       });
                       // Username is unique, proceed with sign up logic
+                      await FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(
+                              email: email, password: password);
                       await FirestoreCrud.addUserToFirestore(
-                          email, password, username, name, surname, location);
+                          email, username, name, surname, location);
                       setState(() {
                         _isUsernameNotUnique = false;
+                        _isEmailNotUnique = false;
                       });
                       // Show the success dialog
                       // ignore: use_build_context_synchronously
                       _showSignUpSuccessDialog(context);
-                    } else if (isUnique == false) {
+                    } else {
                       // Username is not unique, show a warning
+
                       setState(() {
-                        _isUsernameNotUnique = true;
+                        _isUsernameNotUnique = !isUsernameUnique;
+                        _isEmailNotUnique = !isEmailUnique;
                       });
                     }
                   }

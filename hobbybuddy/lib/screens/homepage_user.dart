@@ -237,7 +237,7 @@ class _UserPageState extends State<UserPage> {
                             ),
                           ],
                         )),
-                    Preferences.getUsername() == _username
+                    Preferences.getUsername() == _username && downloadUserPics
                         ? MyIconButton(
                             margin: const EdgeInsets.only(right: 30),
                             onTap: () async {

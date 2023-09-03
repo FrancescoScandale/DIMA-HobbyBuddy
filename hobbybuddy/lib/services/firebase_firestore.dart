@@ -34,7 +34,7 @@ class FirestoreCrud {
     }
   }
 
-  static Future<void> addUserToFirestore(String email, String password,
+  static Future<void> addUserToFirestore(String email,
       String username, String name, String surname, String location) async {
     // Add a new document with automatic ID to the "users" collection
     await fi.collection('users').add({
@@ -43,7 +43,6 @@ class FirestoreCrud {
       'hobbies': '',
       'location': location,
       'mentors': '',
-      'password': password,
       'receivedReq': '',
       'sentReq': '',
       'username': username,
@@ -456,10 +455,12 @@ class FirestoreCrud {
     }
   }
 
-  static Future<bool> isUsernameUnique(String username) async {
+  /// "field" can be 'username' or 'email', based on the uniqueness we want to check
+  /// "value" is the value of the field
+  static Future<bool> isFieldUnique(String field, String value) async {
     final QuerySnapshot snapshot = await fi
         .collection('users')
-        .where('username', isEqualTo: username)
+        .where(field, isEqualTo: value)
         .get();
     return snapshot.docs.isEmpty;
   }

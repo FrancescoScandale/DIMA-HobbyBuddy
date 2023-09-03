@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:provider/provider.dart';
@@ -183,6 +184,7 @@ class _SettingsScreenState extends State<Settings> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () async {
+                  FirebaseAuth.instance.signOut();
                   Widget newScreen = const LogInScreen();
                   // ignore: use_build_context_synchronously
                   await Navigator.of(context, rootNavigator: true).push(
