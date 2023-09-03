@@ -307,7 +307,7 @@ void main() {
   });
 
   testWidgets(
-      'MyFriendsScreen renders correctly and user can send friendship request',
+      'MyFriendsScreen renders correctly and user can send friendship request and revoke a pending request',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
 

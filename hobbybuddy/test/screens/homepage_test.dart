@@ -26,13 +26,9 @@ void main() {
     });
   });
   group('home page screen test', () {
-    // Mock SharedPreferences initialization
-
     testWidgets('Page renders correctly Hobby container can be tapped',
         (WidgetTester tester) async {
       await Preferences.init();
-      //tester.view.devicePixelRatio = 1.0;
-      //tester.view.physicalSize = const Size(1080, 1920);
       // Create a MaterialApp with a HomePScreen
       await tester.pumpWidget(
         const MaterialApp(
@@ -72,10 +68,9 @@ void main() {
     });
   });
 
-  testWidgets('Hobbies can be searched', (WidgetTester tester) async {
+  testWidgets('Hobbies can be searched and sorted',
+      (WidgetTester tester) async {
     await Preferences.init();
-    //tester.view.devicePixelRatio = 1.0;
-    //tester.view.physicalSize = const Size(1080, 1920);
     // Create a MaterialApp with a HomePScreen
     await tester.pumpWidget(
       const MaterialApp(
