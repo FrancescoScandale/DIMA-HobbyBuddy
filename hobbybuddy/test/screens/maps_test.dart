@@ -12,14 +12,19 @@ import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import '../mock/fake_maps_platform.dart';
 
 final firestore = FakeFirebaseFirestore();
 
 void main() async {
+  late FakeGoogleMapsFlutterPlatform platform;
   setUp(() async {
     FirestoreCrud.init(firebaseInstance: firestore);
     WidgetsFlutterBinding.ensureInitialized();
     StorageCrud.init(storageInstance: MockFirebaseStorage());
+    platform = FakeGoogleMapsFlutterPlatform();
+    GoogleMapsFlutterPlatform.instance = platform;
 
     SharedPreferences.setMockInitialValues({
       'isDark': true,
@@ -29,13 +34,11 @@ void main() async {
     });
     await Preferences.init();
 
-    await firestore
-        .collection('users')
-        .add({
-        'username': 'francesco',
-        'location': '45.466050,9.190740',
-        'hobbies': 'Skateboard,Chess'
-        });
+    await firestore.collection('users').add({
+      'username': 'francesco',
+      'location': '45.466050,9.190740',
+      'hobbies': 'Skateboard,Chess'
+    });
 
     await firestore.collection('mentors').add({
       'name': 'Ben',
@@ -126,16 +129,22 @@ void main() async {
       // buttons
       expect(find.byWidgetPredicate((widget) => widget is FloatingActionButton),
           findsNWidgets(2));
-      expect(find.text('Go Back Home'), findsOneWidget);
+      var back = find.text('Go Back Home');
+      expect(back, findsOneWidget);
       expect(find.text('Reload Hobbies'), findsOneWidget);
 
       //map
       expect(find.byType(GoogleMap), findsOneWidget);
+      var map = tester.firstWidget(find.byType(GoogleMap)) as GoogleMap;
+      map.onMapCreated;
 
       //markers
       await tester.pumpAndSettle();
       GoogleMap gm = tester.widget(find.byType(GoogleMap)) as GoogleMap;
       assert(gm.markers.length == 2);
+
+      await tester.tap(back);
+      await tester.pumpAndSettle();
 
       String id = '';
       await firestore
