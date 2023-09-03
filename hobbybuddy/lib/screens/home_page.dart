@@ -38,9 +38,15 @@ class _HomePScreenState extends State<HomePScreen> {
     double height = MediaQuery.of(context).size.height;
     final orientation = MediaQuery.of(context).orientation;
     if (orientation == Orientation.portrait) {
+      if (width > 600) {
+        return 3.7 * width / height;
+      }
       return 2.6 * width / height;
       //return 1; // Aspect ratio for portrait mode
     } else {
+      if (width > 600) {
+        return width / (0.45 * height);
+      }
       return width / (0.85 * height);
       //return 2.2;
     }
