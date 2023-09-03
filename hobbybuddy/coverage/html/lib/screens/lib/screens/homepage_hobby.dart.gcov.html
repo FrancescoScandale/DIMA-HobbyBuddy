@@ -31,13 +31,13 @@
             <td class="headerValue">lcov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryHi">90.1&nbsp;%</td>
-            <td class="headerCovTableEntry">71</td>
-            <td class="headerCovTableEntry">64</td>
+            <td class="headerCovTableEntryMed">89.7&nbsp;%</td>
+            <td class="headerCovTableEntry">78</td>
+            <td class="headerCovTableEntry">70</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2023-09-03 17:03:22</td>
+            <td class="headerValue">2023-09-04 01:21:50</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -237,57 +237,67 @@
 <span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">           2 :           Container(</span></span>
 <span id="L176"><span class="lineNum">     176</span>              :             height: AppLayout.kPaddingFromCreate,</span>
 <span id="L177"><span class="lineNum">     177</span>              :           ),</span>
-<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">           2 :           Container(</span></span>
-<span id="L179"><span class="lineNum">     179</span>              :             alignment: AlignmentDirectional.topStart,</span>
-<span id="L180"><span class="lineNum">     180</span>              :             padding: const EdgeInsetsDirectional.fromSTEB(</span>
-<span id="L181"><span class="lineNum">     181</span>              :                 AppLayout.kModalHorizontalPadding, 0, 0, 0),</span>
-<span id="L182"><span class="lineNum">     182</span>              :             child: const Text(</span>
-<span id="L183"><span class="lineNum">     183</span>              :               &quot;Mentors&quot;,</span>
-<span id="L184"><span class="lineNum">     184</span>              :               style: TextStyle(</span>
-<span id="L185"><span class="lineNum">     185</span>              :                 fontSize: 20,</span>
-<span id="L186"><span class="lineNum">     186</span>              :                 fontWeight: FontWeight.bold,</span>
-<span id="L187"><span class="lineNum">     187</span>              :               ),</span>
-<span id="L188"><span class="lineNum">     188</span>              :             ),</span>
-<span id="L189"><span class="lineNum">     189</span>              :           ),</span>
-<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">           2 :           ContainerShadow(</span></span>
-<span id="L191"><span class="lineNum">     191</span>              :               margin: const EdgeInsetsDirectional.fromSTEB(</span>
-<span id="L192"><span class="lineNum">     192</span>              :                   AppLayout.kModalHorizontalPadding,</span>
-<span id="L193"><span class="lineNum">     193</span>              :                   0,</span>
-<span id="L194"><span class="lineNum">     194</span>              :                   AppLayout.kModalHorizontalPadding,</span>
-<span id="L195"><span class="lineNum">     195</span>              :                   0),</span>
-<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">           2 :               child: ListView.builder(</span></span>
-<span id="L197"><span class="lineNum">     197</span> <span class="tlaGNC">           4 :                 itemCount: _mentors.length,</span></span>
-<span id="L198"><span class="lineNum">     198</span>              :                 shrinkWrap: true,</span>
-<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">           2 :                 itemBuilder: (context, index) {</span></span>
-<span id="L200"><span class="lineNum">     200</span> <span class="tlaGNC">           2 :                   return ListTile(</span></span>
-<span id="L201"><span class="lineNum">     201</span>              :                       leading: const Icon(</span>
-<span id="L202"><span class="lineNum">     202</span>              :                           Icons.person), //TODO?: mettere la propic del mentore</span>
-<span id="L203"><span class="lineNum">     203</span> <span class="tlaGNC">           8 :                       title: Text(_mentors.keys.elementAt(index)),</span></span>
-<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">           2 :                       trailing: MyIconButton(</span></span>
-<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">           1 :                         onTap: () {</span></span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">           4 :                           toggleLikeMentor(_mentors.keys.elementAt(index));</span></span>
-<span id="L207"><span class="lineNum">     207</span>              :                         },</span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">           6 :                         icon: _mentors.values.elementAt(index)</span></span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">           2 :                             ? mentorFavourite</span></span>
-<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">           1 :                             : mentorNotFavourite,</span></span>
-<span id="L211"><span class="lineNum">     211</span>              :                       ),</span>
-<span id="L212"><span class="lineNum">     212</span> <span class="tlaUNC tlaBgUNC">           0 :                       onTap: () {</span></span>
-<span id="L213"><span class="lineNum">     213</span>              :                         Widget newScreen =</span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaUNC">           0 :                             MentorPage(mentor: _mentors.keys.elementAt(index));</span></span>
-<span id="L215"><span class="lineNum">     215</span> <span class="tlaUNC">           0 :                         Navigator.push(</span></span>
-<span id="L216"><span class="lineNum">     216</span>              :                           context,</span>
-<span id="L217"><span class="lineNum">     217</span> <span class="tlaUNC">           0 :                           ScreenTransition(</span></span>
-<span id="L218"><span class="lineNum">     218</span> <span class="tlaUNC">           0 :                             builder: (context) =&gt; newScreen,</span></span>
-<span id="L219"><span class="lineNum">     219</span>              :                           ),</span>
-<span id="L220"><span class="lineNum">     220</span>              :                         );</span>
-<span id="L221"><span class="lineNum">     221</span>              :                       });</span>
-<span id="L222"><span class="lineNum">     222</span>              :                 },</span>
-<span id="L223"><span class="lineNum">     223</span>              :               )),</span>
-<span id="L224"><span class="lineNum">     224</span>              :         ],</span>
-<span id="L225"><span class="lineNum">     225</span>              :       ),</span>
-<span id="L226"><span class="lineNum">     226</span>              :     );</span>
-<span id="L227"><span class="lineNum">     227</span>              :   }</span>
-<span id="L228"><span class="lineNum">     228</span>              : }</span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">           2 :           FractionallySizedBox(</span></span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaGNC">           8 :             widthFactor: MediaQuery.of(context).size.width &lt; 600</span></span>
+<span id="L180"><span class="lineNum">     180</span>              :                 ? 1.0</span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaGNC">           8 :                 : 700 / MediaQuery.of(context).size.width,</span></span>
+<span id="L182"><span class="lineNum">     182</span> <span class="tlaGNC">           2 :             child: Container(</span></span>
+<span id="L183"><span class="lineNum">     183</span>              :               alignment: AlignmentDirectional.topStart,</span>
+<span id="L184"><span class="lineNum">     184</span>              :               padding: const EdgeInsetsDirectional.fromSTEB(</span>
+<span id="L185"><span class="lineNum">     185</span>              :                   AppLayout.kModalHorizontalPadding, 0, 0, 0),</span>
+<span id="L186"><span class="lineNum">     186</span>              :               child: const Text(</span>
+<span id="L187"><span class="lineNum">     187</span>              :                 &quot;Mentors&quot;,</span>
+<span id="L188"><span class="lineNum">     188</span>              :                 style: TextStyle(</span>
+<span id="L189"><span class="lineNum">     189</span>              :                   fontSize: 20,</span>
+<span id="L190"><span class="lineNum">     190</span>              :                   fontWeight: FontWeight.bold,</span>
+<span id="L191"><span class="lineNum">     191</span>              :                 ),</span>
+<span id="L192"><span class="lineNum">     192</span>              :               ),</span>
+<span id="L193"><span class="lineNum">     193</span>              :             ),</span>
+<span id="L194"><span class="lineNum">     194</span>              :           ),</span>
+<span id="L195"><span class="lineNum">     195</span> <span class="tlaGNC">           2 :           FractionallySizedBox(</span></span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">           8 :             widthFactor: MediaQuery.of(context).size.width &lt; 600</span></span>
+<span id="L197"><span class="lineNum">     197</span>              :                 ? 1.0</span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">           8 :                 : 700 / MediaQuery.of(context).size.width,</span></span>
+<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">           2 :             child: ContainerShadow(</span></span>
+<span id="L200"><span class="lineNum">     200</span>              :                 margin: const EdgeInsetsDirectional.fromSTEB(</span>
+<span id="L201"><span class="lineNum">     201</span>              :                     AppLayout.kModalHorizontalPadding,</span>
+<span id="L202"><span class="lineNum">     202</span>              :                     0,</span>
+<span id="L203"><span class="lineNum">     203</span>              :                     AppLayout.kModalHorizontalPadding,</span>
+<span id="L204"><span class="lineNum">     204</span>              :                     0),</span>
+<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">           2 :                 child: ListView.builder(</span></span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">           4 :                   itemCount: _mentors.length,</span></span>
+<span id="L207"><span class="lineNum">     207</span>              :                   shrinkWrap: true,</span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">           2 :                   itemBuilder: (context, index) {</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">           2 :                     return ListTile(</span></span>
+<span id="L210"><span class="lineNum">     210</span>              :                         leading: const Icon(Icons</span>
+<span id="L211"><span class="lineNum">     211</span>              :                             .person), //TODO?: mettere la propic del mentore</span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">           8 :                         title: Text(_mentors.keys.elementAt(index)),</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">           2 :                         trailing: MyIconButton(</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">           1 :                           onTap: () {</span></span>
+<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">           4 :                             toggleLikeMentor(_mentors.keys.elementAt(index));</span></span>
+<span id="L216"><span class="lineNum">     216</span>              :                           },</span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">           6 :                           icon: _mentors.values.elementAt(index)</span></span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">           2 :                               ? mentorFavourite</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           1 :                               : mentorNotFavourite,</span></span>
+<span id="L220"><span class="lineNum">     220</span>              :                         ),</span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaUNC tlaBgUNC">           0 :                         onTap: () {</span></span>
+<span id="L222"><span class="lineNum">     222</span> <span class="tlaUNC">           0 :                           Widget newScreen = MentorPage(</span></span>
+<span id="L223"><span class="lineNum">     223</span> <span class="tlaUNC">           0 :                               mentor: _mentors.keys.elementAt(index));</span></span>
+<span id="L224"><span class="lineNum">     224</span> <span class="tlaUNC">           0 :                           Navigator.push(</span></span>
+<span id="L225"><span class="lineNum">     225</span>              :                             context,</span>
+<span id="L226"><span class="lineNum">     226</span> <span class="tlaUNC">           0 :                             ScreenTransition(</span></span>
+<span id="L227"><span class="lineNum">     227</span> <span class="tlaUNC">           0 :                               builder: (context) =&gt; newScreen,</span></span>
+<span id="L228"><span class="lineNum">     228</span>              :                             ),</span>
+<span id="L229"><span class="lineNum">     229</span>              :                           );</span>
+<span id="L230"><span class="lineNum">     230</span>              :                         });</span>
+<span id="L231"><span class="lineNum">     231</span>              :                   },</span>
+<span id="L232"><span class="lineNum">     232</span>              :                 )),</span>
+<span id="L233"><span class="lineNum">     233</span>              :           ),</span>
+<span id="L234"><span class="lineNum">     234</span>              :         ],</span>
+<span id="L235"><span class="lineNum">     235</span>              :       ),</span>
+<span id="L236"><span class="lineNum">     236</span>              :     );</span>
+<span id="L237"><span class="lineNum">     237</span>              :   }</span>
+<span id="L238"><span class="lineNum">     238</span>              : }</span>
         </pre>
               </td>
             </tr>
