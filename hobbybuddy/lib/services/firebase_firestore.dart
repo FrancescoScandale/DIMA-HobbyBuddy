@@ -64,7 +64,9 @@ class FirestoreCrud {
           .get()
           .then((value) {
         String tmp = value.docs[0][data];
-        result = tmp.split(',');
+        if (tmp.isNotEmpty) {
+          result = tmp.split(',');
+        }
         return result; //result = [name0 surname0,name1 surname1] (for mentors)
       });
     } on FirebaseException catch (e) {
