@@ -1,8 +1,10 @@
+import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
+import 'package:geocoding/geocoding.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -33,9 +35,11 @@ class _SignUpFormState extends State<SignUpForm> {
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _locationController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _passwordInvisible = true;
   bool _isUsernameNotUnique = false;
+  final String localeIdentifier = 'it_IT';
 
   @override
   void dispose() {
@@ -44,6 +48,7 @@ class _SignUpFormState extends State<SignUpForm> {
     _surnameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -57,7 +62,7 @@ class _SignUpFormState extends State<SignUpForm> {
           controller: PrimaryScrollController.of(context),
           padding: const EdgeInsets.symmetric(horizontal: 20),
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: AppLayout.kHeightSmall),
             TextFormField(
               key: const Key("username_field"),
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -80,7 +85,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 'This username is already taken. Please choose a different one.',
                 style: TextStyle(color: Colors.red),
               ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppLayout.kHeightSmall),
             TextFormField(
               key: const Key("name_field"),
               controller: _nameController,
@@ -97,7 +102,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppLayout.kHeightSmall),
             TextFormField(
               key: const Key("surname_field"),
               controller: _surnameController,
@@ -111,15 +116,17 @@ class _SignUpFormState extends State<SignUpForm> {
                 if (value == null || value.isEmpty) {
                   return 'Surname cannot be empty';
                 }
+                locationFromAddress(_surnameController.text,
+                    localeIdentifier: 'it_IT');
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppLayout.kHeightSmall),
             TextFormField(
               key: const Key("email_field"),
               controller: _emailController,
               decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.mail),
+                prefixIcon: Icon(Icons.mail_outline),
                 border: OutlineInputBorder(),
                 labelText: 'E-mail',
                 labelStyle: TextStyle(fontStyle: FontStyle.italic),
@@ -135,7 +142,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppLayout.kHeightSmall),
             TextFormField(
               key: const Key("password_field"),
               controller: _passwordController,
@@ -166,7 +173,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppLayout.kHeightSmall),
             TextFormField(
               key: const Key("password_confirm_field"),
               obscureText: _passwordInvisible,
@@ -190,8 +197,28 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
               ),
               validator: (value) {
+                if (value == null || value.length < 8) {
+                  return 'Password must be at least 8 characters long';
+                }
                 if (value != _passwordController.text) {
                   return 'Passwords do not match';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: AppLayout.kHeightSmall),
+            TextFormField(
+              key: const Key("location_field"),
+              controller: _locationController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.place_outlined),
+                border: OutlineInputBorder(),
+                labelText: 'Address',
+                labelStyle: TextStyle(fontStyle: FontStyle.italic),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter an address';
                 }
                 return null;
               },
@@ -211,9 +238,15 @@ class _SignUpFormState extends State<SignUpForm> {
                     String username = _usernameController.text;
                     String name = _nameController.text;
                     String surname = _surnameController.text;
+                    String location = await locationFromAddress(
+                            _locationController.text,
+                            localeIdentifier: localeIdentifier)
+                        .then((value) {
+                      return '${value[0].latitude},${value[0].longitude}';
+                    });
                     // Username is unique, proceed with sign up logic
                     await FirestoreCrud.addUserToFirestore(
-                        email, password, username, name, surname);
+                        email, password, username, name, surname, location);
                     setState(() {
                       _isUsernameNotUnique = false;
                     });

@@ -35,13 +35,13 @@ class FirestoreCrud {
   }
 
   static Future<void> addUserToFirestore(String email, String password,
-      String username, String name, String surname) async {
+      String username, String name, String surname, String location) async {
     // Add a new document with automatic ID to the "users" collection
     await fi.collection('users').add({
       'email': email,
       'friends': '',
       'hobbies': '',
-      'location': '',
+      'location': location,
       'mentors': '',
       'password': password,
       'receivedReq': '',

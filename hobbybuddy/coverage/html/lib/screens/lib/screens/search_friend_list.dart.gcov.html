@@ -31,13 +31,13 @@
             <td class="headerValue">lcov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryHi">91.0&nbsp;%</td>
+            <td class="headerCovTableEntryHi">97.2&nbsp;%</td>
             <td class="headerCovTableEntry">144</td>
-            <td class="headerCovTableEntry">131</td>
+            <td class="headerCovTableEntry">140</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2023-09-03 00:39:04</td>
+            <td class="headerValue">2023-09-03 17:03:22</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -91,13 +91,13 @@
 <span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           3 :     _searchController.addListener(_performSearch);</span></span>
 <span id="L30"><span class="lineNum">      30</span>              :   }</span>
 <span id="L31"><span class="lineNum">      31</span>              : </span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaUNC tlaBgUNC">           0 :   @override</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">           1 :   @override</span></span>
 <span id="L33"><span class="lineNum">      33</span>              :   void didUpdateWidget(SearchFriendsList oldWidget) {</span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaUNC">           0 :     super.didUpdateWidget(oldWidget);</span></span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaUNC">           0 :     retriveSentRequests(); // Update pending requests when widget updates</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           1 :     super.didUpdateWidget(oldWidget);</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           1 :     retriveSentRequests(); // Update pending requests when widget updates</span></span>
 <span id="L36"><span class="lineNum">      36</span>              :   }</span>
 <span id="L37"><span class="lineNum">      37</span>              : </span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC tlaBgGNC">           1 :   Future&lt;void&gt; _performSearch() async {</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           1 :   Future&lt;void&gt; _performSearch() async {</span></span>
 <span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           2 :     setState(() {</span></span>
 <span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           3 :       if (_searchController.text.isEmpty) {</span></span>
 <span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           2 :         _filteredFriends = _friends;</span></span>
@@ -184,11 +184,11 @@
 <span id="L122"><span class="lineNum">     122</span>              :               ),</span>
 <span id="L123"><span class="lineNum">     123</span>              :             ),</span>
 <span id="L124"><span class="lineNum">     124</span> <span class="tlaGNC tlaBgGNC">           1 :             RefreshIndicator(</span></span>
-<span id="L125"><span class="lineNum">     125</span> <span class="tlaUNC tlaBgUNC">           0 :               onRefresh: () async {</span></span>
-<span id="L126"><span class="lineNum">     126</span> <span class="tlaUNC">           0 :                 widget.onRefreshMainPage!();</span></span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaGNC">           1 :               onRefresh: () async {</span></span>
+<span id="L126"><span class="lineNum">     126</span> <span class="tlaGNC">           3 :                 widget.onRefreshMainPage!();</span></span>
 <span id="L127"><span class="lineNum">     127</span>              :               },</span>
 <span id="L128"><span class="lineNum">     128</span>              :               //interactive: false,</span>
-<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC tlaBgGNC">           1 :               child: ListView.builder(</span></span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">           1 :               child: ListView.builder(</span></span>
 <span id="L130"><span class="lineNum">     130</span>              :                 //physics: const NeverScrollableScrollPhysics(),</span>
 <span id="L131"><span class="lineNum">     131</span>              :                 shrinkWrap: true,</span>
 <span id="L132"><span class="lineNum">     132</span>              :                 //controller: PrimaryScrollController.of(context),</span>
@@ -198,13 +198,13 @@
 <span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">           2 :                   final friendName = _filteredFriends[index];</span></span>
 <span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">           2 :                   final bool isPending = _pendingRequests.contains(friendName);</span></span>
 <span id="L138"><span class="lineNum">     138</span> <span class="tlaGNC">           1 :                   return GestureDetector(</span></span>
-<span id="L139"><span class="lineNum">     139</span> <span class="tlaUNC tlaBgUNC">           0 :                     onTap: () async {</span></span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC">           1 :                     onTap: () async {</span></span>
 <span id="L140"><span class="lineNum">     140</span>              :                       Widget newScreen =</span>
-<span id="L141"><span class="lineNum">     141</span> <span class="tlaUNC">           0 :                           UserPage(user: _filteredFriends[index]);</span></span>
-<span id="L142"><span class="lineNum">     142</span> <span class="tlaUNC">           0 :                       Navigator.push(</span></span>
+<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">           3 :                           UserPage(user: _filteredFriends[index]);</span></span>
+<span id="L142"><span class="lineNum">     142</span> <span class="tlaGNC">           1 :                       Navigator.push(</span></span>
 <span id="L143"><span class="lineNum">     143</span>              :                         context,</span>
-<span id="L144"><span class="lineNum">     144</span> <span class="tlaUNC">           0 :                         ScreenTransition(</span></span>
-<span id="L145"><span class="lineNum">     145</span> <span class="tlaUNC">           0 :                           builder: (context) =&gt; newScreen,</span></span>
+<span id="L144"><span class="lineNum">     144</span> <span class="tlaGNC">           1 :                         ScreenTransition(</span></span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaUNC tlaBgUNC">           0 :                           builder: (context) =&gt; newScreen,</span></span>
 <span id="L146"><span class="lineNum">     146</span>              :                         ),</span>
 <span id="L147"><span class="lineNum">     147</span>              :                       );</span>
 <span id="L148"><span class="lineNum">     148</span>              :                     },</span>

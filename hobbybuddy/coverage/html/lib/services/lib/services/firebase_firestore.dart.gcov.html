@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2023-09-03 00:39:04</td>
+            <td class="headerValue">2023-09-03 17:03:22</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -97,13 +97,13 @@
 <span id="L35"><span class="lineNum">      35</span>              :   }</span>
 <span id="L36"><span class="lineNum">      36</span>              : </span>
 <span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;void&gt; addUserToFirestore(String email, String password,</span></span>
-<span id="L38"><span class="lineNum">      38</span>              :       String username, String name, String surname) async {</span>
+<span id="L38"><span class="lineNum">      38</span>              :       String username, String name, String surname, String location) async {</span>
 <span id="L39"><span class="lineNum">      39</span>              :     // Add a new document with automatic ID to the &quot;users&quot; collection</span>
 <span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           4 :     await fi.collection('users').add({</span></span>
 <span id="L41"><span class="lineNum">      41</span>              :       'email': email,</span>
 <span id="L42"><span class="lineNum">      42</span>              :       'friends': '',</span>
 <span id="L43"><span class="lineNum">      43</span>              :       'hobbies': '',</span>
-<span id="L44"><span class="lineNum">      44</span>              :       'location': '',</span>
+<span id="L44"><span class="lineNum">      44</span>              :       'location': location,</span>
 <span id="L45"><span class="lineNum">      45</span>              :       'mentors': '',</span>
 <span id="L46"><span class="lineNum">      46</span>              :       'password': password,</span>
 <span id="L47"><span class="lineNum">      47</span>              :       'receivedReq': '',</span>

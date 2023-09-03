@@ -1,13 +1,28 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:hobbybuddy/main.dart' as app;
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:mockito/mockito.dart';
 
 final firestore = FakeFirebaseFirestore();
+final String usernameTest = DateTime.timestamp().toString().split('.')[0];
+
+final mockLocation = Location(
+  latitude: 45.4904447,
+  longitude: 9.2301139,
+  timestamp: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
+);
+
+final mockPlacemark = Placemark(
+  locality: 'Milano',
+  street: 'Via San Pietro All\'Orto, 7',
+);
 
 Future tapOnWidgetByKey({
   required String key,
@@ -22,6 +37,7 @@ Future tapOnWidgetByKey({
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
+    GeocodingPlatform.instance = MockGeocodingPlatform();
     SharedPreferences.setMockInitialValues({});
     await Preferences.init();
     FirestoreCrud.init(firebaseInstance: firestore);
@@ -44,7 +60,7 @@ void main() {
       //in signup
       final userForm = find.byKey(Key("username_field"));
       expect(userForm, findsOneWidget);
-      await tester.enterText(userForm, "abcde");
+      await tester.enterText(userForm, usernameTest);
 
       final nameForm = find.byKey(Key("name_field"));
       expect(nameForm, findsOneWidget);
@@ -65,6 +81,11 @@ void main() {
       final password2Form = find.byKey(Key("password_confirm_field"));
       expect(password2Form, findsOneWidget);
       await tester.enterText(password2Form, "12345678");
+
+      final location = find.byKey(const Key("location_field"));
+      expect(location, findsOneWidget);
+      await tester.enterText(location, 'Via San Pietro All\'Orto, 7, Milano');
+
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle();
 
@@ -107,7 +128,7 @@ void main() {
       //in signup
       final userForm = find.byKey(Key("username_field"));
       expect(userForm, findsOneWidget);
-      await tester.enterText(userForm, "muyuan1");
+      await tester.enterText(userForm, usernameTest);
 
       final nameForm = find.byKey(Key("name_field"));
       expect(nameForm, findsOneWidget);
@@ -128,6 +149,10 @@ void main() {
       final password2Form = find.byKey(Key("password_confirm_field"));
       expect(password2Form, findsOneWidget);
       await tester.enterText(password2Form, "12345678");
+
+      final location = find.byKey(const Key("location_field"));
+      expect(location, findsOneWidget);
+      await tester.enterText(location, 'Via San Pietro All\'Orto, 7, Milano');
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
 
@@ -138,10 +163,41 @@ void main() {
       await tester.pumpAndSettle();
 
       var successDuplicateWarning = find.text(
-          'This username is already taken. Please choose a different one.'); // Wait for the Snackbar to appear
+          'This username is already taken. Please choose a different one.',
+          skipOffstage: false); // Wait for the Snackbar to appear
       await tester.pump(const Duration(seconds: 3));
       expect(successDuplicateWarning, findsAtLeastNWidgets(1));
       await tester.pumpAndSettle();
+
+      final String id = await FirestoreCrud.fi
+          .collection('users')
+          .where('username', isEqualTo: usernameTest)
+          .get()
+          .then((value) {
+        return value.docs[0].id;
+      });
+      firestore.collection('users').doc(id).delete();
     });
   });
+}
+
+class MockGeocodingPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements GeocodingPlatform {
+  @override
+  Future<List<Location>> locationFromAddress(
+    String address, {
+    String? localeIdentifier,
+  }) async {
+    return [mockLocation];
+  }
+
+  @override
+  Future<List<Placemark>> placemarkFromCoordinates(
+    double latitude,
+    double longitude, {
+    String? localeIdentifier,
+  }) async {
+    return [mockPlacemark];
+  }
 }

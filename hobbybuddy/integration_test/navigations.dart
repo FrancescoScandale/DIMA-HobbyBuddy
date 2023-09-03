@@ -34,7 +34,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "12345678");
+      await tester.enterText(passwordForm, "87654321");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -94,7 +94,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "12345678");
+      await tester.enterText(passwordForm, "87654321");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -198,7 +198,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "12345678");
+      await tester.enterText(passwordForm, "87654321");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -276,7 +276,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "12345678");
+      await tester.enterText(passwordForm, "87654321");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -348,7 +348,7 @@ void main() {
       await tester.pumpAndSettle(Duration(seconds: 5));
 
       expect(password, findsOneWidget);
-      await tester.enterText(password, "12345678");
+      await tester.enterText(password, "87654321");
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 3));
 

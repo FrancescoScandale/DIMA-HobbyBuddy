@@ -191,7 +191,6 @@ void main() async {
   });
 }
 
-// ignore: prefer_mixin
 class MockGeocodingPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements GeocodingPlatform {
