@@ -51,122 +51,148 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 horizontal: AppLayout.kHorizontalPadding,
               ),
               children: [
-                const SizedBox(height: 20),
-                TextFormField(
-                  key: const Key("currentP"),
-                  controller: _currentPasswordController,
-                  obscureText: _passwordInvisibleOld,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_open),
-                    hintText: 'Current password',
-                    border: const OutlineInputBorder(),
-                    labelText: 'Your password',
-                    labelStyle: const TextStyle(fontStyle: FontStyle.italic),
-                    suffixIcon: IconButton(
-                      key: const Key('lock1'),
-                      onPressed: () {
-                        setState(() {
-                          _passwordInvisibleOld = !_passwordInvisibleOld;
-                        });
-                      },
-                      icon: Icon(
-                        _passwordInvisibleOld
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                const SizedBox(height: 40),
+                FractionallySizedBox(
+                  widthFactor: MediaQuery.of(context).size.width < 600
+                      ? 1.0
+                      : 700 / MediaQuery.of(context).size.width,
+                  child: TextFormField(
+                    key: const Key("currentP"),
+                    controller: _currentPasswordController,
+                    obscureText: _passwordInvisibleOld,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_open),
+                      hintText: 'Current password',
+                      border: const OutlineInputBorder(),
+                      labelText: 'Your password',
+                      labelStyle: const TextStyle(fontStyle: FontStyle.italic),
+                      suffixIcon: IconButton(
+                        key: const Key('lock1'),
+                        onPressed: () {
+                          setState(() {
+                            _passwordInvisibleOld = !_passwordInvisibleOld;
+                          });
+                        },
+                        icon: Icon(
+                          _passwordInvisibleOld
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.length < 8) {
+                        return 'Password must be at least 8 characters long';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.length < 8) {
-                      return 'Password must be at least 8 characters long';
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 20),
-                TextFormField(
-                  key: const Key("newP"),
-                  controller: _passwordController,
-                  obscureText: _passwordInvisibleNew,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.vpn_key_rounded),
-                    //prefixIcon: const Icon(Icons.password),
-                    hintText: 'New password',
-                    border: const OutlineInputBorder(),
-                    labelText: 'Your new password',
-                    labelStyle: const TextStyle(fontStyle: FontStyle.italic),
-                    suffixIcon: IconButton(
-                      key: const Key('lock2'),
-                      onPressed: () {
-                        setState(() {
-                          _passwordInvisibleNew = !_passwordInvisibleNew;
-                        });
-                      },
-                      icon: Icon(
-                        _passwordInvisibleNew
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                FractionallySizedBox(
+                  widthFactor: MediaQuery.of(context).size.width < 600
+                      ? 1.0
+                      : 700 / MediaQuery.of(context).size.width,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width < 600
+                        ? MediaQuery.of(context).size.width
+                        : 700,
+                    child: TextFormField(
+                      key: const Key("newP"),
+                      controller: _passwordController,
+                      obscureText: _passwordInvisibleNew,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.vpn_key_rounded),
+                        //prefixIcon: const Icon(Icons.password),
+                        hintText: 'New password',
+                        border: const OutlineInputBorder(),
+                        labelText: 'Your new password',
+                        labelStyle:
+                            const TextStyle(fontStyle: FontStyle.italic),
+                        suffixIcon: IconButton(
+                          key: const Key('lock2'),
+                          onPressed: () {
+                            setState(() {
+                              _passwordInvisibleNew = !_passwordInvisibleNew;
+                            });
+                          },
+                          icon: Icon(
+                            _passwordInvisibleNew
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.length < 8) {
-                      return 'Password must be at least 8 characters long';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  key: const Key("newP2"),
-                  obscureText: _passwordInvisibleNew,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.vpn_key_rounded),
-                    //prefixIcon: const Icon(Icons.password),
-                    hintText: 'New password',
-                    border: const OutlineInputBorder(),
-                    labelText: 'Confirm new password',
-                    labelStyle: const TextStyle(fontStyle: FontStyle.italic),
-                    suffixIcon: IconButton(
-                      key: const Key('lock3'),
-                      onPressed: () {
-                        setState(() {
-                          _passwordInvisibleNew = !_passwordInvisibleNew;
-                        });
-                      },
-                      icon: Icon(
-                        _passwordInvisibleNew
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                MyButton(
-                  onPressed: () async {
-                    if (_formkey.currentState!.validate()) {
-                      //check if credentials present in db
-                      await FirestoreCrud.getUserPwd(
-                              username!, _currentPasswordController.text)
-                          .then((values) async {
-                        if (values!.docs.isNotEmpty) {
-                          await changePassword();
-                          // ignore: use_build_context_synchronously
-                          _showSuccessDialog(context);
-                        } else {
-                          _showInvalidDialog(context);
+                      validator: (value) {
+                        if (value == null || value.length < 8) {
+                          return 'Password must be at least 8 characters long';
                         }
-                      });
-                    }
-                  },
-                  text: "Save",
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                FractionallySizedBox(
+                  widthFactor: MediaQuery.of(context).size.width < 600
+                      ? 1.0
+                      : 700 / MediaQuery.of(context).size.width,
+                  child: TextFormField(
+                    key: const Key("newP2"),
+                    obscureText: _passwordInvisibleNew,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.vpn_key_rounded),
+                      //prefixIcon: const Icon(Icons.password),
+                      hintText: 'New password',
+                      border: const OutlineInputBorder(),
+                      labelText: 'Confirm new password',
+                      labelStyle: const TextStyle(fontStyle: FontStyle.italic),
+                      suffixIcon: IconButton(
+                        key: const Key('lock3'),
+                        onPressed: () {
+                          setState(() {
+                            _passwordInvisibleNew = !_passwordInvisibleNew;
+                          });
+                        },
+                        icon: Icon(
+                          _passwordInvisibleNew
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value != _passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                FractionallySizedBox(
+                  widthFactor: MediaQuery.of(context).size.width < 600
+                      ? 1.0
+                      : 200 / MediaQuery.of(context).size.width,
+                  child: MyButton(
+                    onPressed: () async {
+                      if (_formkey.currentState!.validate()) {
+                        //check if credentials present in db
+                        await FirestoreCrud.getUserPwd(
+                                username!, _currentPasswordController.text)
+                            .then((values) async {
+                          if (values!.docs.isNotEmpty) {
+                            await changePassword();
+                            // ignore: use_build_context_synchronously
+                            _showSuccessDialog(context);
+                          } else {
+                            _showInvalidDialog(context);
+                          }
+                        });
+                      }
+                    },
+                    text: "Save",
+                  ),
                 ),
                 Container(height: AppLayout.kPaddingFromCreate),
               ],

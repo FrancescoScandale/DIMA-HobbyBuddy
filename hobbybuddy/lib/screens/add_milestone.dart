@@ -80,21 +80,26 @@ class _AddMilestoneState extends State<AddMilestone> {
               100),
           children: [
             Container(
-              height: AppLayout.kVerticalPadding,
+              height: 40,
             ),
             Form(
               key: _formKey,
-              child: TextFormField(
-                  controller: caption,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.text_fields),
-                    border: OutlineInputBorder(),
-                    labelText: 'Caption',
-                    labelStyle: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                  validator: (value) {
-                    return null;
-                  }),
+              child: FractionallySizedBox(
+                widthFactor: MediaQuery.of(context).size.width < 600
+                    ? 1.0
+                    : 700 / MediaQuery.of(context).size.width,
+                child: TextFormField(
+                    controller: caption,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.text_fields),
+                      border: OutlineInputBorder(),
+                      labelText: 'Caption',
+                      labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                    validator: (value) {
+                      return null;
+                    }),
+              ),
             ),
             const SizedBox(height: 20),
             _imagePicked
@@ -104,41 +109,52 @@ class _AddMilestoneState extends State<AddMilestone> {
                 : Container(),
             const SizedBox(height: 10),
             Container(
-                margin: EdgeInsetsDirectional.symmetric(horizontal: 150),
-                child: ElevatedButton(
-                    onPressed: () => pickImage(),
-                    style: const ButtonStyle(
-                      padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
-                          EdgeInsets.all(5)),
-                    ),
-                    child: const Icon(Icons.add_a_photo))),
+              margin: EdgeInsetsDirectional.symmetric(horizontal: 150),
+              child: FractionallySizedBox(
+                  widthFactor: MediaQuery.of(context).size.width < 600
+                      ? 1.0
+                      : 200 / MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                      onPressed: () => pickImage(),
+                      style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
+                            EdgeInsets.all(5)),
+                      ),
+                      child: const Icon(Icons.add_a_photo))),
+            ),
             const SizedBox(height: 30),
-            _notUploaded
-                ? MyButton(
-                    text: 'Upload Milestone',
-                    onPressed: () {
-                      if (caption.text.isEmpty || caption.text.trim().isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Need to insert a caption...")),
-                        );
-                      } else if (!_imagePicked) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Need to upload an image...")),
-                        );
-                      } else {
-                        setState(() {
-                          _notUploaded = false;
-                        });
-                        uploadMilestone();
-                      }
-                    },
-                  )
-                : MyButton(
-                    text: 'Uploading...',
-                    onPressed: () {},
-                  ),
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 350 / MediaQuery.of(context).size.width,
+              child: _notUploaded
+                  ? MyButton(
+                      text: 'Upload Milestone',
+                      onPressed: () {
+                        if (caption.text.isEmpty ||
+                            caption.text.trim().isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Need to insert a caption...")),
+                          );
+                        } else if (!_imagePicked) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Need to upload an image...")),
+                          );
+                        } else {
+                          setState(() {
+                            _notUploaded = false;
+                          });
+                          uploadMilestone();
+                        }
+                      },
+                    )
+                  : MyButton(
+                      text: 'Uploading...',
+                      onPressed: () {},
+                    ),
+            ),
           ],
         ));
   }

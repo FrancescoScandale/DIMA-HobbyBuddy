@@ -175,52 +175,62 @@ class _HomePageHobbyState extends State<HomePageHobby> {
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
-          Container(
-            alignment: AlignmentDirectional.topStart,
-            padding: const EdgeInsetsDirectional.fromSTEB(
-                AppLayout.kModalHorizontalPadding, 0, 0, 0),
-            child: const Text(
-              "Mentors",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: Container(
+              alignment: AlignmentDirectional.topStart,
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                  AppLayout.kModalHorizontalPadding, 0, 0, 0),
+              child: const Text(
+                "Mentors",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-          ContainerShadow(
-              margin: const EdgeInsetsDirectional.fromSTEB(
-                  AppLayout.kModalHorizontalPadding,
-                  0,
-                  AppLayout.kModalHorizontalPadding,
-                  0),
-              child: ListView.builder(
-                itemCount: _mentors.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                      leading: const Icon(
-                          Icons.person), //TODO?: mettere la propic del mentore
-                      title: Text(_mentors.keys.elementAt(index)),
-                      trailing: MyIconButton(
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: ContainerShadow(
+                margin: const EdgeInsetsDirectional.fromSTEB(
+                    AppLayout.kModalHorizontalPadding,
+                    0,
+                    AppLayout.kModalHorizontalPadding,
+                    0),
+                child: ListView.builder(
+                  itemCount: _mentors.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                        leading: const Icon(Icons
+                            .person), //TODO?: mettere la propic del mentore
+                        title: Text(_mentors.keys.elementAt(index)),
+                        trailing: MyIconButton(
+                          onTap: () {
+                            toggleLikeMentor(_mentors.keys.elementAt(index));
+                          },
+                          icon: _mentors.values.elementAt(index)
+                              ? mentorFavourite
+                              : mentorNotFavourite,
+                        ),
                         onTap: () {
-                          toggleLikeMentor(_mentors.keys.elementAt(index));
-                        },
-                        icon: _mentors.values.elementAt(index)
-                            ? mentorFavourite
-                            : mentorNotFavourite,
-                      ),
-                      onTap: () {
-                        Widget newScreen =
-                            MentorPage(mentor: _mentors.keys.elementAt(index));
-                        Navigator.push(
-                          context,
-                          ScreenTransition(
-                            builder: (context) => newScreen,
-                          ),
-                        );
-                      });
-                },
-              )),
+                          Widget newScreen = MentorPage(
+                              mentor: _mentors.keys.elementAt(index));
+                          Navigator.push(
+                            context,
+                            ScreenTransition(
+                              builder: (context) => newScreen,
+                            ),
+                          );
+                        });
+                  },
+                )),
+          ),
         ],
       ),
     );
