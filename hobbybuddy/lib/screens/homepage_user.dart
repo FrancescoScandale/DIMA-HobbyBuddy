@@ -66,24 +66,28 @@ class _UserPageState extends State<UserPage> {
   void getHobbies() async {
     _hobbies = await FirestoreCrud.getUserData(_username, 'hobbies');
     setState(() {
-      downloadHobbies = true;
+      if (_hobbies.isNotEmpty) {
+        downloadHobbies = true;
+      }
     });
   }
 
   void getMentors() async {
     _mentors = await FirestoreCrud.getUserData(_username, 'mentors');
 
-    for (int i = 0; i < _mentors.length; i++) {
-      Uint8List? image = await StorageCrud.getStorage()
-          .ref()
-          .child('Mentors/${_mentors[i]}/propic.jpg')
-          .getData();
-      _mentorsPics[_mentors[i]] = Image.memory(image!);
-    }
+    if (_mentors.isNotEmpty) {
+      for (int i = 0; i < _mentors.length; i++) {
+        Uint8List? image = await StorageCrud.getStorage()
+            .ref()
+            .child('Mentors/${_mentors[i]}/propic.jpg')
+            .getData();
+        _mentorsPics[_mentors[i]] = Image.memory(image!);
+      }
 
-    setState(() {
-      downloadMentors = true;
-    });
+      setState(() {
+        downloadMentors = true;
+      });
+    }
   }
 
   void computeLocation() async {
@@ -103,23 +107,25 @@ class _UserPageState extends State<UserPage> {
         .child('Users/$_username/milestones/')
         .listAll();
 
-    int len = (result.prefixes[0].fullPath.split('/')).length;
-    for (Reference prefs in result.prefixes) {
-      String tmp = prefs.fullPath.split('/')[len - 1];
-      Uint8List? cap = await StorageCrud.getStorage()
-          .ref()
-          .child('Users/$_username/milestones/$tmp/caption.txt')
-          .getData();
-      Uint8List? image = await StorageCrud.getStorage()
-          .ref()
-          .child('Users/$_username/milestones/$tmp/pic.jpg')
-          .getData();
-      _milestones[tmp] = Tuple2(utf8.decode(cap!), Image.memory(image!));
-    }
+    if (result.prefixes.isNotEmpty) {
+      int len = (result.prefixes[0].fullPath.split('/')).length;
+      for (Reference prefs in result.prefixes) {
+        String tmp = prefs.fullPath.split('/')[len - 1];
+        Uint8List? cap = await StorageCrud.getStorage()
+            .ref()
+            .child('Users/$_username/milestones/$tmp/caption.txt')
+            .getData();
+        Uint8List? image = await StorageCrud.getStorage()
+            .ref()
+            .child('Users/$_username/milestones/$tmp/pic.jpg')
+            .getData();
+        _milestones[tmp] = Tuple2(utf8.decode(cap!), Image.memory(image!));
+      }
 
-    setState(() {
-      downloadMilestones = true;
-    });
+      setState(() {
+        downloadMilestones = true;
+      });
+    }
   }
 
   void getUserPics() async {
@@ -143,7 +149,7 @@ class _UserPageState extends State<UserPage> {
       propic = Image.asset('assets/pics/propic.jpg');
       background = Image.asset('assets/pics/lowqualitybackground.jpg');
     }
-    
+
     setState(() {
       downloadUserPics = true;
     });

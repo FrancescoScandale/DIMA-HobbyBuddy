@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
@@ -60,6 +61,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
@@ -71,6 +73,20 @@ class _LoginFormState extends State<LoginForm> {
     username.dispose();
     password.dispose();
     super.dispose();
+  }
+
+  Future<bool> _signInWithEmailAndPassword() async {
+    try {
+      String email = await FirestoreCrud.getEmail(username.text);
+
+      await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password.text,
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
@@ -158,23 +174,14 @@ class _LoginFormState extends State<LoginForm> {
                     });
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
-                      bool check = false;
-                      //check if credentials present in db
-                      await FirestoreCrud.getUserPwd(
-                              username.text, password.text)
-                          .then((values) async {
-                        if (values!.docs.isNotEmpty) {
-                          check = true;
-
-                          //retrieve data
-                          await Preferences.setUsername(username.text);
-                          await Preferences.setHobbies(username.text);
-                          await Preferences.setMentors(username.text);
-                          await Preferences.setEmail(username.text);
-                          await Preferences.setLocation(username.text);
-                        }
-                      });
+                      bool check = await _signInWithEmailAndPassword();
                       if (check) {
+                        //retrieve data
+                        await Preferences.setUsername(username.text);
+                        await Preferences.setHobbies(username.text);
+                        await Preferences.setMentors(username.text);
+                        await Preferences.setEmail(username.text);
+                        await Preferences.setLocation(username.text);
                         Widget newScreen = const BottomNavigationBarApp();
                         // ignore: use_build_context_synchronously
                         Navigator.push(

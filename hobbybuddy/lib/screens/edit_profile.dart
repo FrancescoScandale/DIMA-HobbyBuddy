@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
@@ -62,18 +63,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void getUserPics() async {
-    String? username = Preferences.getUsername();
-    Uint8List? propicData = await StorageCrud.getStorage()
+    String username = Preferences.getUsername()!;
+    ListResult result = await StorageCrud.getStorage()
         .ref()
-        .child('Users/$username/propic.jpg')
-        .getData();
-    Uint8List? backgroundData = await StorageCrud.getStorage()
-        .ref()
-        .child('Users/$username/background.jpg')
-        .getData();
+        .child('Users/$username/')
+        .listAll();
+    if (result.items.isNotEmpty) {
+      print('GOTTEN INSIDE HERE!');
+      Uint8List? propicData = await StorageCrud.getStorage()
+          .ref()
+          .child('Users/$username/propic.jpg')
+          .getData();
+      Uint8List? backgroundData = await StorageCrud.getStorage()
+          .ref()
+          .child('Users/$username/background.jpg')
+          .getData();
 
-    propic = Image.memory(propicData!);
-    background = Image.memory(backgroundData!);
+      propic = Image.memory(propicData!);
+      background = Image.memory(backgroundData!);
+    } else {
+      propic = Image.asset('assets/pics/propic.jpg');
+      background = Image.asset('assets/pics/lowqualitybackground.jpg');
+    }
 
     setState(() {
       downloadUserPics = true;
