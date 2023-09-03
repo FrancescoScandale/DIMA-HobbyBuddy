@@ -45,7 +45,7 @@ class _HomePScreenState extends State<HomePScreen> {
       //return 1; // Aspect ratio for portrait mode
     } else {
       if (width > 600) {
-        return width / (0.45 * height);
+        return width / (0.65 * height);
       }
       return width / (0.85 * height);
       //return 2.2;
@@ -136,7 +136,7 @@ class _HomePScreenState extends State<HomePScreen> {
             floating: true,
             pinned: true,
             snap: true,
-            expandedHeight: 166, // Adjust as needed
+            expandedHeight: 166,
             flexibleSpace: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,10 +210,14 @@ class _HomePScreenState extends State<HomePScreen> {
           ),
           SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Two hobbies per row
+              crossAxisCount: (MediaQuery.of(context).size.width < 600 ||
+                      (MediaQuery.of(context).size.width >= 600 &&
+                          MediaQuery.of(context).orientation ==
+                              Orientation.portrait))
+                  ? 2
+                  : 3, // Two hobbies per row
               mainAxisSpacing: 16.0,
               crossAxisSpacing: 16.0,
-
               childAspectRatio: _calculateAspectRatio(),
             ),
             delegate: SliverChildBuilderDelegate(
@@ -312,7 +316,7 @@ class _HomePScreenState extends State<HomePScreen> {
             ),
           ),
           const SliverPadding(
-            padding: EdgeInsets.only(bottom: 40.0),
+            padding: EdgeInsets.only(bottom: 60.0),
           ),
         ],
       ),

@@ -63,22 +63,27 @@ class _SignUpFormState extends State<SignUpForm> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           children: [
             const SizedBox(height: AppLayout.kHeightSmall),
-            TextFormField(
-              key: const Key("username_field"),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.face),
-                border: OutlineInputBorder(),
-                labelText: 'Username',
-                labelStyle: TextStyle(fontStyle: FontStyle.italic),
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 700 / MediaQuery.of(context).size.width,
+              child: TextFormField(
+                key: const Key("username_field"),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.face),
+                  border: OutlineInputBorder(),
+                  labelText: 'Username',
+                  labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Username cannot be empty';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Username cannot be empty';
-                }
-                return null;
-              },
             ),
             if (_isUsernameNotUnique)
               const Text(
@@ -86,181 +91,217 @@ class _SignUpFormState extends State<SignUpForm> {
                 style: TextStyle(color: Colors.red),
               ),
             const SizedBox(height: AppLayout.kHeightSmall),
-            TextFormField(
-              key: const Key("name_field"),
-              controller: _nameController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.perm_identity),
-                border: OutlineInputBorder(),
-                labelText: 'Name',
-                labelStyle: TextStyle(fontStyle: FontStyle.italic),
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 700 / MediaQuery.of(context).size.width,
+              child: TextFormField(
+                key: const Key("name_field"),
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.perm_identity),
+                  border: OutlineInputBorder(),
+                  labelText: 'Name',
+                  labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Name cannot be empty';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Name cannot be empty';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: AppLayout.kHeightSmall),
-            TextFormField(
-              key: const Key("surname_field"),
-              controller: _surnameController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.perm_identity),
-                border: OutlineInputBorder(),
-                labelText: 'Surname',
-                labelStyle: TextStyle(fontStyle: FontStyle.italic),
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 700 / MediaQuery.of(context).size.width,
+              child: TextFormField(
+                key: const Key("surname_field"),
+                controller: _surnameController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.perm_identity),
+                  border: OutlineInputBorder(),
+                  labelText: 'Surname',
+                  labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Surname cannot be empty';
+                  }
+                  locationFromAddress(_surnameController.text,
+                      localeIdentifier: 'it_IT');
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Surname cannot be empty';
-                }
-                locationFromAddress(_surnameController.text,
-                    localeIdentifier: 'it_IT');
-                return null;
-              },
             ),
             const SizedBox(height: AppLayout.kHeightSmall),
-            TextFormField(
-              key: const Key("email_field"),
-              controller: _emailController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.mail_outline),
-                border: OutlineInputBorder(),
-                labelText: 'E-mail',
-                labelStyle: TextStyle(fontStyle: FontStyle.italic),
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 700 / MediaQuery.of(context).size.width,
+              child: TextFormField(
+                key: const Key("email_field"),
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.mail_outline),
+                  border: OutlineInputBorder(),
+                  labelText: 'E-mail',
+                  labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an e-mail address';
+                  }
+                  final emailRegex =
+                      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  if (!emailRegex.hasMatch(value)) {
+                    return 'Please enter a valid e-mail address';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter an e-mail address';
-                }
-                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                if (!emailRegex.hasMatch(value)) {
-                  return 'Please enter a valid e-mail address';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: AppLayout.kHeightSmall),
-            TextFormField(
-              key: const Key("password_field"),
-              controller: _passwordController,
-              obscureText: _passwordInvisible,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock_open),
-                hintText: 'Password',
-                border: const OutlineInputBorder(),
-                labelText: 'Your password',
-                labelStyle: const TextStyle(fontStyle: FontStyle.italic),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _passwordInvisible = !_passwordInvisible;
-                    });
-                  },
-                  icon: Icon(
-                    _passwordInvisible
-                        ? Icons.visibility_off
-                        : Icons.visibility,
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 700 / MediaQuery.of(context).size.width,
+              child: TextFormField(
+                key: const Key("password_field"),
+                controller: _passwordController,
+                obscureText: _passwordInvisible,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.lock_open),
+                  hintText: 'Password',
+                  border: const OutlineInputBorder(),
+                  labelText: 'Your password',
+                  labelStyle: const TextStyle(fontStyle: FontStyle.italic),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _passwordInvisible = !_passwordInvisible;
+                      });
+                    },
+                    icon: Icon(
+                      _passwordInvisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.length < 8) {
+                    return 'Password must be at least 8 characters long';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.length < 8) {
-                  return 'Password must be at least 8 characters long';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: AppLayout.kHeightSmall),
-            TextFormField(
-              key: const Key("password_confirm_field"),
-              obscureText: _passwordInvisible,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock_open),
-                hintText: 'Password',
-                border: const OutlineInputBorder(),
-                labelText: 'Confirm password',
-                labelStyle: const TextStyle(fontStyle: FontStyle.italic),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _passwordInvisible = !_passwordInvisible;
-                    });
-                  },
-                  icon: Icon(
-                    _passwordInvisible
-                        ? Icons.visibility_off
-                        : Icons.visibility,
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 700 / MediaQuery.of(context).size.width,
+              child: TextFormField(
+                key: const Key("password_confirm_field"),
+                obscureText: _passwordInvisible,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.lock_open),
+                  hintText: 'Password',
+                  border: const OutlineInputBorder(),
+                  labelText: 'Confirm password',
+                  labelStyle: const TextStyle(fontStyle: FontStyle.italic),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _passwordInvisible = !_passwordInvisible;
+                      });
+                    },
+                    icon: Icon(
+                      _passwordInvisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.length < 8) {
+                    return 'Password must be at least 8 characters long';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.length < 8) {
-                  return 'Password must be at least 8 characters long';
-                }
-                if (value != _passwordController.text) {
-                  return 'Passwords do not match';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: AppLayout.kHeightSmall),
-            TextFormField(
-              key: const Key("location_field"),
-              controller: _locationController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.place_outlined),
-                border: OutlineInputBorder(),
-                labelText: 'Address',
-                labelStyle: TextStyle(fontStyle: FontStyle.italic),
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 700 / MediaQuery.of(context).size.width,
+              child: TextFormField(
+                key: const Key("location_field"),
+                controller: _locationController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.place_outlined),
+                  border: OutlineInputBorder(),
+                  labelText: 'Address',
+                  labelStyle: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an address';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter an address';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: 30),
-            MyButton(
-              key: const Key("signup_button"),
-              text: "Sign up",
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  String enteredUsername = _usernameController.text;
-                  bool isUnique =
-                      await FirestoreCrud.isUsernameUnique(enteredUsername);
-                  if (isUnique == true) {
-                    String email = _emailController.text;
-                    String password = _passwordController.text;
-                    String username = _usernameController.text;
-                    String name = _nameController.text;
-                    String surname = _surnameController.text;
-                    String location = await locationFromAddress(
-                            _locationController.text,
-                            localeIdentifier: localeIdentifier)
-                        .then((value) {
-                      return '${value[0].latitude},${value[0].longitude}';
-                    });
-                    // Username is unique, proceed with sign up logic
-                    await FirestoreCrud.addUserToFirestore(
-                        email, password, username, name, surname, location);
-                    setState(() {
-                      _isUsernameNotUnique = false;
-                    });
-                    // Show the success dialog
-                    // ignore: use_build_context_synchronously
-                    _showSignUpSuccessDialog(context);
-                  } else if (isUnique == false) {
-                    // Username is not unique, show a warning
-                    setState(() {
-                      _isUsernameNotUnique = true;
-                    });
+            FractionallySizedBox(
+              widthFactor: MediaQuery.of(context).size.width < 600
+                  ? 1.0
+                  : 200 / MediaQuery.of(context).size.width,
+              child: MyButton(
+                key: const Key("signup_button"),
+                text: "Sign up",
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    String enteredUsername = _usernameController.text;
+                    bool isUnique =
+                        await FirestoreCrud.isUsernameUnique(enteredUsername);
+                    if (isUnique == true) {
+                      String email = _emailController.text;
+                      String password = _passwordController.text;
+                      String username = _usernameController.text;
+                      String name = _nameController.text;
+                      String surname = _surnameController.text;
+                      String location = await locationFromAddress(
+                              _locationController.text,
+                              localeIdentifier: localeIdentifier)
+                          .then((value) {
+                        return '${value[0].latitude},${value[0].longitude}';
+                      });
+                      // Username is unique, proceed with sign up logic
+                      await FirestoreCrud.addUserToFirestore(
+                          email, password, username, name, surname, location);
+                      setState(() {
+                        _isUsernameNotUnique = false;
+                      });
+                      // Show the success dialog
+                      // ignore: use_build_context_synchronously
+                      _showSignUpSuccessDialog(context);
+                    } else if (isUnique == false) {
+                      // Username is not unique, show a warning
+                      setState(() {
+                        _isUsernameNotUnique = true;
+                      });
+                    }
                   }
-                }
-              },
+                },
+              ),
             ),
             Container(
               margin: const EdgeInsets.all(20),

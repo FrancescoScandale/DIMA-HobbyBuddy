@@ -79,58 +79,70 @@ class _LoginFormState extends State<LoginForm> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          TextFormField(
-            key: const Key("u_field"),
-            controller: username,
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.face),
-              border: OutlineInputBorder(),
-              labelText: 'Username',
-              labelStyle: TextStyle(fontStyle: FontStyle.italic),
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: TextFormField(
+              key: const Key("u_field"),
+              controller: username,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.face),
+                border: OutlineInputBorder(),
+                labelText: 'Username',
+                labelStyle: TextStyle(fontStyle: FontStyle.italic),
+              ),
+              // The validator receives the text that the user has entered.
+              validator: (value1) {
+                if (value1 == null || value1.isEmpty) {
+                  setState(() {
+                    pressed = false;
+                  });
+                  return 'Please enter your username';
+                }
+                return null;
+              },
             ),
-            // The validator receives the text that the user has entered.
-            validator: (value1) {
-              if (value1 == null || value1.isEmpty) {
-                setState(() {
-                  pressed = false;
-                });
-                return 'Please enter your username';
-              }
-              return null;
-            },
           ),
           const SizedBox(height: 25),
-          TextFormField(
-            key: const Key("p_field"),
-            controller: password,
-            obscureText: _passwordInvisible,
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.lock_open),
-              hintText: 'Password',
-              border: const OutlineInputBorder(),
-              labelText: 'Password',
-              labelStyle: const TextStyle(fontStyle: FontStyle.italic),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _passwordInvisible = !_passwordInvisible;
-                  });
-                },
-                icon: Icon(
-                  _passwordInvisible ? Icons.visibility_off : Icons.visibility,
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: TextFormField(
+              key: const Key("p_field"),
+              controller: password,
+              obscureText: _passwordInvisible,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.lock_open),
+                hintText: 'Password',
+                border: const OutlineInputBorder(),
+                labelText: 'Password',
+                labelStyle: const TextStyle(fontStyle: FontStyle.italic),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _passwordInvisible = !_passwordInvisible;
+                    });
+                  },
+                  icon: Icon(
+                    _passwordInvisible
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
                 ),
               ),
+              // The validator receives the text that the user has entered.
+              validator: (value2) {
+                if (value2 == null || value2.isEmpty) {
+                  setState(() {
+                    pressed = false;
+                  });
+                  return 'Please enter your password';
+                }
+                return null;
+              },
             ),
-            // The validator receives the text that the user has entered.
-            validator: (value2) {
-              if (value2 == null || value2.isEmpty) {
-                setState(() {
-                  pressed = false;
-                });
-                return 'Please enter your password';
-              }
-              return null;
-            },
           ),
           const SizedBox(height: 10),
           Padding(

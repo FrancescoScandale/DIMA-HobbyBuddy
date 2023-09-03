@@ -82,13 +82,13 @@ class _MentorPageState extends State<MentorPage> {
     final orientation = MediaQuery.of(context).orientation;
     if (orientation == Orientation.portrait) {
       if (width > 600) {
-        return 3.6 * width / height;
+        return 3 * width / height;
       }
       return 2.6 * width / height;
       //return 1; // Aspect ratio for portrait mode
     } else {
       if (width > 600) {
-        return width / (0.45 * height);
+        return width / (0.8 * height);
       }
       return width / (0.85 * height);
       //return 2.2;
@@ -285,55 +285,68 @@ class _MentorPageState extends State<MentorPage> {
           Container(
             height: AppLayout.kHeightSmall,
           ),
-          Container(
-            alignment: AlignmentDirectional.topStart,
-            padding: const EdgeInsetsDirectional.fromSTEB(
-                AppLayout.kModalHorizontalPadding, 0, 0, 0),
-            child: const Text(
-              "Upcoming Classes",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: Container(
+              alignment: AlignmentDirectional.topStart,
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                  AppLayout.kModalHorizontalPadding, 0, 0, 0),
+              child: const Text(
+                "Upcoming Classes",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
+          Container(
+            height: AppLayout.kHeightSmall,
+          ),
           //UPCOMING CLASSES
-          ContainerShadow(
-            margin: const EdgeInsetsDirectional.fromSTEB(
-                AppLayout.kHorizontalPadding,
-                0,
-                AppLayout.kHorizontalPadding,
-                0),
-            child: downloadClasses
-                ? ListView.builder(
-                    itemCount: _upcomingClasses.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: Image.asset(
-                          'assets/hobbies/$_hobby.png',
-                          height: AppLayout.kHobbyDimension,
-                          fit: BoxFit.cover,
-                          color: convertColor(int.parse(
-                              _upcomingClasses[index].split(';;')[0])),
-                        ),
-                        title: Text(_upcomingClasses[index].split(';;')[1]),
-                        trailing: Column(
-                          children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(_upcomingClasses[index].split(';;')[2]),
-                            Text(_upcomingClasses[index].split(';;')[3])
-                          ],
-                        ),
-                      );
-                    },
-                  )
-                : const SizedBox(
-                    height: AppLayout.kIconDimension,
-                  ),
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: ContainerShadow(
+              margin: const EdgeInsetsDirectional.fromSTEB(
+                  AppLayout.kHorizontalPadding,
+                  0,
+                  AppLayout.kHorizontalPadding,
+                  0),
+              child: downloadClasses
+                  ? ListView.builder(
+                      itemCount: _upcomingClasses.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: Image.asset(
+                            'assets/hobbies/$_hobby.png',
+                            height: AppLayout.kHobbyDimension,
+                            fit: BoxFit.cover,
+                            color: convertColor(int.parse(
+                                _upcomingClasses[index].split(';;')[0])),
+                          ),
+                          title: Text(_upcomingClasses[index].split(';;')[1]),
+                          trailing: Column(
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(_upcomingClasses[index].split(';;')[2]),
+                              Text(_upcomingClasses[index].split(';;')[3])
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox(
+                      height: AppLayout.kIconDimension,
+                    ),
+            ),
           ),
           Container(
             height: AppLayout.kHeight,
@@ -367,7 +380,13 @@ class _MentorPageState extends State<MentorPage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _courses.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
+                        crossAxisCount:
+                            (MediaQuery.of(context).size.width < 600 ||
+                                    (MediaQuery.of(context).size.width >= 600 &&
+                                        MediaQuery.of(context).orientation ==
+                                            Orientation.portrait))
+                                ? 2
+                                : 3, // Two hobbies per row
                         mainAxisSpacing: 0,
                         crossAxisSpacing: 0,
                         childAspectRatio: _calculateAspectRatio(),

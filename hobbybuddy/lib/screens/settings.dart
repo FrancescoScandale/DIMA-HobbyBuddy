@@ -43,72 +43,79 @@ class _SettingsScreenState extends State<Settings> {
       ),
       body: ListView(
         children: [
-          Container(
-            width: MediaQuery.sizeOf(context).width,
-            height: 160,
-            decoration: const BoxDecoration(
-              color: ui.Color.fromRGBO(250, 220, 204, 0.5),
-              //color: Color.fromARGB(255, 238, 139, 96),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 40, 20, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Card(
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(80),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
-                      child: ClipRRect(
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: Container(
+              width: MediaQuery.sizeOf(context).width,
+              height: 160,
+              decoration: const BoxDecoration(
+                color: ui.Color.fromRGBO(250, 220, 204, 0.5),
+                //color: Color.fromARGB(255, 238, 139, 96),
+              ),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 40, 20, 0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Card(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(80),
-                        child: Image(
-                          image: _propic.image,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
+                      ),
+                      child: Padding(
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80),
+                          child: Image(
+                            image: _propic.image,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _username,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              //color: Colors.white,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0, 4, 0, 0),
-                            child: Text(
-                              Preferences.getEmail()!,
+                    Expanded(
+                      child: Padding(
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _username,
                               style: const TextStyle(
-                                fontSize: 15,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 //color: Colors.white,
                               ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0, 4, 0, 0),
+                              child: Text(
+                                Preferences.getEmail()!,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  //color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -116,52 +123,57 @@ class _SettingsScreenState extends State<Settings> {
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
-          ContainerShadow(
-            child: Column(
-              children: [
-                SwitchListTile(
-                  title: const Text(
-                    "Dark mode",
+          FractionallySizedBox(
+            widthFactor: MediaQuery.of(context).size.width < 600
+                ? 1.0
+                : 700 / MediaQuery.of(context).size.width,
+            child: ContainerShadow(
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: const Text(
+                      "Dark mode",
+                    ),
+                    value: Preferences.getBool('isDark'),
+                    onChanged: (newValue) {
+                      setState(() {
+                        Provider.of<ThemeManager>(context, listen: false)
+                            .toggleTheme(newValue);
+                      });
+                    },
+                    secondary: const Icon(Icons.dark_mode_rounded),
                   ),
-                  value: Preferences.getBool('isDark'),
-                  onChanged: (newValue) {
-                    setState(() {
-                      Provider.of<ThemeManager>(context, listen: false)
-                          .toggleTheme(newValue);
-                    });
-                  },
-                  secondary: const Icon(Icons.dark_mode_rounded),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.edit),
-                  title: const Text("Edit profile"),
-                  trailing: const Icon(Icons.navigate_next),
-                  onTap: () async {
-                    Widget newScreen = const EditProfileScreen();
-                    Navigator.push(
-                      context,
-                      ScreenTransition(
-                        builder: (context) => newScreen,
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.lock_open),
-                  title: const Text("Change password"),
-                  trailing: const Icon(Icons.navigate_next),
-                  onTap: () {
-                    Widget newScreen = const ChangePasswordScreen();
-                    // ignore: use_build_context_synchronously
-                    Navigator.push(
-                      context,
-                      ScreenTransition(
-                        builder: (context) => newScreen,
-                      ),
-                    );
-                  },
-                ),
-              ],
+                  ListTile(
+                    leading: const Icon(Icons.edit),
+                    title: const Text("Edit profile"),
+                    trailing: const Icon(Icons.navigate_next),
+                    onTap: () async {
+                      Widget newScreen = const EditProfileScreen();
+                      Navigator.push(
+                        context,
+                        ScreenTransition(
+                          builder: (context) => newScreen,
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.lock_open),
+                    title: const Text("Change password"),
+                    trailing: const Icon(Icons.navigate_next),
+                    onTap: () {
+                      Widget newScreen = const ChangePasswordScreen();
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        ScreenTransition(
+                          builder: (context) => newScreen,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           //padding to the next section
