@@ -52,7 +52,6 @@ class _SettingsScreenState extends State<Settings> {
               height: 160,
               decoration: const BoxDecoration(
                 color: ui.Color.fromRGBO(250, 220, 204, 0.5),
-                //color: Color.fromARGB(255, 238, 139, 96),
               ),
               child: Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(20, 40, 20, 0),
@@ -106,7 +105,6 @@ class _SettingsScreenState extends State<Settings> {
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  //color: Colors.white,
                                 ),
                               ),
                             ),
@@ -119,7 +117,6 @@ class _SettingsScreenState extends State<Settings> {
               ),
             ),
           ),
-          //padding to the next section
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
@@ -176,18 +173,17 @@ class _SettingsScreenState extends State<Settings> {
               ),
             ),
           ),
-          //padding to the next section
           Container(
             height: AppLayout.kPaddingFromCreate,
           ),
           Align(
             alignment: Alignment.center,
             child: SizedBox(
-              width: 200, // Adjust the width as per your requirement
-              height: 50, // Adjust the height as per your requirement
+              width: 200,
+              height: 50,
               child: ElevatedButton(
                 onPressed: () async {
-                  Widget newScreen = const LogInScreen(); //Main();
+                  Widget newScreen = const LogInScreen();
                   // ignore: use_build_context_synchronously
                   await Navigator.of(context, rootNavigator: true).push(
                     ScreenTransition(
@@ -205,7 +201,6 @@ class _SettingsScreenState extends State<Settings> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    //color: Colors.white,
                   ),
                 ),
               ),

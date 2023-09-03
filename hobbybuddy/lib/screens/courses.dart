@@ -147,7 +147,6 @@ class _CoursesPageState extends State<CoursesPage> {
       for (Reference item in result.items) {
         String name = item.fullPath.split('/').last;
         if (name.contains('picture')) {
-          //TODO: all downloads can be done with this method... which doesn't rely on a specific name/extension!
           Uint8List? tmp = await StorageCrud.getStorage()
               .ref()
               .child('Mentors/$_mentor/courses/$_courseID/$name')
@@ -219,7 +218,6 @@ class _CoursesPageState extends State<CoursesPage> {
                         child: returned))
                 : ContainerShadow(
                     child: Container(height: 150),
-                    //height: MediaQuery.sizeOf(context).height * 2 / 3),
                   ),
             Container(
               height: AppLayout.kHeight,

@@ -77,7 +77,6 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
       body: SingleChildScrollView(
         primary: true,
         clipBehavior: Clip.none,
-        //physics: const NeverScrollableScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -100,7 +99,6 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
               ),
             ),
             Padding(
-              //mainAxisAlignment: MainAxisAlignment.end,
               padding: const EdgeInsetsDirectional.fromSTEB(0, 3, 20, 3),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -125,11 +123,8 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
               onRefresh: () async {
                 widget.onRefreshMainPage!();
               },
-              //interactive: false,
               child: ListView.builder(
-                //physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                //controller: PrimaryScrollController.of(context),
                 itemCount: _filteredFriends.length,
                 // Number of rectangles you want to display
                 itemBuilder: (context, index) {
@@ -169,7 +164,6 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                                 ),
                               ),
                               Expanded(
-                                // Wrap with Expanded widget
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment
                                       .spaceBetween, // Align text and icon to the extremes

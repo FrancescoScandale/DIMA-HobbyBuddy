@@ -67,7 +67,6 @@ class _MyFriendsListState extends State<MyFriendsList> {
       body: SingleChildScrollView(
         primary: true,
         clipBehavior: Clip.none,
-        //physics: const NeverScrollableScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -90,7 +89,6 @@ class _MyFriendsListState extends State<MyFriendsList> {
               ),
             ),
             Padding(
-              //mainAxisAlignment: MainAxisAlignment.end,
               padding: const EdgeInsetsDirectional.fromSTEB(0, 3, 20, 3),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -112,16 +110,12 @@ class _MyFriendsListState extends State<MyFriendsList> {
               ),
             ),
             RefreshIndicator(
-              //interactive: false,
               onRefresh: () async {
                 widget.onRefreshMainPage!();
               },
               child: ListView.builder(
-                //physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                //controller: PrimaryScrollController.of(context),
                 itemCount: _filteredFriends.length,
-                // Number of rectangles you want to display
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () async {
@@ -157,7 +151,6 @@ class _MyFriendsListState extends State<MyFriendsList> {
                                 ),
                               ),
                               Expanded(
-                                // Wrap with Expanded widget
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment
                                       .spaceBetween, // Align text and icon to the extremes

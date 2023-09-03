@@ -12,7 +12,6 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      // todo: remove appBar
       body: ResponsiveWrapper(
         hideNavigation: true,
         child: SignUpForm(),
@@ -344,7 +343,7 @@ class _SignUpFormState extends State<SignUpForm> {
               'assets/logo.png',
               width: 150,
               height: 150,
-            ), // Replace with your app logo
+            ),
             const SizedBox(height: 16),
             const Text(
               'Thank you for joining Hobby Hobby!',

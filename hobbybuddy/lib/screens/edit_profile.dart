@@ -19,10 +19,8 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  //final _usernameController = TextEditingController();
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
-  // bool _isUsernameNotUnique = false;
   bool loading = false;
 
   final double _backgroundPadding = 250;
@@ -37,7 +35,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _backgroundPicked = false;
 
   Future<void> updateUserToFirestore() async {
-    //String username = _usernameController.text;
     String name = _nameController.text;
     String surname = _surnameController.text;
     String? user = Preferences.getUsername();
@@ -107,7 +104,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void dispose() {
-    //_usernameController.dispose();
     _nameController.dispose();
     _surnameController.dispose();
     super.dispose();
@@ -284,7 +280,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         controller: _surnameController,
                         decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.shortcut_rounded),
-                          //prefixIcon: const Icon(Icons.perm_identity),
                           border: OutlineInputBorder(),
                           hintText: "Insert new surname here",
                           labelText: 'Your new surname',

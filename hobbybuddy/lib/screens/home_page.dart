@@ -36,19 +36,20 @@ class _HomePScreenState extends State<HomePScreen> {
   double _calculateAspectRatio() {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     final orientation = MediaQuery.of(context).orientation;
     if (orientation == Orientation.portrait) {
       if (width > 600) {
         return 3.7 * width / height;
+      } else {
+        return 2.6 * width / height;
       }
-      return 2.6 * width / height;
-      //return 1; // Aspect ratio for portrait mode
     } else {
-      if (width > 600) {
+      if (height > 600) {
         return width / (0.65 * height);
+      } else {
+        return width / (1.3 * height);
       }
-      return width / (0.85 * height);
-      //return 2.2;
     }
   }
 
@@ -246,7 +247,7 @@ class _HomePScreenState extends State<HomePScreen> {
                           children: [
                             Container(
                               width: double.infinity,
-                              //height: 120, // Adjust the image height as needed
+                              //height: 120,
 
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
@@ -306,7 +307,6 @@ class _HomePScreenState extends State<HomePScreen> {
                             ),
                           ],
                         ),
-                        // const SizedBox(height: 8),
                       ],
                     ),
                   ),

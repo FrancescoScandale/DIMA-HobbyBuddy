@@ -142,7 +142,6 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                     obscureText: _passwordInvisibleNew,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.vpn_key_rounded),
-                      //prefixIcon: const Icon(Icons.password),
                       hintText: 'New password',
                       border: const OutlineInputBorder(),
                       labelText: 'Confirm new password',

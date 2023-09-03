@@ -83,15 +83,14 @@ class _MentorPageState extends State<MentorPage> {
     if (orientation == Orientation.portrait) {
       if (width > 600) {
         return 3 * width / height;
+      } else {
+        return 2.1 * width / height;
       }
-      return 2.6 * width / height;
-      //return 1; // Aspect ratio for portrait mode
     } else {
-      if (width > 600) {
+      if (height > 600) {
         return width / (0.8 * height);
       }
-      return width / (0.85 * height);
-      //return 2.2;
+      return width / (1.5 * height);
     }
   }
 
