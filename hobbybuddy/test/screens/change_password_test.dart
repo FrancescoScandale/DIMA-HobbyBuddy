@@ -20,7 +20,8 @@ void main() {
 
     await Preferences.init();
   });
-  testWidgets('ChangePassword Screen displays form and handles change',
+  testWidgets(
+      'ChangePassword Screen displays form and handles a correct change',
       (tester) async {
     await tester.pumpWidget(MaterialApp(home: ChangePasswordScreen()));
 

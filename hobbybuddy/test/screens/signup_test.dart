@@ -36,7 +36,8 @@ void main() {
       "password": "userpassword",
     });
   });
-  testWidgets('SignUpScreen displays form and handles sign-up', (tester) async {
+  testWidgets('SignUpScreen displays form and handles a correct sign-up',
+      (tester) async {
     await tester.pumpWidget(MaterialApp(home: SignUpScreen()));
 
     await tester.pumpAndSettle();

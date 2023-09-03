@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
+import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 
 const double startingZoom = 17;
@@ -10,13 +11,11 @@ class MapsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = 'Buddy Finder';
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(appTitle),
+    return const Scaffold(
+      appBar: MyAppBar(
+        title: 'Buddy Finder',
       ),
-      body: const MapClass(),
+      body: MapClass(),
     );
   }
 }

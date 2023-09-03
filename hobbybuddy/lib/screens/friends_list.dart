@@ -88,7 +88,9 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
             return AlertDialog(
               title: const Text('Friendship Requests'),
               content: Container(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width < 600
+                    ? MediaQuery.of(context).size.width
+                    : 300,
                 // Adjust width as needed
                 child: SingleChildScrollView(
                   child: Column(
