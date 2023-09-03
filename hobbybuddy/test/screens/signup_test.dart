@@ -1,8 +1,10 @@
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -10,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mockito/mockito.dart';
 
 final firestore = FakeFirebaseFirestore();
+final mockAuth = MockFirebaseAuth();
 
 final mockLocation = Location(
   latitude: 45.4904447,
@@ -28,6 +31,8 @@ void main() {
     await Preferences.init();
     FirestoreCrud.init(firebaseInstance: firestore);
     GeocodingPlatform.instance = MockGeocodingPlatform();
+    AuthenticationCrud.init(authInstance: mockAuth);
+
     await firestore.collection("users").add({
       "username": "user1",
       "name": "user", // example received requests
@@ -53,7 +58,7 @@ void main() {
 
     final userField = find.byKey(const Key("username_field"));
     expect(userField, findsOneWidget);
-    await tester.enterText(userField, 'testUser');
+    await tester.enterText(userField, 'newUser');
 
     final nameField = find.byKey(const Key("name_field"));
     expect(nameField, findsOneWidget);
@@ -80,7 +85,6 @@ void main() {
     await tester.enterText(location, 'Via Cavour 7, Milano');
 
     await tester.tap(find.byKey(const Key("signup_button")));
-    await tester.pumpAndSettle();
     await tester.pumpAndSettle();
     expect(
       find.byWidgetPredicate((widget) => widget is AlertDialog,

@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
@@ -296,7 +296,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         return '${value[0].latitude},${value[0].longitude}';
                       });
                       // Username is unique, proceed with sign up logic
-                      await FirebaseAuth.instance
+                      await AuthenticationCrud.auth
                           .createUserWithEmailAndPassword(
                               email: email, password: password);
                       await FirestoreCrud.addUserToFirestore(

@@ -1,7 +1,9 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/settings.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/services/light_dark_manager.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:provider/provider.dart';
@@ -11,12 +13,13 @@ import 'package:hobbybuddy/services/firebase_firestore.dart';
 import '../mock/mock_app_theme.dart';
 
 final firestore = FakeFirebaseFirestore();
+final mockAuth = MockFirebaseAuth();
 
 void main() async {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     FirestoreCrud.init(firebaseInstance: firestore);
-
+    AuthenticationCrud.init(authInstance: mockAuth);
     SharedPreferences.setMockInitialValues({
       'username': 'marta',
       'email': 'marta@gmail.com',

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/themes/layout.dart';
 import 'package:hobbybuddy/widgets/app_bar.dart';
 import 'package:hobbybuddy/widgets/button.dart';
@@ -14,7 +15,6 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePasswordScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formkey = GlobalKey<FormState>();
   final _currentPasswordController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -23,7 +23,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
   bool _passwordInvisibleNew = true;
 
   Future<bool> changePassword() async {
-    User user = _auth.currentUser!;
+    User user = AuthenticationCrud.auth.currentUser!;
     String newPassword = _passwordController.text;
 
     try {
@@ -116,7 +116,6 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                       obscureText: _passwordInvisibleNew,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.vpn_key_rounded),
-                        //prefixIcon: const Icon(Icons.password),
                         hintText: 'New password',
                         border: const OutlineInputBorder(),
                         labelText: 'Your new password',
@@ -189,18 +188,6 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                   child: MyButton(
                     onPressed: () async {
                       if (_formkey.currentState!.validate()) {
-                        //check if credentials present in db
-                        // await FirestoreCrud.getUserPwd(
-                        //         username!, _currentPasswordController.text)
-                        //     .then((values) async {
-                        //   if (values!.docs.isNotEmpty) {
-                        //     await changePassword();
-                        //     // ignore: use_build_context_synchronously
-                        //     _showSuccessDialog(context);
-                        //   } else {
-                        //     _showInvalidDialog(context);
-                        //   }
-                        // });
                         bool changed = await changePassword();
                         if (changed) {
                           // ignore: use_build_context_synchronously

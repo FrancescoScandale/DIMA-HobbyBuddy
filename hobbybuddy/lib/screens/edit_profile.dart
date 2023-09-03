@@ -69,7 +69,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .child('Users/$username/')
         .listAll();
     if (result.items.isNotEmpty) {
-      print('GOTTEN INSIDE HERE!');
       Uint8List? propicData = await StorageCrud.getStorage()
           .ref()
           .child('Users/$username/propic.jpg')
