@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
 
 final firestore = FakeFirebaseFirestore();
-final String usernameTest = DateTime.timestamp().toString().split('.')[0];
-
+//final String usernameTest = DateTime.timestamp().toString().split('.')[0];
+String usernameTest = 'abcde';
 final mockLocation = Location(
   latitude: 45.4904447,
   longitude: 9.2301139,
@@ -105,7 +105,7 @@ void main() {
       // We are in login, verify that the signup process was successful.
       final user2Form = find.byKey(Key("u_field"));
       expect(user2Form, findsOneWidget);
-      await tester.enterText(user2Form, "abcde");
+      await tester.enterText(user2Form, usernameTest);
 
       final password3Form = find.byKey(Key("p_field"));
       expect(password3Form, findsOneWidget);
@@ -168,15 +168,6 @@ void main() {
       await tester.pump(const Duration(seconds: 3));
       expect(successDuplicateWarning, findsAtLeastNWidgets(1));
       await tester.pumpAndSettle();
-
-      final String id = await FirestoreCrud.fi
-          .collection('users')
-          .where('username', isEqualTo: usernameTest)
-          .get()
-          .then((value) {
-        return value.docs[0].id;
-      });
-      firestore.collection('users').doc(id).delete();
     });
   });
 }
