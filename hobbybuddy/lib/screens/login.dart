@@ -7,6 +7,8 @@ import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
 import 'package:hobbybuddy/main.dart';
 
+import '../services/firebase_auth.dart';
+
 class LogInScreen extends StatelessWidget {
   const LogInScreen({Key? key}) : super(key: key);
 
@@ -61,7 +63,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = AuthenticationCrud.auth;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();

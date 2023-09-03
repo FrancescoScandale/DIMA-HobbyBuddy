@@ -1,35 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/screens/login.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:hobbybuddy/services/firebase_storage.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 
 final firestore = FakeFirebaseFirestore();
+final mockAuth = MockFirebaseAuth();
 void main() {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     FirestoreCrud.init(firebaseInstance: firestore);
     StorageCrud.init(storageInstance: MockFirebaseStorage());
-
+    AuthenticationCrud.init(authInstance: mockAuth);
     // Set up fake Firestore instance
     SharedPreferences.setMockInitialValues({});
-    await firestore.collection("users").add({
-      'username': 'marta',
-      'password': '12345678',
-      'email': 'martar@gmail.com',
-      'friends': '',
-      'hobbies': '',
-      'location': '',
-      'mentors': '',
-      'receivedReq': '',
-      'sentReq': '',
-      'name': 'marta',
-      'surname': 'radaelli',
-    });
   });
 
   testWidgets('LogInScreen renders correctly with button', (tester) async {
@@ -136,7 +126,7 @@ void main() {
     expect(passwordField, findsOneWidget);
 
     // Fill in the username and password fields
-    await tester.enterText(userField, 'hello');
+    await tester.enterText(userField, 'marta');
     await tester.enterText(passwordField, '18273645');
 
     // Tap the login button
