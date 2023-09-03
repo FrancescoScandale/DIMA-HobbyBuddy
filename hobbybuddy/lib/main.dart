@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbybuddy/firebase_options.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/services/light_dark_manager.dart';
@@ -24,6 +25,7 @@ Future<void> main() async {
   await Preferences.init();
   FirestoreCrud.init();
   StorageCrud.init();
+  AuthenticationCrud.init();
 
   runApp(MultiProvider(providers: [
     // DARK/LIGHT THEME
