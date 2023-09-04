@@ -7,7 +7,7 @@ import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 class SearchFriendsList extends StatefulWidget {
-  final VoidCallback? onRefreshMainPage; // Callback function
+  final VoidCallback? onRefreshMainPage;
   const SearchFriendsList({Key? key, this.onRefreshMainPage}) : super(key: key);
 
   @override
@@ -126,7 +126,6 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: _filteredFriends.length,
-                // Number of rectangles you want to display
                 itemBuilder: (context, index) {
                   final friendName = _filteredFriends[index];
                   final bool isPending = _pendingRequests.contains(friendName);
@@ -166,7 +165,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
                               Expanded(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween, // Align text and icon to the extremes
+                                      .spaceBetween,
                                   children: [
                                     Padding(
                                       padding:
@@ -243,7 +242,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(true); // Confirmed action
+                Navigator.of(context).pop(true);
               },
               child: const Text(
                 'Send',
@@ -254,7 +253,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(false); // Canceled action
+                Navigator.of(context).pop(false);
               },
               child: const Text(
                 'Cancel',
@@ -270,7 +269,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
 
     if (confirmAction == true) {
       setState(() {
-        _pendingRequests.add(friendName); // Add friend to pending requests
+        _pendingRequests.add(friendName);
       });
 
       await FirestoreCrud.addSentRequest(
@@ -306,7 +305,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(true); // Confirmed action
+                Navigator.of(context).pop(true);
               },
               child: const Text(
                 'Confirm',
@@ -317,7 +316,7 @@ class _SearchFriendsListState extends State<SearchFriendsList> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(false); // Canceled action
+                Navigator.of(context).pop(false);
               },
               child: const Text(
                 'Cancel',

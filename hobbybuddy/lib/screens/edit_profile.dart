@@ -41,7 +41,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     String? user = Preferences.getUsername();
     if (_profilePicked) {
       String profilePicPath = 'Users/$user/propic.jpg';
-      // Convert the selected image file to Uint8List
       Uint8List profilePicData = await _profileFile.readAsBytes();
       await StorageCrud.getStorage()
           .ref(profilePicPath)
@@ -50,7 +49,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (_backgroundPicked) {
       String backgroundPath = 'Users/$user/background.jpg';
-      // Convert the selected image file to Uint8List
       Uint8List backgroundData = await _backgroundFile.readAsBytes();
       await StorageCrud.getStorage()
           .ref(backgroundPath)
@@ -152,7 +150,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: (() {
                               if (_backgroundPicked) {
                                 return Image.file(
-                                  _backgroundFile, // Display the selected profile picture
+                                  _backgroundFile,
                                   alignment: Alignment.center,
                                   fit: BoxFit.fitHeight,
                                 );
@@ -209,7 +207,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   child: (() {
                                     if (_profilePicked) {
                                       return Image.file(
-                                        _profileFile, // Display the selected profile picture
+                                        _profileFile,
                                         width: AppLayout.kProfilePicRadiusLarge,
                                         height:
                                             AppLayout.kProfilePicRadiusLarge,

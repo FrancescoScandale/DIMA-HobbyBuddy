@@ -20,7 +20,7 @@ class CoursesPage extends StatefulWidget {
 
   final String mentor;
   final String title;
-  final String courseID; //in our case it's the date
+  final String courseID;
 
   @override
   State<CoursesPage> createState() =>
@@ -389,24 +389,24 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     seconds: _controller.value.position.inSeconds - 10,
                   ));
                 },
-                child: Icon(Icons.fast_rewind_outlined)),
+                child: const Icon(Icons.fast_rewind_outlined)),
             ElevatedButton(
                 onPressed: () {
                   _controller.pause();
                 },
-                child: Icon(Icons.pause_circle_outline)),
+                child: const Icon(Icons.pause_circle_outline)),
             ElevatedButton(
                 onPressed: () {
                   _controller.play();
                 },
-                child: Icon(Icons.play_circle_outline)),
+                child: const Icon(Icons.play_circle_outline)),
             ElevatedButton(
                 onPressed: () {
                   _controller.seekTo(Duration(
                     seconds: _controller.value.position.inSeconds + 10,
                   ));
                 },
-                child: Icon(Icons.fast_forward_outlined)),
+                child: const Icon(Icons.fast_forward_outlined)),
           ],
         )
       ],

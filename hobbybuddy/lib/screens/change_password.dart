@@ -43,7 +43,6 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
 
   @override
   void dispose() {
-    // Clean up the controllers when the widget is disposed.
     _currentPasswordController.dispose();
     _passwordController.dispose();
     super.dispose();

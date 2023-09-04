@@ -222,7 +222,7 @@ class _UserPageState extends State<UserPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              downloadNameSurname ? _name + ' ' + _surname : '',
+                              downloadNameSurname ? '$_name $_surname' : '',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -256,7 +256,6 @@ class _UserPageState extends State<UserPage> {
                                 getUserPics();
                                 getNameSurname();
                               });
-                              ;
                             },
                             icon: const Icon(
                               Icons.settings_sharp,
@@ -336,7 +335,7 @@ class _UserPageState extends State<UserPage> {
                                       downloadHobbies
                                           ? Text(
                                               _hobbies[index],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold),
                                             )
@@ -385,7 +384,7 @@ class _UserPageState extends State<UserPage> {
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                               child: Container(
-                                                  color: ui.Color(0xffffcc80),
+                                                  color: const ui.Color(0xffffcc80),
                                                   child: downloadMentors
                                                       ? Image(
                                                           key: Key(
@@ -516,7 +515,7 @@ class _UserPageState extends State<UserPage> {
                                       downloadMilestones
                                           ? _milestones.keys.toList()[index]
                                           : '',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -529,7 +528,7 @@ class _UserPageState extends State<UserPage> {
                                               .toList()[index]
                                               .item1
                                           : '',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold),
                                     ),

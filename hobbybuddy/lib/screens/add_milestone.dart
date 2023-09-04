@@ -109,7 +109,7 @@ class _AddMilestoneState extends State<AddMilestone> {
                 : Container(),
             const SizedBox(height: 10),
             Container(
-              margin: EdgeInsetsDirectional.symmetric(horizontal: 150),
+              margin: const EdgeInsetsDirectional.symmetric(horizontal: 150),
               child: FractionallySizedBox(
                   widthFactor: MediaQuery.of(context).size.width < 600
                       ? 1.0

@@ -310,7 +310,6 @@ class _SignUpFormState extends State<SignUpForm> {
                       _showSignUpSuccessDialog(context);
                     } else {
                       // Username is not unique, show a warning
-
                       setState(() {
                         _isUsernameNotUnique = !isUsernameUnique;
                         _isEmailNotUnique = !isEmailUnique;

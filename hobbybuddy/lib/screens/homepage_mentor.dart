@@ -1,9 +1,3 @@
-/*
-  Legend for the upcoming classes in the firebase firestore db
-    Fields for the same upcoming class are separated by ;;
-    Tiers of difficulty are 1,2,3 (1 being the hardest -> red)
-*/
-
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -385,7 +379,7 @@ class _MentorPageState extends State<MentorPage> {
                                         MediaQuery.of(context).orientation ==
                                             Orientation.portrait))
                                 ? 2
-                                : 3, // Two hobbies per row
+                                : 3, // Two or three per row
                         mainAxisSpacing: 0,
                         crossAxisSpacing: 0,
                         childAspectRatio: _calculateAspectRatio(),
@@ -416,7 +410,7 @@ class _MentorPageState extends State<MentorPage> {
                                 Container(
                                   alignment: Alignment.center,
                                   height:
-                                      120, // Adjust the image height as needed
+                                      120,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: const ui.Color(0xffffcc80),
@@ -441,7 +435,7 @@ class _MentorPageState extends State<MentorPage> {
                                 ),
                                 const SizedBox(
                                     height:
-                                        8), // Spacing between image and title
+                                        8),
                                 Container(
                                   padding:
                                       const EdgeInsetsDirectional.symmetric(

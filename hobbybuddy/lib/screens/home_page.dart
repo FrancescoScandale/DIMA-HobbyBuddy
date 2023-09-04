@@ -94,7 +94,7 @@ class _HomePScreenState extends State<HomePScreen> {
     size: AppLayout.kIconSize,
   );
 
-// Sets "checkFavouriteHobby" for each hobby based on the favourite hobbies
+/// Sets "checkFavouriteHobby" for each hobby based on the favourite hobbies
   void setFavouriteStatus() {
     List<String>? favoriteHobbies = Preferences.getHobbies();
 
@@ -116,7 +116,7 @@ class _HomePScreenState extends State<HomePScreen> {
             List.generate(_filteredHobbies.length, (_) => false);
       });
     }
-    setFavouriteStatus(); // Call this after retrieving hobbies
+    setFavouriteStatus();
   }
 
   @override
@@ -182,7 +182,6 @@ class _HomePScreenState extends State<HomePScreen> {
                     ),
                   ),
                   Padding(
-                    //mainAxisAlignment: MainAxisAlignment.end,
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 3, 20, 3),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -216,7 +215,7 @@ class _HomePScreenState extends State<HomePScreen> {
                           MediaQuery.of(context).orientation ==
                               Orientation.portrait))
                   ? 2
-                  : 3, // Two hobbies per row
+                  : 3, // Two or three hobbies per row
               mainAxisSpacing: 16.0,
               crossAxisSpacing: 16.0,
               childAspectRatio: _calculateAspectRatio(),
@@ -238,7 +237,6 @@ class _HomePScreenState extends State<HomePScreen> {
                     });
                   },
                   child: ContainerShadow(
-                    //width: double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -247,8 +245,6 @@ class _HomePScreenState extends State<HomePScreen> {
                           children: [
                             Container(
                               width: double.infinity,
-                              //height: 120,
-
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: const ui.Color(0xffffcc80),
@@ -290,19 +286,19 @@ class _HomePScreenState extends State<HomePScreen> {
                           ],
                         ),
                         const SizedBox(
-                            height: 8), // Spacing between image and title
+                            height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 8.0), // Add left padding
+                                  left: 8.0),
                               child: Text(_filteredHobbies[index],
                                   style: const TextStyle(fontSize: 17)),
                             ),
                             const Padding(
                               padding: EdgeInsets.only(
-                                  right: 8.0), // Add right padding
+                                  right: 8.0),
                               child: Icon(Icons.navigate_next),
                             ),
                           ],

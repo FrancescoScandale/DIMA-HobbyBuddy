@@ -30,9 +30,6 @@ final mockPlacemark = Placemark(
   street: 'Via Cavour 7',
 );
 
-//there were renderflex errors in mentors (Container and Column went outside borders)
-//they were solved by wrapping the column in a SingleChildScrollView()
-//reference of the solution: homepage_user.dart - row 328
 void main() async {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();

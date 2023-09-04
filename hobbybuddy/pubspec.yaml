@@ -55,6 +55,7 @@ dependencies:
   path_provider: ^2.1.1
   image: ^4.0.17
   google_maps_flutter_platform_interface: ^2.4.1
+  stream_transform: ^2.1.0
   
 
 dev_dependencies:

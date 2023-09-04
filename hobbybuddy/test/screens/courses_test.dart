@@ -101,27 +101,21 @@ void main() async {
       );
       await tester.pump();
 
-      // await tester.drag(find.byType(SingleChildScrollView), const Offset(0,2500));
-
       //pause
       await tester
           .tap(find.byIcon(Icons.pause_circle_outline, skipOffstage: false));
-      // await tester.pump();
 
       //play
       await tester
           .tap(find.byIcon(Icons.play_circle_outline, skipOffstage: false));
-      // await tester.pump();
 
       //fast forward
       await tester
           .tap(find.byIcon(Icons.fast_forward_outlined, skipOffstage: false));
-      // await tester.pump();
 
       //fast rewind
       await tester
           .tap(find.byIcon(Icons.fast_rewind_outlined, skipOffstage: false));
-      // await tester.pump();
     });
   });
 }

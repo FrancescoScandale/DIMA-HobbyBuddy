@@ -208,7 +208,7 @@ class _HomePageHobbyState extends State<HomePageHobby> {
                   itemBuilder: (context, index) {
                     return ListTile(
                         leading: const Icon(Icons
-                            .person), //TODO?: mettere la propic del mentore
+                            .person),
                         title: Text(_mentors.keys.elementAt(index)),
                         trailing: MyIconButton(
                           onTap: () {

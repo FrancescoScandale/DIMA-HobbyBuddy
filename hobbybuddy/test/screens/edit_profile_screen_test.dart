@@ -43,6 +43,7 @@ class MockImagePicker extends Mock
   }
 
   @Deprecated('Use getImageFromSource instead.')
+  @override
   Future<PickedFile?> pickImage({
     required ImageSource source,
     double? maxWidth,
@@ -164,7 +165,6 @@ void main() async {
       await tester.enterText(surnameField, 'scandale');
       final buttonToTap = find.byKey(const Key('saveB'));
 
-      // await tester.ensureVisible(buttonToTap);
       await tester.tap(buttonToTap);
       await tester.pumpAndSettle();
     });
@@ -222,7 +222,6 @@ void main() async {
 
       final buttonToTap = find.byKey(const Key('saveB'));
 
-      // await tester.ensureVisible(buttonToTap);
       await tester.tap(buttonToTap);
       await tester.pumpAndSettle();
     });

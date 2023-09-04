@@ -7,7 +7,7 @@ import 'package:hobbybuddy/widgets/button_icon.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 
 class MyFriendsList extends StatefulWidget {
-  final VoidCallback? onRefreshMainPage; // Callback function
+  final VoidCallback? onRefreshMainPage;
   const MyFriendsList({Key? key, this.onRefreshMainPage}) : super(key: key);
 
   @override
@@ -153,7 +153,7 @@ class _MyFriendsListState extends State<MyFriendsList> {
                               Expanded(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween, // Align text and icon to the extremes
+                                      .spaceBetween,
                                   children: [
                                     Padding(
                                       padding:
@@ -195,7 +195,6 @@ class _MyFriendsListState extends State<MyFriendsList> {
     );
   }
 
-  // Method to show the confirmation dialog
   Future<void> _showRemoveFriendDialog(String friendName) async {
     bool confirmAction = await showDialog(
       context: context,
@@ -220,7 +219,7 @@ class _MyFriendsListState extends State<MyFriendsList> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(true); // Confirmed action
+                Navigator.of(context).pop(true);
               },
               child: const Text(
                 'Remove',
@@ -231,7 +230,7 @@ class _MyFriendsListState extends State<MyFriendsList> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(false); // Canceled action
+                Navigator.of(context).pop(false);
               },
               child: const Text(
                 'Cancel',

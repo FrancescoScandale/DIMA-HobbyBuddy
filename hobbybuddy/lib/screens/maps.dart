@@ -35,8 +35,6 @@ class MapState extends State<MapClass> {
   late CameraPosition _goHome;
   bool loaded = false;
   late GoogleMapController mapController;
-  //used to update the camera position
-  //useful because the map lags and the button uses this to go back to the initial position
 
   @override
   void initState() {

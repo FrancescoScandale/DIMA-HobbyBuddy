@@ -15,7 +15,6 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 final firestore = FakeFirebaseFirestore();
 final mockAuth = MockFirebaseAuth();
 
-//final String usernameTest = DateTime.timestamp().toString().split('.')[0];
 String usernameTest = 'abcde';
 final mockLocation = Location(
   latitude: 45.4904447,
@@ -32,7 +31,7 @@ Future tapOnWidgetByKey({
   required String key,
   required WidgetTester tester,
 }) async {
-  final widget = await find.byKey(Key(key));
+  final widget = find.byKey(Key(key));
   expect(widget, findsOneWidget);
   await tester.tap(widget);
   await tester.pumpAndSettle();
@@ -59,7 +58,6 @@ void main() {
     testWidgets('sign up new user and login', (tester) async {
       await app.main();
       await tester.pumpAndSettle();
-      //await logoutTest(tester: tester);
       await tapOnWidgetByKey(key: "go_sign_up", tester: tester);
 
       //in signup

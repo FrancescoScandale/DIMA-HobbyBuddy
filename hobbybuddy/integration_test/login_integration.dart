@@ -27,7 +27,6 @@ void main() {
     testWidgets('login fail', (tester) async {
       await app.main();
       await tester.pumpAndSettle();
-      //await logoutTest(tester: tester);
 
       // We are in login, verify that the signup process was successful.
       final userForm = find.byKey(Key("u_field"));
@@ -53,7 +52,6 @@ void main() {
     testWidgets('login and sign out success', (tester) async {
       await app.main();
       await tester.pumpAndSettle();
-      //await logoutTest(tester: tester);
 
       // We are in login, verify that the signup process was successful.
       final userForm = find.byKey(Key("u_field"));

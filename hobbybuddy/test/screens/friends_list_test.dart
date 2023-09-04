@@ -10,8 +10,6 @@ import 'package:hobbybuddy/screens/search_friend_list.dart';
 
 final firestore = FakeFirebaseFirestore();
 
-// Create a mock class for FirebaseCrud
-
 void main() {
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -136,7 +134,6 @@ void main() {
         home: MyFriendsScreen(),
       ),
     );
-    //await tester.pumpAndSettle();
     await tester.pump();
     await tester.tap(find.text("My friends"));
     await tester.pumpAndSettle();
@@ -194,7 +191,6 @@ void main() {
       'MyFriendsScreen renders correctly and user can interact with friendship request dialog to accept or decline a request',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
-
     await tester.pumpWidget(
       const MaterialApp(
         home: MyFriendsScreen(),
@@ -259,7 +255,6 @@ void main() {
   testWidgets('MyFriendsScreen renders correctly and user can delete friend',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
-
     await tester.pumpWidget(
       const MaterialApp(
         home: MyFriendsScreen(),
@@ -310,7 +305,6 @@ void main() {
       'MyFriendsScreen renders correctly and user can send friendship request and revoke a pending request',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
-
     await tester.pumpWidget(
       const MaterialApp(
         home: MyFriendsScreen(),

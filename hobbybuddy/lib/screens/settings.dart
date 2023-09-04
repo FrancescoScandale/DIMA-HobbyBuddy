@@ -95,7 +95,6 @@ class _SettingsScreenState extends State<Settings> {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                //color: Colors.white,
                               ),
                             ),
                             Padding(

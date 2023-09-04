@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/services/preferences.dart';
 import 'package:hobbybuddy/widgets/screen_transition.dart';
 import 'package:hobbybuddy/widgets/responsive_wrapper.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/screens/sign_up.dart';
 import 'package:hobbybuddy/main.dart';
-
-import '../services/firebase_auth.dart';
 
 class LogInScreen extends StatelessWidget {
   const LogInScreen({Key? key}) : super(key: key);
@@ -59,7 +58,7 @@ class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
 
   @override
-  _LoginFormState createState() => _LoginFormState();
+  State<LoginForm> createState() => _LoginFormState();
 }
 
 class _LoginFormState extends State<LoginForm> {
@@ -110,7 +109,6 @@ class _LoginFormState extends State<LoginForm> {
                 labelText: 'Username',
                 labelStyle: TextStyle(fontStyle: FontStyle.italic),
               ),
-              // The validator receives the text that the user has entered.
               validator: (value1) {
                 if (value1 == null || value1.isEmpty) {
                   setState(() {
@@ -150,7 +148,6 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                 ),
               ),
-              // The validator receives the text that the user has entered.
               validator: (value2) {
                 if (value2 == null || value2.isEmpty) {
                   setState(() {
@@ -174,7 +171,6 @@ class _LoginFormState extends State<LoginForm> {
                     setState(() {
                       pressed = true;
                     });
-                    // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
                       bool check = await _signInWithEmailAndPassword();
                       if (check) {
@@ -205,7 +201,7 @@ class _LoginFormState extends State<LoginForm> {
                   },
                   child: Text(
                     pressed ? 'Checking...' : 'Submit',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

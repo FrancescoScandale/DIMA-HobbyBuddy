@@ -17,8 +17,6 @@ class ResponsiveWrapper extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).appBarTheme.backgroundColor,
         ),
-        //child: ConstrainedBox(
-        //constraints: const BoxConstraints(maxWidth: 600),
         child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,

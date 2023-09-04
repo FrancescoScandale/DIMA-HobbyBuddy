@@ -54,7 +54,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
     });
   }
 
-  // Function to trigger the refresh
   void refreshMainPage() {
     Future<List<String>> receivedRequestsFuture =
         FirestoreCrud.getReceivedRequest(Preferences.getUsername()!);
@@ -91,7 +90,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                 width: MediaQuery.of(context).size.width < 600
                     ? MediaQuery.of(context).size.width
                     : 300,
-                // Adjust width as needed
                 child: SingleChildScrollView(
                   child: Column(
                     children: receivedRequests?.map((request) {
@@ -203,7 +201,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
               if (requestCount >= 0)
                 Container(
                   margin: const EdgeInsetsDirectional.fromSTEB(
-                      0, 5, 40, 5), //const EdgeInsets.only(right: 40),
+                      0, 5, 40, 5),
                   child: InkWell(
                     customBorder: const CircleBorder(),
                     onTap: () async {
@@ -211,7 +209,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                         context,
                         receivedRequests,
                         requestCount,
-                        this, // Pass the instance of _MyFriendsScreenState
+                        this,
                       );
                     },
                     child: Ink(
@@ -240,7 +238,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
               if (_showRedCircle)
                 Container(
                   margin: const EdgeInsets.only(
-                      bottom: 31, left: 22), // Adjust these values
+                      bottom: 31, left: 22),
                   padding: const EdgeInsets.all(6),
                   decoration: const BoxDecoration(
                     color: Colors.red,
@@ -254,8 +252,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
       body: SafeArea(
         child: ResponsiveWrapper(
           child: NestedScrollView(
-            //physics: const NeverScrollableScrollPhysics(),
-            //controller: _scrollController,
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 SliverOverlapAbsorber(
@@ -267,7 +263,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
                       scrolledUnderElevation: 0,
                       elevation: 1,
                       pinned: true,
-                      expandedHeight: 0, // Adjust this value as needed
+                      expandedHeight: 0,
                       automaticallyImplyLeading: false,
                       centerTitle: true,
                       backgroundColor:
@@ -291,7 +287,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen>
               children: [
                 Expanded(
                   child: TabBarView(
-                    //physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
                     children: [
                       MyFriendsList(
