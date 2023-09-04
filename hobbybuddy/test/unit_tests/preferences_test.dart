@@ -17,6 +17,7 @@ void main() {
         "hobbies": "Volleyball,Tennis",
         "mentors": "Emma,Luca",
         "email": "sfjbs@mail.com",
+        "location": 'via poli 3',
       });
     });
 
@@ -126,6 +127,25 @@ void main() {
       await Preferences.setEmail('marta');
       SharedPreferences.getInstance().then((prefs) {
         expect(prefs.getString('email'), 'sfjbs@mail.com');
+      });
+    });
+
+    //Location
+    test('getlocation method should return the correct value', () {
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setStringList('location', ['via poli 3']);
+        expect(Preferences.getLocation(), ['via poli 3']);
+      });
+    });
+
+    test('getEmails method should return the default value', () {
+      expect(Preferences.getLocation(), null);
+    });
+
+    test('getUsername method should set the correct value', () async {
+      await Preferences.setLocation('marta');
+      SharedPreferences.getInstance().then((prefs) {
+        expect(prefs.getStringList('location'), ['via poli 3']);
       });
     });
   });

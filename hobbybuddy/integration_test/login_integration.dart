@@ -1,7 +1,8 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
-
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/firebase_storage.dart';
 import 'package:hobbybuddy/services/preferences.dart';
@@ -11,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 final firestore = FakeFirebaseFirestore();
+final mockAuth = MockFirebaseAuth();
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
@@ -18,6 +20,7 @@ void main() {
     await Preferences.init();
     FirestoreCrud.init(firebaseInstance: firestore);
     StorageCrud.init(storageInstance: MockFirebaseStorage());
+    AuthenticationCrud.init(authInstance: mockAuth);
   });
 
   group('login test', () {

@@ -1,6 +1,6 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
-
+import 'package:hobbybuddy/services/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hobbybuddy/services/firebase_firestore.dart';
 import 'package:hobbybuddy/services/firebase_storage.dart';
@@ -9,8 +9,11 @@ import 'package:integration_test/integration_test.dart';
 import 'package:hobbybuddy/main.dart' as app;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 
 final firestore = FakeFirebaseFirestore();
+final mockAuth = MockFirebaseAuth();
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
@@ -18,6 +21,7 @@ void main() {
     await Preferences.init();
     FirestoreCrud.init(firebaseInstance: firestore);
     StorageCrud.init(storageInstance: MockFirebaseStorage());
+    AuthenticationCrud.init(authInstance: mockAuth);
   });
 
   group('general navigation test', () {
@@ -34,7 +38,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "87654321");
+      await tester.enterText(passwordForm, "12345678");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -94,7 +98,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "87654321");
+      await tester.enterText(passwordForm, "12345678");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -198,7 +202,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "87654321");
+      await tester.enterText(passwordForm, "12345678");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -276,7 +280,7 @@ void main() {
 
       final passwordForm = find.byKey(Key("p_field"));
       expect(passwordForm, findsOneWidget);
-      await tester.enterText(passwordForm, "87654321");
+      await tester.enterText(passwordForm, "12345678");
 
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 1));
@@ -329,11 +333,11 @@ void main() {
 
       final newP = find.byKey(Key("newP"));
       expect(newP, findsOneWidget);
-      await tester.enterText(newP, "87654321");
+      await tester.enterText(newP, "12345678");
 
       final newP2 = find.byKey(Key("newP2"));
       expect(newP2, findsOneWidget);
-      await tester.enterText(newP2, "87654321");
+      await tester.enterText(newP2, "12345678");
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 3));
 
@@ -348,7 +352,7 @@ void main() {
       await tester.pumpAndSettle(Duration(seconds: 5));
 
       expect(password, findsOneWidget);
-      await tester.enterText(password, "87654321");
+      await tester.enterText(password, "12345678");
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle(Duration(seconds: 3));
 

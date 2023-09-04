@@ -110,7 +110,8 @@ void main() async {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.favorite_outline));
+
+      await tester.tap(find.byIcon(Icons.favorite_outline).last);
       await tester.pumpAndSettle();
       expect(
         find.byIcon(Icons.favorite),
@@ -125,6 +126,22 @@ void main() async {
         findsNWidgets(3),
       );
       assert(!Preferences.getHobbies()!.contains('Skateboard'));
+
+      await tester.tap(find.byIcon(Icons.favorite).last);
+      await tester.pumpAndSettle();
+      expect(
+        find.byIcon(Icons.favorite),
+        findsNWidgets(2),
+      );
+      assert(Preferences.getMentors()!.length == 3);
+
+      await tester.tap(find.byKey(const Key('toggleHobby')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byIcon(Icons.favorite),
+        findsNWidgets(3),
+      );
+      assert(Preferences.getHobbies()!.contains('Skateboard'));
     });
   });
 }

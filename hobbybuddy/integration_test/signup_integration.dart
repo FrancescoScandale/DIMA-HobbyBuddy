@@ -9,8 +9,12 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
+import 'package:hobbybuddy/services/firebase_auth.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 
 final firestore = FakeFirebaseFirestore();
+final mockAuth = MockFirebaseAuth();
+
 //final String usernameTest = DateTime.timestamp().toString().split('.')[0];
 String usernameTest = 'abcde';
 final mockLocation = Location(
@@ -41,12 +45,13 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await Preferences.init();
     FirestoreCrud.init(firebaseInstance: firestore);
+    AuthenticationCrud.init(authInstance: mockAuth);
     await firestore.collection("users").add({
       "username": "user",
-      "name": "user", // example received requests
-      "surname": "surname2", // example sent requests
-      "email": "email@user.it", // example friends
-      "password": "userpassword",
+      "name": "user",
+      "surname": "surname2",
+      "email": "email@user.it",
+      "location": "45.4905447,9.2303139",
     });
   });
 
