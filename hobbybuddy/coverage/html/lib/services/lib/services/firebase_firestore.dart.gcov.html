@@ -31,13 +31,13 @@
             <td class="headerValue">lcov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryMed">77.9&nbsp;%</td>
+            <td class="headerCovTableEntryMed">80.9&nbsp;%</td>
             <td class="headerCovTableEntry">303</td>
-            <td class="headerCovTableEntry">236</td>
+            <td class="headerCovTableEntry">245</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2023-09-04 01:21:50</td>
+            <td class="headerValue">2023-09-04 10:03:45</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -383,12 +383,12 @@
 <span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC">           1 :     hobbies = Preferences.getHobbies()!;</span></span>
 <span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC">           3 :     if (hobbies.contains(hobby) &amp;&amp; operation.compareTo('remove') == 0) {</span></span>
 <span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">           1 :       hobbies.remove(hobby);</span></span>
-<span id="L324"><span class="lineNum">     324</span> <span class="tlaUNC tlaBgUNC">           0 :     } else if (!hobbies.contains(hobby) &amp;&amp; operation.compareTo('add') == 0) {</span></span>
-<span id="L325"><span class="lineNum">     325</span> <span class="tlaUNC">           0 :       hobbies.add(hobby);</span></span>
+<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">           3 :     } else if (!hobbies.contains(hobby) &amp;&amp; operation.compareTo('add') == 0) {</span></span>
+<span id="L325"><span class="lineNum">     325</span> <span class="tlaGNC">           1 :       hobbies.add(hobby);</span></span>
 <span id="L326"><span class="lineNum">     326</span>              :     }</span>
 <span id="L327"><span class="lineNum">     327</span>              : </span>
 <span id="L328"><span class="lineNum">     328</span>              :     try {</span>
-<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC tlaBgGNC">           1 :       await fi</span></span>
+<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">           1 :       await fi</span></span>
 <span id="L330"><span class="lineNum">     330</span> <span class="tlaGNC">           1 :           .collection(&quot;users&quot;)</span></span>
 <span id="L331"><span class="lineNum">     331</span> <span class="tlaGNC">           1 :           .where(&quot;username&quot;, isEqualTo: username)</span></span>
 <span id="L332"><span class="lineNum">     332</span> <span class="tlaGNC">           1 :           .get()</span></span>
@@ -425,8 +425,8 @@
 <span id="L363"><span class="lineNum">     363</span>              :     String id = '';</span>
 <span id="L364"><span class="lineNum">     364</span>              : </span>
 <span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">           2 :     mentors = Preferences.getMentors()!;</span></span>
-<span id="L366"><span class="lineNum">     366</span> <span class="tlaGNC">           4 :     if (mentors.contains(mentor) &amp;&amp; operation.compareTo('remove') == 0) {</span></span>
-<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">           1 :       mentors.remove(mentor);</span></span>
+<span id="L366"><span class="lineNum">     366</span> <span class="tlaGNC">           6 :     if (mentors.contains(mentor) &amp;&amp; operation.compareTo('remove') == 0) {</span></span>
+<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">           2 :       mentors.remove(mentor);</span></span>
 <span id="L368"><span class="lineNum">     368</span> <span class="tlaGNC">           3 :     } else if (!mentors.contains(mentor) &amp;&amp; operation.compareTo('add') == 0) {</span></span>
 <span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC">           1 :       mentors.add(mentor);</span></span>
 <span id="L370"><span class="lineNum">     370</span>              :     }</span>
@@ -446,19 +446,19 @@
 <span id="L384"><span class="lineNum">     384</span>              :     }</span>
 <span id="L385"><span class="lineNum">     385</span>              :   }</span>
 <span id="L386"><span class="lineNum">     386</span>              : </span>
-<span id="L387"><span class="lineNum">     387</span> <span class="tlaUNC">           0 :   static Future&lt;List&lt;String&gt;&gt; getLocation(String username) async {</span></span>
+<span id="L387"><span class="lineNum">     387</span> <span class="tlaGNC tlaBgGNC">           1 :   static Future&lt;List&lt;String&gt;&gt; getLocation(String username) async {</span></span>
 <span id="L388"><span class="lineNum">     388</span>              :     List&lt;String&gt; coordinates;</span>
-<span id="L389"><span class="lineNum">     389</span> <span class="tlaUNC">           0 :     coordinates = await fi</span></span>
-<span id="L390"><span class="lineNum">     390</span> <span class="tlaUNC">           0 :         .collection('users')</span></span>
-<span id="L391"><span class="lineNum">     391</span> <span class="tlaUNC">           0 :         .where(&quot;username&quot;, isEqualTo: username)</span></span>
-<span id="L392"><span class="lineNum">     392</span> <span class="tlaUNC">           0 :         .get()</span></span>
-<span id="L393"><span class="lineNum">     393</span> <span class="tlaUNC">           0 :         .then((value) {</span></span>
-<span id="L394"><span class="lineNum">     394</span> <span class="tlaUNC">           0 :       return value.docs[0]['location'].toString().split(',');</span></span>
+<span id="L389"><span class="lineNum">     389</span> <span class="tlaGNC">           1 :     coordinates = await fi</span></span>
+<span id="L390"><span class="lineNum">     390</span> <span class="tlaGNC">           1 :         .collection('users')</span></span>
+<span id="L391"><span class="lineNum">     391</span> <span class="tlaGNC">           1 :         .where(&quot;username&quot;, isEqualTo: username)</span></span>
+<span id="L392"><span class="lineNum">     392</span> <span class="tlaGNC">           1 :         .get()</span></span>
+<span id="L393"><span class="lineNum">     393</span> <span class="tlaGNC">           2 :         .then((value) {</span></span>
+<span id="L394"><span class="lineNum">     394</span> <span class="tlaGNC">           5 :       return value.docs[0]['location'].toString().split(',');</span></span>
 <span id="L395"><span class="lineNum">     395</span>              :     });</span>
 <span id="L396"><span class="lineNum">     396</span>              :     return coordinates;</span>
 <span id="L397"><span class="lineNum">     397</span>              :   }</span>
 <span id="L398"><span class="lineNum">     398</span>              : </span>
-<span id="L399"><span class="lineNum">     399</span> <span class="tlaGNC tlaBgGNC">           2 :   static Future&lt;String&gt; getEmail(String username) async {</span></span>
+<span id="L399"><span class="lineNum">     399</span> <span class="tlaGNC">           2 :   static Future&lt;String&gt; getEmail(String username) async {</span></span>
 <span id="L400"><span class="lineNum">     400</span> <span class="tlaGNC">           2 :     String email = await fi</span></span>
 <span id="L401"><span class="lineNum">     401</span> <span class="tlaGNC">           2 :         .collection('users')</span></span>
 <span id="L402"><span class="lineNum">     402</span> <span class="tlaGNC">           2 :         .where(&quot;username&quot;, isEqualTo: username)</span></span>
