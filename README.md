@@ -8,7 +8,7 @@ For further details, refer to the **Design Document**.
 Open the simulator of your choice and run, from the "hobbybuddy" directory: <br>
 flutter run <br>
 <br>
-A profile can then be created.\
+A profile can then be created.
 
 ### Note
 Courses are only present in Milan, so look around there when looking for courses in the map!
